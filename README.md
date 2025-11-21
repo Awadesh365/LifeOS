@@ -1,73 +1,230 @@
-# React + TypeScript + Vite
+# CityOS Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern, scalable React application for CityOS built with **enterprise-grade architecture**.
 
-Currently, two official plugins are available:
+## 🎯 Architecture Highlights
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Framework**: React 18 + TypeScript + Vite
+- **Structure**: Feature-based + Atomic Design
+- **State**: Zustand (global) + React Query (server) + React Hook Form (forms)
+- **Styling**: CSS Modules with design tokens
+- **Testing**: Vitest + React Testing Library + Playwright
 
-## React Compiler
+## 📁 Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/     # Reusable UI (Atomic Design)
+├── features/       # Domain modules (auth, users, billing)
+├── pages/          # Route pages
+├── layouts/        # Page layouts
+├── hooks/          # Custom hooks
+├── store/          # Global state (Zustand)
+├── services/       # API layer
+├── utils/          # Helper functions
+├── types/          # TypeScript types
+└── config/         # Configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+See [STRUCTURE.md](./STRUCTURE.md) for complete folder organization.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+- Node.js 18+
+- npm or pnpm
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
+
+# Run E2E tests
+npm run test:e2e
 ```
+
+## 🛠 Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server (http://localhost:5173) |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm test` | Run unit tests |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run test:e2e` | Run E2E tests (Playwright) |
+| `npm run lint` | Lint code |
+| `npm run format` | Format code with Prettier |
+| `npm run storybook` | Start Storybook |
+
+## 📚 Documentation
+
+- [**Codebase Structure**](../standards/frontend/CODEBASE_STRUCTURE.md) - Complete folder organization
+- [**Component Architecture**](../standards/frontend/COMPONENT_ARCHITECTURE.md) - How to build components
+- [**State Management**](../standards/frontend/STATE_MANAGEMENT.md) - When to use which state solution
+- [**Frontend Standards**](../standards/frontend/README.md) - Development standards
+
+## 🏗️ Architecture Decisions
+
+### Why Feature-Based?
+
+Features are self-contained modules:
+```
+features/auth/
+├── components/   # LoginForm, RegisterForm
+├── hooks/        # useLogin, useAuth
+├── services/     # auth.api.ts
+├── store/        # authSlice.ts
+└── index.ts      # Public API
+```
+
+**Benefits**:
+- Easy to find related code
+- Can assign entire features to teams
+- Can extract to separate packages
+- Clear boundaries
+
+### Why CSS Modules?
+
+- **Scoped styles** - No global conflicts
+- **Type-safe** - TypeScript support
+- **Performance** - Only load what's needed
+- **Flexible** - Easy to override
+
+### Why React Query?
+
+- **Automatic caching** - Fetch once, use everywhere
+- **Background updates** - Data stays fresh
+- **Built-in loading/error** - Less boilerplate
+- **Optimistic updates** - Better UX
+
+## 🎨 Component Library
+
+### Atoms (Basic)
+- Button, Input, Icon, Badge, Avatar, Spinner
+
+### Molecules (Composite)
+- FormField, Card, SearchBar, Modal, Dropdown
+
+### Organisms (Complex)
+- Header, Sidebar, DataTable, UserProfile
+
+## 🔧 Path Aliases
+
+Import with clean paths:
+
+```typescript
+import { Button } from '@components/atoms/Button';
+import { useAuth } from '@hooks/useAuth';
+import { User } from '@types/models/User';
+import { formatDate } from '@utils/formatters/date';
+```
+
+Configured in `tsconfig.json`.
+
+## 🧪 Testing Strategy
+
+### Unit Tests (Vitest)
+```bash
+npm test
+```
+
+Test component logic, hooks, utilities.
+
+### E2E Tests (Playwright)
+```bash
+npm run test:e2e
+```
+
+Test critical user flows.
+
+### Coverage Target
+- **Minimum**: 80%
+- **Critical paths**: 100%
+
+## 📦 Build Output
+
+```bash
+npm run build
+```
+
+Output in `dist/`:
+- Minified JavaScript
+- Optimized CSS
+- Compressed images
+- Source maps (optional)
+
+## 🚢 Deployment
+
+### Vercel/Netlify
+```bash
+# Automatically detected by Vite
+npm run build
+```
+
+### Docker
+```bash
+docker build -t cityos-frontend .
+docker run -p 80:80 cityos-frontend
+```
+
+## 🔐 Environment Variables
+
+Create `.env.local`:
+
+```env
+VITE_API_URL=http://localhost:3000
+VITE_WS_URL=ws://localhost:3000
+VITE_ANALYTICS_ID=your-analytics-id
+```
+
+Access in code:
+```typescript
+const API_URL = import.meta.env.VITE_API_URL;
+```
+
+## 🤝 Contributing
+
+1. Follow the [Frontend Standards](../standards/frontend/README.md)
+2. Write tests for new features
+3. Run linter before committing
+4. Create Storybook stories for components
+5. Update documentation
+
+## 📈 Performance
+
+### Targets
+- **FCP**: < 1.8s
+- **TTI**: < 3.8s
+- **Lighthouse**: > 90
+
+### Optimization Techniques
+- Code splitting (React.lazy)
+- Image optimization (WebP)
+- Bundle analysis
+- Memoization (React.memo, useMemo)
+
+## 🌐 Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## 📝 License
+
+See [LICENSE](../LICENSE)
+
+---
+
+**Built with ❤️ for CityOS**
