@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import AppLayout from './layout/AppLayout';
-import { premiumTheme } from './theme/premiumTheme';
-import './styles/premium.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import AppLayout from "./layout/AppLayout";
+import { premiumTheme } from "./theme/premiumTheme";
+import { StationsList } from "./pages/Stations/StationsList";
+import "./styles/premium.css";
 
 // Sample page components (placeholders)
 const DashboardPage = () => (
@@ -12,12 +13,7 @@ const DashboardPage = () => (
   </div>
 );
 
-const StationsListPage = () => (
-  <div>
-    <h1>All Stations</h1>
-    <p>Manage your charging stations here</p>
-  </div>
-);
+const StationsListPage = () => <StationsList />;
 
 const AddStationPage = () => (
   <div>
