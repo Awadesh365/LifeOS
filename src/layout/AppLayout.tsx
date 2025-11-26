@@ -1,31 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import Navbar from "../components/layout/Navbar/Navbar";
+import Navbar, { ModuleType } from "../components/layout/Navbar/Navbar";
 import Sidebar from "../components/layout/Sidebar/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import {
-  NAV_SIDEBAR_ITEMS,
+  COMMAND_CENTER_MODULE,
+  CITY_SERVICES_MODULE,
+  ANALYTICS_MODULE,
+  ADMIN_MODULE,
   filterSidebarItemsByPermissions,
 } from "../lib/constants/navigation";
 
 const AppLayout: React.FC = () => {
-  const navData = NAV_SIDEBAR_ITEMS;
   const [isOpen, setIsOpen] = useState(() => {
     const stored = localStorage.getItem("sidebarOpen");
     return stored === null ? true : JSON.parse(stored);
   });
 
+  const [currentModule, setCurrentModule] = useState<ModuleType>('command-center');
+  const location = useLocation();
+
+  // Auto-switch module based on route if user navigates directly
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.startsWith('/services')) {
+      setCurrentModule('city-services');
+    } else if (path.startsWith('/analytics')) {
+      setCurrentModule('analytics');
+    } else if (path.startsWith('/admin')) {
+      setCurrentModule('admin');
+    } else {
+      setCurrentModule('command-center');
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
-  const location = useLocation();
-
-  const isDashboard =
-    location.pathname === "/" || location.pathname === "/dashboard";
+  const getModuleItems = () => {
+    switch (currentModule) {
+      case 'city-services':
+        return CITY_SERVICES_MODULE;
+      case 'analytics':
+        return ANALYTICS_MODULE;
+      case 'admin':
+        return ADMIN_MODULE;
+      default:
+        return COMMAND_CENTER_MODULE;
+    }
+  };
 
   // Filter navigation by permissions
-  const filteredSidebarNavbarItems = filterSidebarItemsByPermissions(navData);
+  const activeNavItems = filterSidebarItemsByPermissions(getModuleItems());
 
   return (
     <Box
@@ -33,29 +60,33 @@ const AppLayout: React.FC = () => {
         display: "flex",
         width: "100%",
         minHeight: "100vh",
-        background: (theme) => theme.palette.background.default,
+        background: "#f8fafc", // Slate 50
       }}
     >
-      <Navbar items={filteredSidebarNavbarItems} />
-      {!isDashboard && (
-        <Sidebar
-          setIsOpen={setIsOpen}
-          isOpen={isOpen}
-          items={filteredSidebarNavbarItems}
-        />
-      )}
+      <Navbar 
+        items={activeNavItems} 
+        currentModule={currentModule}
+        onModuleChange={setCurrentModule}
+      />
+      
+      <Sidebar
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        items={activeNavItems}
+      />
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          mt: "104px", // Space for floating navbar (88px) + margin
-          ml: !isDashboard ? (isOpen ? "16px" : "16px") : "32px", // Reduced gap from sidebar
-          mr: "24px",
-          mb: "24px",
-          p: 0,
-          minWidth: 0,
-          minHeight: "calc(100vh - 136px)",
-          transition: "margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          mt: "64px", // Height of Navbar
+          ml: 0, 
+          paddingLeft: isOpen ? "260px" : "72px",
+          width: "100%",
+          transition: "padding-left 0.2s ease",
+          p: 3,
+          minHeight: "calc(100vh - 64px)",
+          boxSizing: "border-box",
         }}
       >
         <Outlet />
