@@ -1,16 +1,15 @@
 import React from 'react';
-import { TableBody as MuiTableBody, TableRow, TableCell, Checkbox, Collapse, Box, IconButton } from '@mui/material';
+import { TableBody as MuiTableBody, TableRow, TableCell, Collapse, Box, IconButton } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Column } from '../DataTable.types';
+import { Column, RowAction } from '../DataTable.types';
 import { getAccessorValue } from '../../../../utils/dataTable/tableUtils';
+import { RowActions } from './RowActions';
 
 interface TableBodyProps<T> {
   data: T[];
   columns: Column<T>[];
-  selectable: boolean | 'single' | 'multiple' | 'none';
-  selectedRows: (string | number)[];
+  rowActions?: RowAction<T>[];
   onRowClick?: (row: T, index: number, event: React.MouseEvent) => void;
-  onRowSelect: (row: T, index: number) => void;
   keyExtractor: (row: T, index: number) => string | number;
   emptyMessage?: string;
   // Expansion
@@ -23,10 +22,8 @@ interface TableBodyProps<T> {
 export function TableBody<T>({
   data,
   columns,
-  selectable,
-  selectedRows,
+  rowActions,
   onRowClick,
-  onRowSelect,
   keyExtractor,
   emptyMessage = 'No data available',
   expandable = false,
@@ -34,7 +31,6 @@ export function TableBody<T>({
   onRowExpand,
   renderExpandedRow,
 }: TableBodyProps<T>) {
-  const isSelected = (id: string | number) => selectedRows.includes(id);
   const isExpanded = (id: string | number) => expandedRows.includes(id);
 
   if (data.length === 0) {
@@ -42,7 +38,7 @@ export function TableBody<T>({
       <MuiTableBody>
         <TableRow>
           <TableCell
-            colSpan={columns.length + (selectable !== 'none' ? 1 : 0) + (expandable ? 1 : 0)}
+            colSpan={columns.length + 1 + (expandable ? 1 : 0)}
             align="center"
           >
             {emptyMessage}
@@ -56,7 +52,6 @@ export function TableBody<T>({
     <MuiTableBody>
       {data.map((row, index) => {
         const rowId = keyExtractor(row, index);
-        const isRowSelected = isSelected(rowId);
         const isRowExpanded = isExpanded(rowId);
 
         return (
@@ -65,31 +60,14 @@ export function TableBody<T>({
               hover
               onClick={(event) => {
                 onRowClick?.(row, index, event);
-                if (selectable !== 'none' && !expandable) {
-                   // If expandable, maybe click shouldn't select? Or separate click areas?
-                   // Standard behavior: row click triggers selection or custom action
-                   onRowSelect(row, index);
-                }
               }}
-              role="checkbox"
-              aria-checked={isRowSelected}
               tabIndex={-1}
-              selected={isRowSelected}
-              sx={{ cursor: 'pointer' }}
+              sx={{ cursor: onRowClick ? 'pointer' : 'default' }}
             >
-              {selectable !== 'none' && (
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    color="primary"
-                    checked={isRowSelected}
-                    inputProps={{
-                      'aria-labelledby': `enhanced-table-checkbox-${index}`,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={() => onRowSelect(row, index)}
-                  />
-                </TableCell>
-              )}
+              {/* Actions Column - Always shown at the beginning */}
+              <TableCell padding="checkbox">
+                <RowActions row={row} index={index} actions={rowActions} />
+              </TableCell>
               
               {expandable && (
                 <TableCell padding="checkbox">
@@ -118,7 +96,7 @@ export function TableBody<T>({
             
             {expandable && renderExpandedRow && (
               <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + (selectable !== 'none' ? 1 : 0) + 1}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 1 + (expandable ? 1 : 0)}>
                   <Collapse in={isRowExpanded} timeout="auto" unmountOnExit>
                     <Box sx={{ margin: 1 }}>
                       {renderExpandedRow(row, index)}
@@ -133,3 +111,4 @@ export function TableBody<T>({
     </MuiTableBody>
   );
 }
+

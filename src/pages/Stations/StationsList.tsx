@@ -1,6 +1,7 @@
 import { Box, Chip } from "@mui/material";
 import { DataTable } from "../../components/organisms/DataTable/DataTable";
-import { Column } from "../../components/organisms/DataTable/DataTable.types";
+import { Column, RowAction } from "../../components/organisms/DataTable/DataTable.types";
+import { Edit, Visibility, Archive, Delete, Settings } from "@mui/icons-material";
 
 interface Station {
   id: string;
@@ -186,6 +187,60 @@ export const StationsList = () => {
     },
   ];
 
+  // Define custom row actions for stations
+  const rowActions: RowAction<Station>[] = [
+    {
+      id: "edit",
+      label: "Edit",
+      icon: <Edit fontSize="small" />,
+      onClick: (row) => {
+        console.log("Edit station:", row.name);
+        // Navigate to edit page or open edit modal
+      },
+    },
+    {
+      id: "view",
+      label: "View Details",
+      icon: <Visibility fontSize="small" />,
+      onClick: (row) => {
+        console.log("View station details:", row.name);
+        // Navigate to details page or open details modal
+      },
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: <Settings fontSize="small" />,
+      onClick: (row) => {
+        console.log("Open settings for:", row.name);
+        // Open settings modal
+      },
+      disabled: (row) => row.status === "inactive", // Disable settings for inactive stations
+    },
+    {
+      id: "archive",
+      label: "Archive",
+      icon: <Archive fontSize="small" />,
+      onClick: (row) => {
+        console.log("Archive station:", row.name);
+        // Archive the station
+      },
+    },
+    {
+      id: "delete",
+      label: "Delete",
+      icon: <Delete fontSize="small" />,
+      onClick: (row) => {
+        if (window.confirm(`Are you sure you want to delete ${row.name}?`)) {
+          console.log("Delete station:", row.name);
+          // Delete the station
+        }
+      },
+      disabled: (row) => row.status === "active", // Only allow deleting inactive/maintenance stations
+      color: "error",
+    },
+  ];
+
   return (
     <Box sx={{ p: 3 }}>
       <DataTable
@@ -196,7 +251,7 @@ export const StationsList = () => {
         sortable={true}
         filterable={true}
         searchable={true}
-        selectable="multiple"
+        rowActions={rowActions}
         paginated={true}
         columnVisibility={true}
         stickyHeader={true}
