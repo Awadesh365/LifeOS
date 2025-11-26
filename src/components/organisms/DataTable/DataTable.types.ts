@@ -124,6 +124,32 @@ export interface TableAction<T = any> {
 }
 
 /**
+ * Row action definition for three-dot menu
+ */
+export interface RowAction<T = any> {
+  /** Unique identifier */
+  id: string;
+  
+  /** Display label */
+  label: string;
+  
+  /** Icon to display */
+  icon?: ReactNode;
+  
+  /** Click handler - receives the row and its index */
+  onClick: (row: T, index: number) => void;
+  
+  /** Whether action is disabled */
+  disabled?: boolean | ((row: T, index: number) => boolean);
+  
+  /** Tooltip text */
+  tooltip?: string;
+  
+  /** Color variant for the action */
+  color?: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success';
+}
+
+/**
  * Row expansion configuration
  */
 export interface RowExpansionConfig<T = any> {
@@ -314,6 +340,9 @@ export interface DataTableProps<T = any> {
   // ===== Actions & Toolbar =====
   /** Action buttons for selected rows */
   actions?: TableAction<T>[];
+  
+  /** Row-level actions for three-dot menu */
+  rowActions?: RowAction<T>[];
   
   /** Custom content for toolbar */
   toolbarContent?: ReactNode;

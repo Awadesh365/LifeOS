@@ -16,7 +16,6 @@ import { TablePagination } from './components/TablePagination';
 import { useTableSort } from '../../../hooks/dataTable/useTableSort';
 import { useTableFilter } from '../../../hooks/dataTable/useTableFilter';
 import { useTablePagination } from '../../../hooks/dataTable/useTablePagination';
-import { useTableSelection } from '../../../hooks/dataTable/useTableSelection';
 import { useColumnVisibility } from '../../../hooks/dataTable/useColumnVisibility';
 import { useRowExpansion } from '../../../hooks/dataTable/useRowExpansion';
 
@@ -31,7 +30,6 @@ export function DataTable<T>({
   sortable = true,
   filterable = true,
   searchable = true,
-  selectable = false,
   paginated = true,
   columnVisibility = true,
   glassmorphism = true,
@@ -46,14 +44,13 @@ export function DataTable<T>({
   // Advanced features
   rowExpansion,
   exportData,
+  rowActions,
   // Controlled props
   page: controlledPage,
   rowsPerPage: controlledRowsPerPage,
   totalRows,
   onPageChange: controlledOnPageChange,
   onRowsPerPageChange: controlledOnRowsPerPageChange,
-  selectedRows: controlledSelectedRows,
-  onSelectionChange: controlledOnSelectionChange,
   sortBy: controlledSortBy,
   sortOrder: controlledSortOrder,
   onSortChange: controlledOnSortChange,
@@ -104,20 +101,7 @@ export function DataTable<T>({
     onRowsPerPageChange: controlledOnRowsPerPageChange,
   });
 
-  // 5. Selection
-  const {
-    selectedIds,
-    toggleRowSelection,
-    toggleAllRows,
-    selectionMode,
-  } = useTableSelection(paginatedData, { // Select from current page or all data depending on requirement? Usually select from visible data for "Select All on Page"
-    selectable,
-    selectedRows: controlledSelectedRows,
-    onSelectionChange: controlledOnSelectionChange,
-    keyExtractor,
-  });
-
-  // 6. Row Expansion
+  // 5. Row Expansion
   const { expandedRowIds, toggleRowExpansion } = useRowExpansion({
     singleExpansion: rowExpansion?.singleExpansion,
     initiallyExpanded: rowExpansion?.initiallyExpanded,
@@ -125,7 +109,7 @@ export function DataTable<T>({
     onExpansionChange: rowExpansion?.onExpansionChange,
   });
 
-  // 7. Export
+  // 6. Export
   const handleExport = (format: 'csv' | 'xlsx') => {
     const dataToExport = exportData?.columnsToExport 
         ? data // TODO: Filter columns if needed, but export util handles columns
@@ -163,10 +147,10 @@ export function DataTable<T>({
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={paperStyles}>
-        {!title && !searchable && selectable === 'none' && !exportData && !columnVisibility ? null : (
+        {!title && !searchable && !exportData && !columnVisibility ? null : (
              <TableToolbar
                 title={title}
-                numSelected={selectedIds.length}
+                numSelected={0}
                 searchValue={searchValue}
                 onSearchChange={handleSearchChange}
                 searchable={searchable}
@@ -192,19 +176,13 @@ export function DataTable<T>({
               onSort={handleSort}
               sortColumn={sortState.columnId}
               sortOrder={sortState.order}
-              selectable={selectionMode}
-              numSelected={selectedIds.length}
-              rowCount={paginatedData.length} // Select all applies to current page usually, or total? Let's assume current page for now
-              onSelectAllClick={toggleAllRows}
               stickyHeader={stickyHeader}
             />
             <TableBody
               data={paginatedData}
               columns={activeColumns}
-              selectable={selectionMode}
-              selectedRows={selectedIds}
+              rowActions={rowActions}
               onRowClick={onRowClick}
-              onRowSelect={toggleRowSelection}
               keyExtractor={getKey}
               // Expansion
               expandable={rowExpansion?.enabled}
@@ -229,3 +207,4 @@ export function DataTable<T>({
     </Box>
   );
 }
+

@@ -1,5 +1,4 @@
-import React from 'react';
-import { TableHead, TableRow, TableCell, Checkbox, TableSortLabel } from '@mui/material';
+import { TableHead, TableRow, TableCell, TableSortLabel } from '@mui/material';
 import { Column, SortOrder } from '../DataTable.types';
 
 interface TableHeaderProps<T> {
@@ -7,10 +6,6 @@ interface TableHeaderProps<T> {
   onSort: (columnId: string) => void;
   sortColumn: string | null;
   sortOrder: SortOrder;
-  selectable: boolean | 'single' | 'multiple' | 'none';
-  numSelected: number;
-  rowCount: number;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   stickyHeader?: boolean;
 }
 
@@ -19,24 +14,14 @@ export function TableHeader<T>({
   onSort,
   sortColumn,
   sortOrder,
-  selectable,
-  numSelected,
-  rowCount,
-  onSelectAllClick,
   stickyHeader,
 }: TableHeaderProps<T>) {
   return (
     <TableHead sx={{ position: stickyHeader ? 'sticky' : 'static', top: 0, zIndex: 1 }}>
       <TableRow>
-        {selectable === 'multiple' && (
-          <TableCell padding="checkbox">
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-            />
-          </TableCell>
-        )}
+        {/* Actions Column Header - Empty */}
+        <TableCell padding="checkbox" />
+        
         {columns.map((column) => (
           <TableCell
             key={column.id}
@@ -61,3 +46,4 @@ export function TableHeader<T>({
     </TableHead>
   );
 }
+
