@@ -1,0 +1,51 @@
+import { User } from "../../types/auth";
+
+export const DUMMY_USERS: User[] = [
+  {
+    id: "u1",
+    name: "Yogi Adityanath",
+    email: "cm@up.gov.in",
+    role: "state_admin",
+    designation: "Chief Minister (CM)",
+    location: "Lucknow (State Capital)",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Yogi",
+  },
+  {
+    id: "u2",
+    name: "Surya Pal Gangwar",
+    email: "dm.lucknow@up.gov.in",
+    role: "district_admin",
+    designation: "District Magistrate (DM)",
+    location: "Lucknow District",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Surya",
+  },
+  {
+    id: "u3",
+    name: "Amit Pathak",
+    email: "sp.city@up.police.gov.in",
+    role: "dept_head",
+    designation: "Superintendent of Police (SP)",
+    department: "Police",
+    location: "Varanasi",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amit",
+  },
+  {
+    id: "u4",
+    name: "Dr. R.K. Gupta",
+    email: "cmo.kanpur@up.health.gov.in",
+    role: "field_staff",
+    designation: "Senior Surgeon",
+    department: "Health",
+    location: "Kanpur Nagar",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Gupta",
+  },
+  {
+    id: "u5",
+    name: "Rajesh Kumar",
+    email: "rajesh.k@gmail.com",
+    role: "citizen",
+    designation: "Citizen",
+    location: "Noida",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rajesh",
+  },
+];
