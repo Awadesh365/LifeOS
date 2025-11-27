@@ -1,280 +1,357 @@
 /**
  * Navigation Configuration
  * Defines the navigation structure for the CityOS application
+ * Adapted for Indian Administrative Context (State & District Levels)
  */
 
-/**
- * Navigation Configuration
- * Defines the navigation structure for the CityOS application
- * Based on PRD v1.0.0 - Unified Platform for City Management
- */
+import { NavItem } from "../../types/navigation";
 
-import { NavItem } from '../../types/navigation';
+// =============================================================================
+// ROLES DEFINITION
+// =============================================================================
+export const ROLES = {
+  STATE_ADMIN: "state_admin", // Chief Minister (CM), Chief Secretary, PMO
+  DISTRICT_ADMIN: "district_admin", // District Magistrate (DM), Collector, Municipal Commissioner
+  DEPARTMENT_HEAD: "dept_head", // SP (Police), CMO (Health), Chief Engineer
+  FIELD_STAFF: "field_staff", // Constable, Doctor, Sanitation Worker
+  CITIZEN: "citizen", // Nagrik
+};
 
-// Level 4: City Magistrate/Admin & Level 3: City Operator View
-export const COMMAND_CENTER_MODULE: NavItem[] = [
+// =============================================================================
+// MODULES
+// =============================================================================
+
+// 1. STATE ADMIN MODULE (Rajya Prashasan) - Super Admin View
+// For Chief Minister, PMO, Chief Secretary
+export const STATE_ADMIN_MODULE: NavItem[] = [
   {
-    key: 'dashboard',
-    label: 'City Overview',
-    icon: 'dashboard',
-    route: '/dashboard',
+    key: "state-dashboard",
+    label: "Rajya Dashboard (State)",
+    icon: "account_balance",
+    route: "/state/dashboard",
     enabled: true,
   },
   {
-    key: 'emergency-response',
-    label: 'Emergency Response',
-    icon: 'warning', // or 'emergency'
+    key: "district-monitoring",
+    label: "Zila Nigrani (Districts)",
+    icon: "map",
     enabled: true,
     items: [
       {
-        key: 'active-incidents',
-        label: 'Active Incidents',
-        icon: 'notifications_active',
-        route: 'emergency/incidents/active',
+        key: "district-performance",
+        label: "District Performance",
+        icon: "analytics",
+        route: "/state/districts/performance",
         enabled: true,
       },
       {
-        key: 'dispatch-queue',
-        label: 'Dispatch Queue',
-        icon: 'local_shipping', // or 'ambulance'
-        route: 'emergency/dispatch',
-        enabled: true,
-      },
-      {
-        key: 'resource-map',
-        label: 'Live Resource Map',
-        icon: 'map',
-        route: 'emergency/map',
+        key: "district-reports",
+        label: "Monthly Reports",
+        icon: "assessment",
+        route: "/state/districts/reports",
         enabled: true,
       },
     ],
   },
   {
-    key: 'department-ops',
-    label: 'Department Ops',
-    icon: 'business',
+    key: "schemes-policies",
+    label: "Yojana & Policies",
+    icon: "policy",
     enabled: true,
     items: [
       {
-        key: 'police-dept',
-        label: 'Police & Security',
-        icon: 'local_police',
-        route: 'ops/police',
+        key: "central-schemes",
+        label: "Central Schemes (PM)",
+        icon: "flag",
+        route: "/state/schemes/central",
         enabled: true,
       },
       {
-        key: 'health-dept',
-        label: 'Health & Medical',
-        icon: 'local_hospital',
-        route: 'ops/health',
-        enabled: true,
-      },
-      {
-        key: 'fire-dept',
-        label: 'Fire & Safety',
-        icon: 'local_fire_department',
-        route: 'ops/fire',
-        enabled: true,
-      },
-      {
-        key: 'public-works',
-        label: 'Public Works',
-        icon: 'engineering',
-        route: 'ops/public-works',
+        key: "state-schemes",
+        label: "State Schemes (CM)",
+        icon: "campaign",
+        route: "/state/schemes/state",
         enabled: true,
       },
     ],
   },
   {
-    key: 'grievance-redressal',
-    label: 'Grievance Redressal',
-    icon: 'support_agent',
+    key: "high-command-reports",
+    label: "High Command Reports",
+    icon: "summarize",
+    route: "/state/reports",
+    enabled: true,
+  },
+];
+
+// 2. DISTRICT ADMIN MODULE (Zila Prashasan) - Tenant Admin View
+// For District Magistrate (DM), Collector, Municipal Commissioner
+export const DISTRICT_ADMIN_MODULE: NavItem[] = [
+  {
+    key: "district-dashboard",
+    label: "Zila Dashboard (District)",
+    icon: "dashboard",
+    route: "/dashboard",
+    enabled: true,
+  },
+  {
+    key: "emergency-response",
+    label: "Aapatkaleen (Emergency)",
+    icon: "warning",
     enabled: true,
     items: [
       {
-        key: 'citizen-reports',
-        label: 'Citizen Reports',
-        icon: 'report_problem',
-        route: 'grievance/reports',
+        key: "active-incidents",
+        label: "Active Incidents",
+        icon: "notifications_active",
+        route: "emergency/incidents/active",
         enabled: true,
       },
       {
-        key: 'ticket-status',
-        label: 'Ticket Status',
-        icon: 'assignment',
-        route: 'grievance/tickets',
+        key: "dispatch-queue",
+        label: "Dispatch Queue",
+        icon: "local_shipping",
+        route: "emergency/dispatch",
+        enabled: true,
+      },
+      {
+        key: "resource-map",
+        label: "Live Resource Map",
+        icon: "map",
+        route: "emergency/map",
+        enabled: true,
+      },
+    ],
+  },
+  {
+    key: "department-ops",
+    label: "Vibhag (Departments)",
+    icon: "business",
+    enabled: true,
+    items: [
+      {
+        key: "police-dept",
+        label: "Police & Security",
+        icon: "local_police",
+        route: "ops/police",
+        enabled: true,
+      },
+      {
+        key: "health-dept",
+        label: "Health & Medical",
+        icon: "local_hospital",
+        route: "ops/health",
+        enabled: true,
+      },
+      {
+        key: "fire-dept",
+        label: "Fire & Safety",
+        icon: "local_fire_department",
+        route: "ops/fire",
+        enabled: true,
+      },
+      {
+        key: "public-works",
+        label: "PWD & Utilities",
+        icon: "engineering",
+        route: "ops/public-works",
+        enabled: true,
+      },
+    ],
+  },
+  {
+    key: "grievance-redressal",
+    label: "Jan Shikayat (Grievance)",
+    icon: "support_agent",
+    enabled: true,
+    items: [
+      {
+        key: "citizen-reports",
+        label: "Citizen Reports",
+        icon: "report_problem",
+        route: "grievance/reports",
+        enabled: true,
+      },
+      {
+        key: "ticket-status",
+        label: "Nivaran Status",
+        icon: "assignment",
+        route: "grievance/tickets",
         enabled: true,
       },
     ],
   },
 ];
 
-// Level 1: Citizen Services (Management View for Admins)
-export const CITY_SERVICES_MODULE: NavItem[] = [
+// 3. CITIZEN SERVICES MODULE (Nagrik Sewa)
+// For Citizens and Front Desk Operators
+export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   {
-    key: 'services-overview',
-    label: 'Services Overview',
-    icon: 'category',
-    route: '/services/overview',
+    key: "services-overview",
+    label: "Suvidha Overview",
+    icon: "category",
+    route: "/services/overview",
     enabled: true,
   },
   {
-    key: 'civic-services',
-    label: 'Civic Services',
-    icon: 'location_city',
+    key: "civic-services",
+    label: "Nagar Nigam Sewa",
+    icon: "location_city",
     enabled: true,
     items: [
       {
-        key: 'birth-death',
-        label: 'Birth & Death Reg',
-        icon: 'child_friendly',
-        route: 'services/registry',
+        key: "birth-death",
+        label: "Janam-Mrityu (Birth/Death)",
+        icon: "child_friendly",
+        route: "services/registry",
         enabled: true,
       },
       {
-        key: 'utilities',
-        label: 'Utilities & Billing',
-        icon: 'water_drop',
-        route: 'services/utilities',
+        key: "utilities",
+        label: "Bill Payment (Bijli/Pani)",
+        icon: "water_drop",
+        route: "services/utilities",
         enabled: true,
       },
       {
-        key: 'property-tax',
-        label: 'Property Tax',
-        icon: 'receipt_long',
-        route: 'services/tax',
+        key: "property-tax",
+        label: "Sampatti Kar (Property Tax)",
+        icon: "receipt_long",
+        route: "services/tax",
         enabled: true,
       },
     ],
   },
 ];
 
-// Analytics & Insights for Decision Makers
+// 4. ANALYTICS MODULE (Vishleshan)
+// For Decision Makers (DM, CM, Planners)
 export const ANALYTICS_MODULE: NavItem[] = [
   {
-    key: 'analytics-overview',
-    label: 'Insights Dashboard',
-    icon: 'insights',
-    route: '/analytics/overview',
+    key: "analytics-overview",
+    label: "Vishleshan Dashboard",
+    icon: "insights",
+    route: "/analytics/overview",
     enabled: true,
   },
   {
-    key: 'crime-analysis',
-    label: 'Crime Analysis',
-    icon: 'policy',
+    key: "crime-analysis",
+    label: "Apradh (Crime)",
+    icon: "policy",
     enabled: true,
     items: [
       {
-        key: 'hotspots',
-        label: 'Crime Hotspots',
-        icon: 'whatshot',
-        route: 'analytics/crime/hotspots',
+        key: "hotspots",
+        label: "Crime Hotspots",
+        icon: "whatshot",
+        route: "analytics/crime/hotspots",
         enabled: true,
       },
       {
-        key: 'trends',
-        label: 'Crime Trends',
-        icon: 'trending_up',
-        route: 'analytics/crime/trends',
+        key: "trends",
+        label: "Crime Trends",
+        icon: "trending_up",
+        route: "analytics/crime/trends",
         enabled: true,
       },
     ],
   },
   {
-    key: 'health-metrics',
-    label: 'Health Metrics',
-    icon: 'monitor_heart',
+    key: "health-metrics",
+    label: "Swasthya (Health)",
+    icon: "monitor_heart",
     enabled: true,
     items: [
       {
-        key: 'disease-outbreaks',
-        label: 'Disease Outbreaks',
-        icon: 'coronavirus',
-        route: 'analytics/health/outbreaks',
+        key: "disease-outbreaks",
+        label: "Mahamari (Outbreaks)",
+        icon: "coronavirus",
+        route: "analytics/health/outbreaks",
         enabled: true,
       },
       {
-        key: 'hospital-capacity',
-        label: 'Hospital Capacity',
-        icon: 'local_hotel',
-        route: 'analytics/health/capacity',
+        key: "hospital-capacity",
+        label: "Hospital Beds",
+        icon: "local_hotel",
+        route: "analytics/health/capacity",
         enabled: true,
       },
     ],
   },
 ];
 
-// Administration & System Config
-export const ADMIN_MODULE: NavItem[] = [
+// 5. SYSTEM ADMIN MODULE (System Config)
+// For IT Admin / Technical Staff
+export const SYSTEM_ADMIN_MODULE: NavItem[] = [
   {
-    key: 'admin-overview',
-    label: 'System Status',
-    icon: 'dns',
-    route: '/admin/status',
+    key: "admin-overview",
+    label: "System Status",
+    icon: "dns",
+    route: "/admin/status",
     enabled: true,
   },
   {
-    key: 'user-management',
-    label: 'User Management',
-    icon: 'manage_accounts',
+    key: "user-management",
+    label: "User Management",
+    icon: "manage_accounts",
     enabled: true,
     items: [
       {
-        key: 'staff-directory',
-        label: 'Staff Directory',
-        icon: 'badge',
-        route: 'admin/users/staff',
+        key: "staff-directory",
+        label: "Staff Directory",
+        icon: "badge",
+        route: "admin/users/staff",
         enabled: true,
       },
       {
-        key: 'roles-permissions',
-        label: 'Roles & Permissions',
-        icon: 'security',
-        route: 'admin/users/roles',
+        key: "roles-permissions",
+        label: "Roles & Permissions",
+        icon: "security",
+        route: "admin/users/roles",
         enabled: true,
       },
     ],
   },
   {
-    key: 'resource-catalog',
-    label: 'Resource Catalog',
-    icon: 'inventory_2',
+    key: "resource-catalog",
+    label: "Resource Catalog",
+    icon: "inventory_2",
     enabled: true,
     items: [
       {
-        key: 'manage-stations',
-        label: 'Manage Stations',
-        icon: 'ev_station',
-        route: 'admin/resources/stations',
+        key: "manage-stations",
+        label: "Thana/Stations",
+        icon: "ev_station",
+        route: "admin/resources/stations",
         enabled: true,
       },
       {
-        key: 'manage-hospitals',
-        label: 'Manage Hospitals',
-        icon: 'local_hospital',
-        route: 'admin/resources/hospitals',
+        key: "manage-hospitals",
+        label: "Hospitals",
+        icon: "local_hospital",
+        route: "admin/resources/hospitals",
         enabled: true,
       },
     ],
   },
   {
-    key: 'settings',
-    label: 'System Settings',
-    icon: 'settings_suggest',
+    key: "settings",
+    label: "Settings",
+    icon: "settings_suggest",
     enabled: true,
     items: [
       {
-        key: 'routing-rules',
-        label: 'Routing Rules',
-        icon: 'alt_route',
-        route: 'admin/settings/routing',
+        key: "routing-rules",
+        label: "Routing Rules",
+        icon: "alt_route",
+        route: "admin/settings/routing",
         enabled: true,
       },
       {
-        key: 'tenant-config',
-        label: 'Tenant Config',
-        icon: 'domain',
-        route: 'admin/settings/tenant',
+        key: "tenant-config",
+        label: "District/Tenant Config",
+        icon: "domain",
+        route: "admin/settings/tenant",
         enabled: true,
       },
     ],
@@ -283,18 +360,20 @@ export const ADMIN_MODULE: NavItem[] = [
 
 // Combine for backward compatibility or default view if needed
 export const NAV_SIDEBAR_ITEMS: NavItem[] = [
-  ...COMMAND_CENTER_MODULE,
-  ...CITY_SERVICES_MODULE,
+  ...DISTRICT_ADMIN_MODULE,
+  ...CITIZEN_SERVICES_MODULE,
   ...ANALYTICS_MODULE,
-  ...ADMIN_MODULE
+  ...SYSTEM_ADMIN_MODULE,
 ];
 
 /**
  * Filter navigation items by permissions
  * This is a placeholder - implement your own RBAC logic here
  */
-export const filterSidebarItemsByPermissions = (items: NavItem[]): NavItem[] => {
+export const filterSidebarItemsByPermissions = (
+  items: NavItem[]
+): NavItem[] => {
   // TODO: Implement permission-based filtering
   // For now, return all enabled items
-  return items.filter(item => item.enabled);
+  return items.filter((item) => item.enabled);
 };

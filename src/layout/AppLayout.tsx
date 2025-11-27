@@ -4,10 +4,10 @@ import Navbar, { ModuleType } from "../components/layout/Navbar/Navbar";
 import Sidebar from "../components/layout/Sidebar/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import {
-  COMMAND_CENTER_MODULE,
-  CITY_SERVICES_MODULE,
-  ANALYTICS_MODULE,
-  ADMIN_MODULE,
+  DISTRICT_ADMIN_MODULE,
+  CITIZEN_SERVICES_MODULE,
+  STATE_ADMIN_MODULE,
+  SYSTEM_ADMIN_MODULE,
   filterSidebarItemsByPermissions,
 } from "../lib/constants/navigation";
 
@@ -17,20 +17,21 @@ const AppLayout: React.FC = () => {
     return stored === null ? true : JSON.parse(stored);
   });
 
-  const [currentModule, setCurrentModule] = useState<ModuleType>('command-center');
+  const [currentModule, setCurrentModule] =
+    useState<ModuleType>("district-admin");
   const location = useLocation();
 
   // Auto-switch module based on route if user navigates directly
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/services')) {
-      setCurrentModule('city-services');
-    } else if (path.startsWith('/analytics')) {
-      setCurrentModule('analytics');
-    } else if (path.startsWith('/admin')) {
-      setCurrentModule('admin');
+    if (path.startsWith("/services")) {
+      setCurrentModule("citizen-services");
+    } else if (path.startsWith("/state")) {
+      setCurrentModule("state-admin");
+    } else if (path.startsWith("/admin")) {
+      setCurrentModule("system-admin");
     } else {
-      setCurrentModule('command-center');
+      setCurrentModule("district-admin");
     }
   }, [location.pathname]);
 
@@ -40,14 +41,14 @@ const AppLayout: React.FC = () => {
 
   const getModuleItems = () => {
     switch (currentModule) {
-      case 'city-services':
-        return CITY_SERVICES_MODULE;
-      case 'analytics':
-        return ANALYTICS_MODULE;
-      case 'admin':
-        return ADMIN_MODULE;
+      case "citizen-services":
+        return CITIZEN_SERVICES_MODULE;
+      case "state-admin":
+        return STATE_ADMIN_MODULE;
+      case "system-admin":
+        return SYSTEM_ADMIN_MODULE;
       default:
-        return COMMAND_CENTER_MODULE;
+        return DISTRICT_ADMIN_MODULE;
     }
   };
 
@@ -63,24 +64,20 @@ const AppLayout: React.FC = () => {
         background: "#f8fafc", // Slate 50
       }}
     >
-      <Navbar 
-        items={activeNavItems} 
+      <Navbar
+        items={activeNavItems}
         currentModule={currentModule}
         onModuleChange={setCurrentModule}
       />
-      
-      <Sidebar
-        setIsOpen={setIsOpen}
-        isOpen={isOpen}
-        items={activeNavItems}
-      />
+
+      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} items={activeNavItems} />
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           mt: "64px", // Height of Navbar
-          ml: 0, 
+          ml: 0,
           paddingLeft: isOpen ? "260px" : "72px",
           width: "100%",
           transition: "padding-left 0.2s ease",
