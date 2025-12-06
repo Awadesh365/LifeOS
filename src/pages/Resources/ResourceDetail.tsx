@@ -14,7 +14,8 @@ import {
   Divider,
   Button,
 } from "@mui/material";
-import { DUMMY_RESOURCES } from "../../lib/constants/dummyResources";
+import { resourceService } from "../../services/resourceService";
+import { Facility } from "../../types/resources";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import SchoolIcon from "@mui/icons-material/School";
@@ -27,7 +28,28 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const ResourceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const resource = DUMMY_RESOURCES.find((r) => r.id === id);
+  const [resource, setResource] = React.useState<Facility | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchResource = async () => {
+      if (!id) return;
+      try {
+        const data = await resourceService.getById(id);
+        setResource(data);
+      } catch (error) {
+        console.error("Failed to fetch resource:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResource();
+  }, [id]);
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   if (!resource) {
     return <Typography>Resource not found</Typography>;

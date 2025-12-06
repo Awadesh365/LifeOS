@@ -8,7 +8,8 @@ import {
   IconButton,
   InputBase,
 } from "@mui/material";
-import { DUMMY_RESOURCES } from "../../lib/constants/dummyResources";
+import { resourceService } from "../../services/resourceService";
+import { Facility } from "../../types/resources";
 import { useNavigate } from "react-router-dom";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
@@ -18,6 +19,23 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const ResourceList: React.FC = () => {
   const navigate = useNavigate();
+  const [resources, setResources] = React.useState<Facility[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const data = await resourceService.getAll();
+        setResources(data);
+      } catch (error) {
+        console.error("Failed to fetch resources:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResources();
+  }, []);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -31,6 +49,10 @@ const ResourceList: React.FC = () => {
         return null;
     }
   };
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Box>
@@ -72,7 +94,7 @@ const ResourceList: React.FC = () => {
       </Box>
 
       <Grid container spacing={3}>
-        {DUMMY_RESOURCES.map((resource) => (
+        {resources.map((resource) => (
           <Grid size={{ xs: 12, md: 6, lg: 4 }} key={resource.id}>
             <Card
               onClick={() => navigate(`/admin/resources/${resource.id}`)}

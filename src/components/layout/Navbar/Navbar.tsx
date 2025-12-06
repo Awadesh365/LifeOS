@@ -26,18 +26,26 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CheckIcon from "@mui/icons-material/Check";
+import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/useAuth";
 import { NavItem } from "../../../types/navigation";
 
+interface StyledAppBarProps {
+  isSidebarOpen: boolean;
+}
+
 // Clean, Professional Header
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
+const StyledAppBar = styled(AppBar, {
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen",
+})<StyledAppBarProps>(({ theme, isSidebarOpen }) => ({
   position: "fixed",
   top: 0,
-  left: 0,
-  right: 0,
-  width: "100%",
+  left: isSidebarOpen ? 272 : 72, // Shift based on sidebar state
+  width: isSidebarOpen ? "calc(100% - 272px)" : "calc(100% - 72px)", // Adjust width
   height: 64,
   background: "#ffffff",
   borderBottom: "1px solid #e2e8f0",
@@ -46,6 +54,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   color: "#0f172a",
   display: "flex",
   justifyContent: "center",
+  transition: theme.transitions.create(["width", "left"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
 }));
 
 const ModuleSwitcher = styled(Button)(({ theme }) => ({
@@ -122,10 +134,6 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-
 export type ModuleType =
   | "district-admin"
   | "citizen-services"
@@ -136,12 +144,14 @@ interface NavbarProps {
   items: NavItem[];
   currentModule: ModuleType;
   onModuleChange: (module: ModuleType) => void;
+  isSidebarOpen: boolean;
 }
 
 const SimpleNavbar: React.FC<NavbarProps> = ({
   items,
   currentModule,
   onModuleChange,
+  isSidebarOpen,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moduleMenuAnchor, setModuleMenuAnchor] = useState<null | HTMLElement>(
@@ -222,7 +232,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
   const activeModule = getModuleDetails(currentModule);
 
   return (
-    <StyledAppBar>
+    <StyledAppBar isSidebarOpen={isSidebarOpen}>
       <Box
         sx={{
           display: "flex",

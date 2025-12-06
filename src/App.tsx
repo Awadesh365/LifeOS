@@ -5,15 +5,23 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import {
+  ThemeProvider,
+  CssBaseline,
+  CircularProgress,
+  Box,
+} from "@mui/material";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { useAppSelector } from "./hooks/redux";
 import AppLayout from "./layout/AppLayout";
 import { premiumTheme } from "./theme/premiumTheme";
 import { StationsList } from "./pages/Stations/StationsList";
 import { PlaceholderPage } from "./components/common/PlaceholderPage";
+import LandingPage from "./pages/Landing/LandingPage";
 import LoginPage from "./pages/Auth/LoginPage";
 import ResourceList from "./pages/Resources/ResourceList";
 import ResourceDetail from "./pages/Resources/ResourceDetail";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./styles/premium.css";
 
 // Sample page components (placeholders)
@@ -26,24 +34,41 @@ const DashboardPage = () => (
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          bgcolor: "background.default",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 const App = () => {
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <ThemeProvider theme={premiumTheme}>
         <CssBaseline />
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<AppLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<DashboardPage />} />
 
                 {/* District Admin / Command Center Routes */}
@@ -258,7 +283,7 @@ const App = () => {
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
-    </AuthProvider>
+    </Provider>
   );
 };
 
