@@ -2,6 +2,7 @@ import {
   Box,
   Drawer,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -11,20 +12,20 @@ import {
   styled,
   Tooltip,
   Collapse,
+  Divider,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import MenuIcon from "@mui/icons-material/Menu";
 import { NavItem } from "../../../types/navigation";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/useAuth";
 
-const drawerWidth = 260;
+const drawerWidth = 272;
 const collapsedWidth = 72;
 
-// Clean, Professional Sidebar
 const StyledDrawer = styled(Drawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })<{ open: boolean }>(({ theme, open }) => ({
@@ -39,53 +40,21 @@ const StyledDrawer = styled(Drawer, {
       duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: "hidden",
-    background: "#0f172a", // Slate 900 - Professional Dark
+    background: "#0f172a", // Slate 900
     borderRight: "1px solid rgba(255,255,255,0.05)",
     color: "#e2e8f0",
   },
+  zIndex: theme.zIndex.drawer + 1, // Ensure it sits above the Navbar (AppBar)
 }));
 
-const BrandSection = styled(Box)(({ theme }) => ({
-  height: 64,
+const HeaderBox = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "open",
+})<{ open: boolean }>(({ theme, open }) => ({
   display: "flex",
   alignItems: "center",
-  padding: theme.spacing(0, 2.5),
-  borderBottom: "1px solid rgba(255,255,255,0.05)",
-  zIndex: 1,
-}));
-
-const StyledListItemButton = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== "active" && prop !== "depth",
-})<{
-  active?: boolean;
-  depth?: number;
-  component?: React.ElementType;
-  to?: string;
-}>(({ theme, active, depth = 0 }) => ({
-  minHeight: 44,
-  margin: theme.spacing(0.5, 1.5),
-  padding: theme.spacing(0, 1.5),
-  paddingLeft: theme.spacing(1.5 + depth * 2), // Indent based on depth
-  borderRadius: 8,
-  transition: "all 0.2s ease",
-  backgroundColor: active ? "rgba(59, 130, 246, 0.1)" : "transparent",
-  color: active ? "#60a5fa" : "#94a3b8",
-  "&:hover": {
-    backgroundColor: active
-      ? "rgba(59, 130, 246, 0.15)"
-      : "rgba(255,255,255,0.03)",
-    color: active ? "#60a5fa" : "#f1f5f9",
-  },
-  "& .MuiListItemIcon-root": {
-    minWidth: 36,
-    color: active ? "#60a5fa" : "#64748b",
-  },
-}));
-
-const UserProfileSection = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: "1px solid rgba(255,255,255,0.05)",
-  marginTop: "auto",
+  justifyContent: open ? "space-between" : "center", // Center when collapsed
+  padding: theme.spacing(3, 2),
+  minHeight: 64,
 }));
 
 interface SidebarProps {
@@ -115,7 +84,7 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
     const hasChildren = item.items && item.items.length > 0;
     const isExpanded = expandedItems.includes(item.key);
 
-    if (!isOpen && depth > 0) return null; // Hide nested items when collapsed
+    if (!isOpen && depth > 0) return null;
 
     const handleClick = () => {
       if (hasChildren) {
@@ -125,20 +94,50 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
 
     return (
       <React.Fragment key={item.key}>
-        <Tooltip title={!isOpen ? item.label : ""} placement="right" arrow>
-          {item.route ? (
-            <StyledListItemButton
-              component={Link}
-              to={item.route.startsWith("/") ? item.route : `/${item.route}`}
-              active={isActive}
-              depth={depth}
+        <ListItem disablePadding sx={{ display: "block" }}>
+          <Tooltip title={!isOpen ? item.label : ""} placement="right" arrow>
+            <ListItemButton
+              component={item.route ? Link : "div"}
+              to={
+                item.route && item.route.startsWith("/")
+                  ? item.route
+                  : `/${item.route}`
+              }
               onClick={handleClick}
+              sx={{
+                minHeight: 48,
+                justifyContent: isOpen ? "initial" : "center",
+                px: 2.5,
+                mx: 1,
+                borderRadius: 2,
+                mb: 0.5,
+                borderLeft: isActive
+                  ? "4px solid #3b82f6"
+                  : "4px solid transparent",
+                backgroundColor: isActive
+                  ? "rgba(59, 130, 246, 0.1)"
+                  : "transparent",
+                color: isActive ? "#60a5fa" : "#94a3b8",
+                "&:hover": {
+                  backgroundColor: isActive
+                    ? "rgba(59, 130, 246, 0.15)"
+                    : "rgba(255,255,255,0.03)",
+                  color: isActive ? "#60a5fa" : "#f1f5f9",
+                },
+              }}
             >
-              <ListItemIcon>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: isOpen ? 2 : "auto",
+                  justifyContent: "center",
+                  color: isActive ? "#60a5fa" : "#64748b",
+                }}
+              >
                 <Box
                   component="span"
                   className="material-symbols-outlined"
-                  sx={{ fontSize: 20 }}
+                  sx={{ fontSize: 24 }}
                 >
                   {item.icon}
                 </Box>
@@ -151,6 +150,7 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
                       fontSize: "0.875rem",
                       fontWeight: isActive ? 600 : 500,
                     }}
+                    sx={{ opacity: isOpen ? 1 : 0 }}
                   />
                   {hasChildren &&
                     (isExpanded ? (
@@ -160,46 +160,13 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
                     ))}
                 </>
               )}
-            </StyledListItemButton>
-          ) : (
-            <StyledListItemButton
-              active={isActive}
-              depth={depth}
-              onClick={handleClick}
-            >
-              <ListItemIcon>
-                <Box
-                  component="span"
-                  className="material-symbols-outlined"
-                  sx={{ fontSize: 20 }}
-                >
-                  {item.icon}
-                </Box>
-              </ListItemIcon>
-              {isOpen && (
-                <>
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      fontSize: "0.875rem",
-                      fontWeight: isActive ? 600 : 500,
-                    }}
-                  />
-                  {hasChildren &&
-                    (isExpanded ? (
-                      <ExpandLess sx={{ fontSize: 18, opacity: 0.5 }} />
-                    ) : (
-                      <ExpandMore sx={{ fontSize: 18, opacity: 0.5 }} />
-                    ))}
-                </>
-              )}
-            </StyledListItemButton>
-          )}
-        </Tooltip>
+            </ListItemButton>
+          </Tooltip>
+        </ListItem>
 
         {hasChildren && isOpen && (
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
+            <List component="div" disablePadding sx={{ pl: 2 }}>
               {item.items?.map((child) => renderNavItem(child, depth + 1))}
             </List>
           </Collapse>
@@ -209,7 +176,6 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
   };
 
   const { user: authUser } = useAuth();
-
   const user = {
     name: authUser?.name || "Guest",
     role: authUser?.role
@@ -226,77 +192,57 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
 
   return (
     <StyledDrawer variant="permanent" open={isOpen}>
-      {/* Brand / Toggle */}
-      <BrandSection>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            flexGrow: 1,
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: 1,
-              background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem" }}
+      <HeaderBox open={isOpen}>
+        {isOpen && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 1,
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              C
-            </Typography>
-          </Box>
-          {isOpen && (
+              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700 }}>
+                C
+              </Typography>
+            </Box>
             <Typography
               variant="subtitle1"
-              sx={{
-                fontWeight: 700,
-                color: "#f8fafc",
-                letterSpacing: "-0.02em",
-              }}
+              sx={{ fontWeight: 700, color: "#f8fafc" }}
             >
               CityOS
             </Typography>
-          )}
-        </Box>
+          </Box>
+        )}
         <IconButton
           onClick={() => setIsOpen(!isOpen)}
-          size="small"
           sx={{
-            color: "#64748b",
+            color: "#f8fafc", // White for visibility
+            minWidth: 40,
+            height: 40,
+            borderRadius: 1.5,
             "&:hover": {
-              color: "#f1f5f9",
-              background: "rgba(255,255,255,0.05)",
+              bgcolor: "rgba(255,255,255,0.1)",
             },
           }}
         >
-          {isOpen ? (
-            <MenuOpenIcon fontSize="small" />
-          ) : (
-            <MenuIcon fontSize="small" />
-          )}
+          {isOpen ? <MenuOpenIcon /> : <MenuIcon />}
         </IconButton>
-      </BrandSection>
+      </HeaderBox>
 
-      {/* Navigation */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto", py: 2 }}>
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.05)", mb: 2 }} />
+
+      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
         <List component="nav" disablePadding>
           {items.map((item) => renderNavItem(item))}
         </List>
       </Box>
 
-      {/* User Profile */}
-      <UserProfileSection>
+      <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Avatar
             sx={{
@@ -314,20 +260,17 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
             <Box sx={{ minWidth: 0 }}>
               <Typography
                 variant="subtitle2"
-                sx={{ color: "#f1f5f9", fontWeight: 600, lineHeight: 1.2 }}
+                sx={{ color: "#f1f5f9", fontWeight: 600 }}
               >
                 {user.name}
               </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: "#94a3b8", lineHeight: 1.2 }}
-              >
+              <Typography variant="caption" sx={{ color: "#94a3b8" }}>
                 {user.role}
               </Typography>
             </Box>
           )}
         </Box>
-      </UserProfileSection>
+      </Box>
     </StyledDrawer>
   );
 };

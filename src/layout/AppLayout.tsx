@@ -68,6 +68,7 @@ const AppLayout: React.FC = () => {
         items={activeNavItems}
         currentModule={currentModule}
         onModuleChange={setCurrentModule}
+        isSidebarOpen={isOpen}
       />
 
       <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} items={activeNavItems} />
@@ -78,7 +79,7 @@ const AppLayout: React.FC = () => {
           flexGrow: 1,
           mt: "64px", // Height of Navbar
           ml: 0,
-          paddingLeft: isOpen ? "260px" : "72px",
+          paddingLeft: isOpen ? "272px" : "72px",
           width: "100%",
           transition: "padding-left 0.2s ease",
           p: 3,

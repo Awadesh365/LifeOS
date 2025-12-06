@@ -1,27 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   Card,
   Container,
   Typography,
-  Avatar,
-  Grid,
-  Chip,
+  TextField,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
-import { DUMMY_USERS } from "../../lib/constants/dummyUsers";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import SecurityIcon from "@mui/icons-material/Security";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (userId: string) => {
-    login(userId);
-    navigate("/dashboard"); // Default redirect, can be smarter based on role
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login({ email, password });
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,7 +46,7 @@ const LoginPage: React.FC = () => {
         p: 2,
       }}
     >
-      <Container maxWidth="md">
+      <Container maxWidth="sm">
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Box
             sx={{
@@ -71,84 +82,74 @@ const LoginPage: React.FC = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={3}>
-          {DUMMY_USERS.map((user) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={user.id}>
-              <Card
-                onClick={() => handleLogin(user.id)}
-                sx={{
-                  p: 3,
-                  height: "100%",
-                  cursor: "pointer",
-                  background: "rgba(255, 255, 255, 0.03)",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
-                  borderRadius: 4,
-                  transition: "all 0.2s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    background: "rgba(255, 255, 255, 0.06)",
-                    borderColor: "rgba(255, 255, 255, 0.1)",
-                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.3)",
-                  },
-                }}
-              >
-                <Avatar
-                  src={user.avatar}
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    mb: 2,
-                    border: "4px solid rgba(255,255,255,0.1)",
-                  }}
-                />
-                <Typography
-                  variant="h6"
-                  sx={{ color: "#f8fafc", fontWeight: 600, mb: 0.5 }}
-                >
-                  {user.name}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#94a3b8", mb: 2 }}>
-                  {user.designation}
-                </Typography>
+        <Card
+          sx={{
+            p: 4,
+            background: "rgba(255, 255, 255, 0.03)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255, 255, 255, 0.05)",
+            borderRadius: 4,
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{ color: "#fff", mb: 3, textAlign: "center" }}
+          >
+            Sign In
+          </Typography>
 
-                <Box sx={{ mt: "auto", width: "100%" }}>
-                  <Chip
-                    label={user.role.replace("_", " ").toUpperCase()}
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(59, 130, 246, 0.1)",
-                      color: "#60a5fa",
-                      fontWeight: 600,
-                      fontSize: "0.7rem",
-                      mb: 2,
-                    }}
-                  />
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    endIcon={<ArrowForwardIcon />}
-                    sx={{
-                      borderColor: "rgba(255,255,255,0.1)",
-                      color: "#e2e8f0",
-                      borderRadius: 2,
-                      "&:hover": {
-                        borderColor: "#3b82f6",
-                        bgcolor: "rgba(59, 130, 246, 0.1)",
-                      },
-                    }}
-                  >
-                    Login as {user.role === "citizen" ? "Citizen" : "Official"}
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              label="Email Address"
+              variant="outlined"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{
+                mb: 3,
+                input: { color: "#fff" },
+                label: { color: "#94a3b8" },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{
+                mb: 4,
+                input: { color: "#fff" },
+                label: { color: "#94a3b8" },
+              }}
+            />
+            <Button
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              sx={{
+                bgcolor: "#3b82f6",
+                height: 48,
+                "&:hover": { bgcolor: "#2563eb" },
+              }}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Login"
+              )}
+            </Button>
+          </form>
+        </Card>
 
         <Box
           sx={{
