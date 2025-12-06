@@ -73,7 +73,7 @@ const LoginPage: React.FC = () => {
 
         <Grid container spacing={3}>
           {DUMMY_USERS.map((user) => (
-            <Grid item xs={12} sm={6} md={4} key={user.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={user.id}>
               <Card
                 onClick={() => handleLogin(user.id)}
                 sx={{

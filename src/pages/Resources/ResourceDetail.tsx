@@ -12,7 +12,6 @@ import {
   Avatar,
   ListItemText,
   Divider,
-  IconButton,
   Button,
 } from "@mui/material";
 import { DUMMY_RESOURCES } from "../../lib/constants/dummyResources";
@@ -67,7 +66,7 @@ const ResourceDetail: React.FC = () => {
         }}
       >
         <Grid container spacing={3} alignItems="center">
-          <Grid item>
+          <Grid>
             <Box
               sx={{
                 width: 80,
@@ -82,7 +81,7 @@ const ResourceDetail: React.FC = () => {
               {getIcon()}
             </Box>
           </Grid>
-          <Grid item xs>
+          <Grid size="grow">
             <Typography
               variant="h4"
               sx={{ fontWeight: 700, color: "#0f172a", mb: 1 }}
@@ -106,7 +105,7 @@ const ResourceDetail: React.FC = () => {
               />
             </Typography>
           </Grid>
-          <Grid item sx={{ textAlign: "right" }}>
+          <Grid sx={{ textAlign: "right" }}>
             <Box
               sx={{
                 display: "flex",
@@ -131,7 +130,7 @@ const ResourceDetail: React.FC = () => {
 
       <Grid container spacing={4}>
         {/* Left Column: Stats & Vehicles */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           {/* Capacity & Stats */}
           <Card sx={{ p: 3, mb: 3, borderRadius: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
@@ -173,7 +172,7 @@ const ResourceDetail: React.FC = () => {
 
             <Grid container spacing={2}>
               {Object.entries(resource.stats || {}).map(([key, value]) => (
-                <Grid item xs={6} key={key}>
+                <Grid size={6} key={key}>
                   <Typography
                     variant="caption"
                     sx={{ color: "#64748b", textTransform: "capitalize" }}
@@ -227,7 +226,7 @@ const ResourceDetail: React.FC = () => {
                       color={
                         vehicle.status === "available" ? "success" : "warning"
                       }
-                      variant="soft"
+                      variant="outlined"
                       sx={{ textTransform: "capitalize" }}
                     />
                   </ListItem>
@@ -238,7 +237,7 @@ const ResourceDetail: React.FC = () => {
         </Grid>
 
         {/* Right Column: Staff Roster */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ p: 3, borderRadius: 3, height: "100%" }}>
             <Box
               sx={{
@@ -260,7 +259,7 @@ const ResourceDetail: React.FC = () => {
 
             <Grid container spacing={2}>
               {resource.staff.map((staff) => (
-                <Grid item xs={12} sm={6} key={staff.id}>
+                <Grid size={{ xs: 12, sm: 6 }} key={staff.id}>
                   <Box
                     sx={{
                       p: 2,
