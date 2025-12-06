@@ -73,7 +73,7 @@ const ResourceList: React.FC = () => {
 
       <Grid container spacing={3}>
         {DUMMY_RESOURCES.map((resource) => (
-          <Grid item xs={12} md={6} lg={4} key={resource.id}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={resource.id}>
             <Card
               onClick={() => navigate(`/admin/resources/${resource.id}`)}
               sx={{
