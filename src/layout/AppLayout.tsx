@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import Navbar, { ModuleType } from "../components/layout/Navbar/Navbar";
-import Sidebar from "../components/layout/Sidebar/Sidebar";
+import Navbar, { ModuleType } from "../components/Navbar/Navbar";
+import Sidebar from "../components/Sidebar/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import {
   DISTRICT_ADMIN_MODULE,

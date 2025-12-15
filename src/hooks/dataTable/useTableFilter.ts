@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Column, FilterState } from '../../components/organisms/DataTable/DataTable.types';
+import { Column, FilterState } from '../../components/ui/DataTable/DataTable.types';
 import { filterDataBySearch, filterDataByFilters, debounce } from '../../utils/dataTable/tableUtils';
 
 /**

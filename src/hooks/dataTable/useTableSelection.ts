@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { SelectionMode } from '../../components/organisms/DataTable/DataTable.types';
+import { SelectionMode } from '../../components/ui/DataTable/DataTable.types';
 import { generateRowKey } from '../../utils/dataTable/tableUtils';
 
 /**

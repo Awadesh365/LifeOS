@@ -20,8 +20,8 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
-import { NavItem } from "../../../types/navigation";
-import { useAuth } from "../../../hooks/useAuth";
+import { NavItem } from "../../types/navigation";
+import { useAuth } from "../../hooks/useAuth";
 
 const drawerWidth = 272;
 const collapsedWidth = 72;

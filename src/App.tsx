@@ -17,7 +17,7 @@ import { useAppSelector } from "./hooks/redux";
 import AppLayout from "./layout/AppLayout";
 import { premiumTheme } from "./theme/premiumTheme";
 import { StationsList } from "./pages/Stations/StationsList";
-import { PlaceholderPage } from "./components/common/PlaceholderPage";
+import { PlaceholderPage } from "./components/ui/PlaceholderPage";
 import LandingPage from "./pages/Landing/LandingPage";
 import LoginPage from "./pages/Auth/LoginPage";
 import ResourceList from "./pages/Resources/ResourceList";

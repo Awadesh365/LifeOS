@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Column } from '../../components/organisms/DataTable/DataTable.types';
+import { Column } from '../../components/ui/DataTable/DataTable.types';
 import { reorderArray } from '../../utils/dataTable/tableUtils';
 
 /**

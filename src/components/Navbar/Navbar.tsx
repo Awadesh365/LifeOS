@@ -31,8 +31,8 @@ import LocationCityIcon from "@mui/icons-material/LocationCity";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
-import { NavItem } from "../../../types/navigation";
+import { useAuth } from "../../hooks/useAuth";
+import { NavItem } from "../../types/navigation";
 
 interface StyledAppBarProps {
   isSidebarOpen: boolean;
