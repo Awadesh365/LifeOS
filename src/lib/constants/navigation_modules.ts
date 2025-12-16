@@ -13,6 +13,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "district-dashboard",
     label: "जिला Dashboard",
+    labelKey: "sidebar.district.dashboard",
     icon: "dashboard",
     route: "/dashboard",
     enabled: true,
@@ -20,12 +21,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "offices",
     label: "कार्यालय (Offices)",
+    labelKey: "sidebar.district.offices",
     icon: "business",
     enabled: true,
     items: [
       {
         key: "collectorate",
         label: "Collectorate",
+        labelKey: "sidebar.district.collectorate",
         icon: "account_balance",
         route: "district/collectorate",
         enabled: true,
@@ -33,6 +36,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "sub-divisions",
         label: "Sub-Divisions",
+        labelKey: "sidebar.district.subDivisions",
         icon: "domain",
         route: "district/sub-divisions",
         enabled: true,
@@ -40,6 +44,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "tehsils",
         label: "Tehsils",
+        labelKey: "sidebar.district.tehsils",
         icon: "location_city",
         route: "district/tehsils",
         enabled: true,
@@ -47,6 +52,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "blocks",
         label: "Blocks",
+        labelKey: "sidebar.district.blocks",
         icon: "grid_view",
         route: "district/blocks",
         enabled: true,
@@ -56,12 +62,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "meetings",
     label: "बैठक (Meetings)",
+    labelKey: "sidebar.district.meetings",
     icon: "event",
     enabled: true,
     items: [
       {
         key: "calendar",
         label: "Calendar",
+        labelKey: "sidebar.district.calendar",
         icon: "calendar_month",
         route: "district/calendar",
         enabled: true,

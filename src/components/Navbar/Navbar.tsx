@@ -25,8 +25,10 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CheckIcon from "@mui/icons-material/Check";
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { NavItem } from "../../types/navigation";
+import { LanguagePicker } from "../LanguagePicker";
 
 interface StyledAppBarProps {
   isSidebarOpen: boolean;
@@ -144,8 +146,8 @@ export type ModuleType =
 
 interface TopNavItemProp {
   key: string;
-  label: string;
-  labelHindi?: string;
+  labelKey: string; // i18n translation key
+  descriptionKey: string; // i18n translation key
   icon: string;
   color?: string;
   enabled: boolean;
@@ -171,6 +173,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
   );
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Generate breadcrumbs based on current path
   const pathnames = location.pathname.split("/").filter((x) => x);
@@ -255,7 +258,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                 variant="subtitle2"
                 sx={{ fontWeight: 700, lineHeight: 1.1 }}
               >
-                {activeModuleData?.label || "Dashboard"}
+                {t(activeModuleData?.labelKey || "modules.districtAdmin.title")}
               </Typography>
               <Typography
                 variant="caption"
@@ -286,7 +289,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
               variant="caption"
               sx={{ px: 2, py: 1, color: "#94a3b8", fontWeight: 600 }}
             >
-              Switch Context
+              {t("navbar.switchContext")}
             </Typography>
             {items
               .filter((m) => m.enabled)
@@ -318,12 +321,15 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                     </Box>
                   </ListItemIcon>
                   <ListItemText
-                    primary={
-                      m.labelHindi ? `${m.label} (${m.labelHindi})` : m.label
-                    }
+                    primary={t(m.labelKey)}
+                    secondary={t(m.descriptionKey)}
                     primaryTypographyProps={{
                       fontWeight: activeNav === m.key ? 600 : 500,
                       fontSize: "0.8rem",
+                    }}
+                    secondaryTypographyProps={{
+                      fontSize: "0.7rem",
+                      color: "#94a3b8",
                     }}
                   />
                   {activeNav === m.key && (
@@ -429,6 +435,9 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
               <NotificationsIcon fontSize="small" />
             </Badge>
           </ActionButton>
+
+          {/* Language Picker */}
+          <LanguagePicker variant="button" />
 
           <Box
             onClick={handleUserClick}

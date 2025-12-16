@@ -1,6 +1,7 @@
 /**
  * CityOS Top Navigation Configuration
  * All 12 modules with their respective sidebar items
+ * Uses i18n translation keys instead of hardcoded labels
  * Created: December 17, 2025
  */
 
@@ -23,8 +24,8 @@ import {
 // Top Nav Item Interface
 export interface TopNavItem {
   key: string;
-  label: string;
-  labelHindi: string;
+  labelKey: string; // i18n translation key for label
+  descriptionKey: string; // i18n translation key for description
   icon: string;
   color: string;
   enabled: boolean;
@@ -32,14 +33,69 @@ export interface TopNavItem {
   items: NavItem[];
 }
 
+// Module key to translation key mapping
+export const MODULE_TRANSLATION_KEYS: Record<
+  string,
+  { title: string; description: string }
+> = {
+  "district-admin": {
+    title: "modules.districtAdmin.title",
+    description: "modules.districtAdmin.description",
+  },
+  "state-admin": {
+    title: "modules.stateAdmin.title",
+    description: "modules.stateAdmin.description",
+  },
+  "citizen-services": {
+    title: "modules.citizenServices.title",
+    description: "modules.citizenServices.description",
+  },
+  "dev-schemes": {
+    title: "modules.devSchemes.title",
+    description: "modules.devSchemes.description",
+  },
+  emergency: {
+    title: "modules.emergency.title",
+    description: "modules.emergency.description",
+  },
+  revenue: {
+    title: "modules.revenue.title",
+    description: "modules.revenue.description",
+  },
+  health: {
+    title: "modules.health.title",
+    description: "modules.health.description",
+  },
+  education: {
+    title: "modules.education.title",
+    description: "modules.education.description",
+  },
+  police: {
+    title: "modules.police.title",
+    description: "modules.police.description",
+  },
+  environment: {
+    title: "modules.environment.title",
+    description: "modules.environment.description",
+  },
+  analytics: {
+    title: "modules.analytics.title",
+    description: "modules.analytics.description",
+  },
+  "system-admin": {
+    title: "modules.systemAdmin.title",
+    description: "modules.systemAdmin.description",
+  },
+};
+
 // =============================================================================
 // TOP NAVIGATION ITEMS (12 Modules)
 // =============================================================================
 export const TOP_NAV_ITEMS: TopNavItem[] = [
   {
     key: "district-admin",
-    label: "District",
-    labelHindi: "जिला प्रशासन",
+    labelKey: "modules.districtAdmin.title",
+    descriptionKey: "modules.districtAdmin.description",
     icon: "account_balance",
     color: "#3b82f6", // Blue
     enabled: true,
@@ -47,8 +103,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "state-admin",
-    label: "State",
-    labelHindi: "राज्य प्रशासन",
+    labelKey: "modules.stateAdmin.title",
+    descriptionKey: "modules.stateAdmin.description",
     icon: "domain",
     color: "#8b5cf6", // Violet
     enabled: true,
@@ -56,8 +112,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "citizen-services",
-    label: "Citizen",
-    labelHindi: "नागरिक सेवा",
+    labelKey: "modules.citizenServices.title",
+    descriptionKey: "modules.citizenServices.description",
     icon: "groups",
     color: "#10b981", // Emerald
     enabled: true,
@@ -65,8 +121,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "dev-schemes",
-    label: "Schemes",
-    labelHindi: "विकास योजना",
+    labelKey: "modules.devSchemes.title",
+    descriptionKey: "modules.devSchemes.description",
     icon: "trending_up",
     color: "#f59e0b", // Amber
     enabled: true,
@@ -74,8 +130,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "emergency",
-    label: "Emergency",
-    labelHindi: "आपातकाल",
+    labelKey: "modules.emergency.title",
+    descriptionKey: "modules.emergency.description",
     icon: "warning",
     color: "#ef4444", // Red
     enabled: true,
@@ -83,8 +139,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "revenue",
-    label: "Revenue",
-    labelHindi: "राजस्व भूमि",
+    labelKey: "modules.revenue.title",
+    descriptionKey: "modules.revenue.description",
     icon: "gavel",
     color: "#78716c", // Stone
     enabled: true,
@@ -92,8 +148,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "health",
-    label: "Health",
-    labelHindi: "स्वास्थ्य",
+    labelKey: "modules.health.title",
+    descriptionKey: "modules.health.description",
     icon: "local_hospital",
     color: "#ec4899", // Pink
     enabled: true,
@@ -101,8 +157,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "education",
-    label: "Education",
-    labelHindi: "शिक्षा",
+    labelKey: "modules.education.title",
+    descriptionKey: "modules.education.description",
     icon: "school",
     color: "#06b6d4", // Cyan
     enabled: true,
@@ -110,8 +166,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "police",
-    label: "Police",
-    labelHindi: "पुलिस सुरक्षा",
+    labelKey: "modules.police.title",
+    descriptionKey: "modules.police.description",
     icon: "local_police",
     color: "#1e3a8a", // Navy
     enabled: true,
@@ -119,8 +175,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "environment",
-    label: "Environment",
-    labelHindi: "पर्यावरण",
+    labelKey: "modules.environment.title",
+    descriptionKey: "modules.environment.description",
     icon: "eco",
     color: "#22c55e", // Green
     enabled: true,
@@ -128,8 +184,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "analytics",
-    label: "Analytics",
-    labelHindi: "विश्लेषण",
+    labelKey: "modules.analytics.title",
+    descriptionKey: "modules.analytics.description",
     icon: "insights",
     color: "#6366f1", // Indigo
     enabled: true,
@@ -137,8 +193,8 @@ export const TOP_NAV_ITEMS: TopNavItem[] = [
   },
   {
     key: "system-admin",
-    label: "System",
-    labelHindi: "व्यवस्था",
+    labelKey: "modules.systemAdmin.title",
+    descriptionKey: "modules.systemAdmin.description",
     icon: "settings",
     color: "#64748b", // Slate
     enabled: true,
@@ -167,4 +223,16 @@ export const getModuleColor = (moduleKey: string): string => {
 export const getModuleIcon = (moduleKey: string): string => {
   const module = getModuleByKey(moduleKey);
   return module?.icon || "dashboard";
+};
+
+// Helper: Get translation keys for a module
+export const getModuleTranslationKeys = (
+  moduleKey: string
+): { title: string; description: string } => {
+  return (
+    MODULE_TRANSLATION_KEYS[moduleKey] || {
+      title: moduleKey,
+      description: moduleKey,
+    }
+  );
 };

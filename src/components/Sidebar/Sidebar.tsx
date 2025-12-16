@@ -20,6 +20,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useTranslation } from "react-i18next";
 import { NavItem } from "../../types/navigation";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -55,26 +56,38 @@ const HeaderBox = styled(Box, {
   justifyContent: open ? "space-between" : "center", // Center when collapsed
   padding: theme.spacing(3, 2),
   minHeight: 64,
+  // background: "rgba(255,255,255,0.02)",
 }));
 
 interface SidebarProps {
-  setIsOpen: (open: boolean) => void;
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   items: NavItem[];
 }
 
-const SimpleSidebar: React.FC<SidebarProps> = ({
-  setIsOpen,
-  isOpen,
-  items,
-}) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
   const location = useLocation();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { user: authUser } = useAuth();
+  const { t } = useTranslation();
 
   const handleToggleExpand = (key: string) => {
     setExpandedItems((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
+  };
+
+  // Helper to get translation key or fallback to label
+  // This helps us transition incrementally
+  const getLabel = (item: NavItem) => {
+    // If we have an explicit translation key in the item (future proofing)
+    if ((item as any).labelKey) return t((item as any).labelKey);
+
+    // Try to derive key from item.key for common patterns
+    // This maps 'district-dashboard' -> 'sidebar.district.dashboard' roughly
+    // For now, we'll try to use the English label if available in translation, otherwise allow fallback
+    // Since we don't have mapping yet, we'll return item.label but we plan to update modules
+    return item.label;
   };
 
   const renderNavItem = (item: NavItem, depth = 0) => {
@@ -92,10 +105,12 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
       }
     };
 
+    const label = getLabel(item);
+
     return (
       <React.Fragment key={item.key}>
         <ListItem disablePadding sx={{ display: "block" }}>
-          <Tooltip title={!isOpen ? item.label : ""} placement="right" arrow>
+          <Tooltip title={!isOpen ? label : ""} placement="right" arrow>
             <ListItemButton
               component={item.route ? Link : "div"}
               to={
@@ -145,7 +160,7 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
               {isOpen && (
                 <>
                   <ListItemText
-                    primary={item.label}
+                    primary={label}
                     primaryTypographyProps={{
                       fontSize: "0.875rem",
                       fontWeight: isActive ? 600 : 500,
@@ -175,7 +190,6 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
     );
   };
 
-  const { user: authUser } = useAuth();
   const user = {
     name: authUser?.name || "Guest",
     role: authUser?.role
@@ -275,4 +289,4 @@ const SimpleSidebar: React.FC<SidebarProps> = ({
   );
 };
 
-export default SimpleSidebar;
+export default Sidebar;
