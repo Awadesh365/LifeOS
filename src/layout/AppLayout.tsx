@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Box } from "@mui/material";
-import Navbar, { ModuleType } from "../components/Navbar/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import {
-  DISTRICT_ADMIN_MODULE,
-  CITIZEN_SERVICES_MODULE,
-  STATE_ADMIN_MODULE,
-  SYSTEM_ADMIN_MODULE,
-  filterSidebarItemsByPermissions,
-} from "../lib/constants/navigation";
+  TOP_NAV_ITEMS,
+  getSidebarItems,
+} from "../lib/constants/top_navigation_complete";
 
 const AppLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -17,21 +14,36 @@ const AppLayout: React.FC = () => {
     return stored === null ? true : JSON.parse(stored);
   });
 
-  const [currentModule, setCurrentModule] =
-    useState<ModuleType>("district-admin");
+  const [activeNav, setActiveNav] = useState("district-admin");
   const location = useLocation();
 
   // Auto-switch module based on route if user navigates directly
   useEffect(() => {
     const path = location.pathname;
     if (path.startsWith("/services")) {
-      setCurrentModule("citizen-services");
+      setActiveNav("citizen-services");
     } else if (path.startsWith("/state")) {
-      setCurrentModule("state-admin");
+      setActiveNav("state-admin");
     } else if (path.startsWith("/admin")) {
-      setCurrentModule("system-admin");
+      setActiveNav("system-admin");
+    } else if (path.startsWith("/schemes")) {
+      setActiveNav("dev-schemes");
+    } else if (path.startsWith("/emergency")) {
+      setActiveNav("emergency");
+    } else if (path.startsWith("/revenue")) {
+      setActiveNav("revenue");
+    } else if (path.startsWith("/health")) {
+      setActiveNav("health");
+    } else if (path.startsWith("/education")) {
+      setActiveNav("education");
+    } else if (path.startsWith("/police")) {
+      setActiveNav("police");
+    } else if (path.startsWith("/environment")) {
+      setActiveNav("environment");
+    } else if (path.startsWith("/analytics")) {
+      setActiveNav("analytics");
     } else {
-      setCurrentModule("district-admin");
+      setActiveNav("district-admin");
     }
   }, [location.pathname]);
 
@@ -39,21 +51,10 @@ const AppLayout: React.FC = () => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
-  const getModuleItems = () => {
-    switch (currentModule) {
-      case "citizen-services":
-        return CITIZEN_SERVICES_MODULE;
-      case "state-admin":
-        return STATE_ADMIN_MODULE;
-      case "system-admin":
-        return SYSTEM_ADMIN_MODULE;
-      default:
-        return DISTRICT_ADMIN_MODULE;
-    }
-  };
-
-  // Filter navigation by permissions
-  const activeNavItems = filterSidebarItemsByPermissions(getModuleItems());
+  // Get sidebar items for active module
+  const sidebarItems = useMemo(() => {
+    return getSidebarItems(activeNav);
+  }, [activeNav]);
 
   return (
     <Box
@@ -65,13 +66,13 @@ const AppLayout: React.FC = () => {
       }}
     >
       <Navbar
-        items={activeNavItems}
-        currentModule={currentModule}
-        onModuleChange={setCurrentModule}
+        items={TOP_NAV_ITEMS}
+        activeNav={activeNav}
+        setActiveNav={setActiveNav}
         isSidebarOpen={isOpen}
       />
 
-      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} items={activeNavItems} />
+      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} items={sidebarItems} />
 
       <Box
         component="main"

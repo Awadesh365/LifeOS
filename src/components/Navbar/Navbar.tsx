@@ -20,15 +20,9 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import SettingsIcon from "@mui/icons-material/Settings";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CheckIcon from "@mui/icons-material/Check";
-import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -136,21 +130,39 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
 
 export type ModuleType =
   | "district-admin"
-  | "citizen-services"
   | "state-admin"
+  | "citizen-services"
+  | "dev-schemes"
+  | "emergency"
+  | "revenue"
+  | "health"
+  | "education"
+  | "police"
+  | "environment"
+  | "analytics"
   | "system-admin";
 
+interface TopNavItemProp {
+  key: string;
+  label: string;
+  labelHindi?: string;
+  icon: string;
+  color?: string;
+  enabled: boolean;
+  items?: NavItem[];
+}
+
 interface NavbarProps {
-  items: NavItem[];
-  currentModule: ModuleType;
-  onModuleChange: (module: ModuleType) => void;
+  items: TopNavItemProp[];
+  activeNav: string;
+  setActiveNav: (nav: string) => void;
   isSidebarOpen: boolean;
 }
 
 const SimpleNavbar: React.FC<NavbarProps> = ({
   items,
-  currentModule,
-  onModuleChange,
+  activeNav,
+  setActiveNav,
   isSidebarOpen,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -190,46 +202,22 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
     setModuleMenuAnchor(null);
   };
 
-  const handleModuleSelect = (module: ModuleType) => {
-    onModuleChange(module);
+  const handleModuleSelect = (moduleKey: string) => {
+    setActiveNav(moduleKey);
     handleClose();
-    // Optional: Navigate to default route for module
-    if (module === "district-admin") navigate("/dashboard");
-    if (module === "citizen-services") navigate("/services/overview");
-    if (module === "state-admin") navigate("/state/dashboard");
-    if (module === "system-admin") navigate("/admin/status");
-  };
-
-  const getModuleDetails = (type: ModuleType) => {
-    switch (type) {
-      case "citizen-services":
-        return {
-          label: "Nagrik Sewa (Citizen)",
-          icon: <LocationCityIcon fontSize="small" />,
-          color: "#10b981",
-        }; // Emerald
-      case "state-admin":
-        return {
-          label: "Rajya Prashasan (State)",
-          icon: <AnalyticsIcon fontSize="small" />,
-          color: "#8b5cf6",
-        }; // Violet
-      case "system-admin":
-        return {
-          label: "System Admin",
-          icon: <AdminPanelSettingsIcon fontSize="small" />,
-          color: "#64748b",
-        }; // Slate
-      default:
-        return {
-          label: "Zila Prashasan (District)",
-          icon: <LocalPoliceIcon fontSize="small" />,
-          color: "#3b82f6",
-        }; // Blue
+    // Navigate to first route of the selected module
+    const selectedModule = items.find((m) => m.key === moduleKey);
+    if (selectedModule?.items?.[0]?.route) {
+      navigate(
+        selectedModule.items[0].route.startsWith("/")
+          ? selectedModule.items[0].route
+          : `/${selectedModule.items[0].route}`
+      );
     }
   };
 
-  const activeModule = getModuleDetails(currentModule);
+  // Get active module from items prop
+  const activeModuleData = items.find((m) => m.key === activeNav) || items[0];
 
   return (
     <StyledAppBar isSidebarOpen={isSidebarOpen}>
@@ -249,8 +237,16 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
               <KeyboardArrowDownIcon sx={{ color: "#94a3b8", fontSize: 18 }} />
             }
             startIcon={
-              <ModuleIconBox sx={{ background: activeModule.color }}>
-                {activeModule.icon}
+              <ModuleIconBox
+                sx={{ background: activeModuleData?.color || "#3b82f6" }}
+              >
+                <Box
+                  component="span"
+                  className="material-symbols-outlined"
+                  sx={{ fontSize: 18 }}
+                >
+                  {activeModuleData?.icon || "dashboard"}
+                </Box>
               </ModuleIconBox>
             }
           >
@@ -259,7 +255,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                 variant="subtitle2"
                 sx={{ fontWeight: 700, lineHeight: 1.1 }}
               >
-                {activeModule.label}
+                {activeModuleData?.label || "Dashboard"}
               </Typography>
               <Typography
                 variant="caption"
@@ -292,59 +288,52 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
             >
               Switch Context
             </Typography>
-            {[
-              {
-                id: "district-admin",
-                label: "Zila Prashasan (District)",
-                icon: <LocalPoliceIcon fontSize="small" />,
-              },
-              {
-                id: "citizen-services",
-                label: "Nagrik Sewa (Citizen)",
-                icon: <LocationCityIcon fontSize="small" />,
-              },
-              {
-                id: "state-admin",
-                label: "Rajya Prashasan (State)",
-                icon: <AnalyticsIcon fontSize="small" />,
-              },
-              {
-                id: "system-admin",
-                label: "System Admin",
-                icon: <AdminPanelSettingsIcon fontSize="small" />,
-              },
-            ].map((m) => (
-              <MenuItem
-                key={m.id}
-                onClick={() => handleModuleSelect(m.id as ModuleType)}
-                sx={{
-                  borderRadius: 2,
-                  mb: 0.5,
-                  py: 1,
-                  backgroundColor:
-                    currentModule === m.id ? "#f1f5f9" : "transparent",
-                }}
-              >
-                <ListItemIcon
+            {items
+              .filter((m) => m.enabled)
+              .map((m) => (
+                <MenuItem
+                  key={m.key}
+                  onClick={() => handleModuleSelect(m.key)}
                   sx={{
-                    minWidth: 32,
-                    color: currentModule === m.id ? "#0f172a" : "#64748b",
+                    borderRadius: 2,
+                    mb: 0.5,
+                    py: 1,
+                    backgroundColor:
+                      activeNav === m.key ? "#f1f5f9" : "transparent",
                   }}
                 >
-                  {m.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={m.label}
-                  primaryTypographyProps={{
-                    fontWeight: currentModule === m.id ? 600 : 500,
-                    fontSize: "0.875rem",
-                  }}
-                />
-                {currentModule === m.id && (
-                  <CheckIcon fontSize="small" sx={{ color: "#0f172a" }} />
-                )}
-              </MenuItem>
-            ))}
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 32,
+                      color:
+                        activeNav === m.key ? m.color || "#0f172a" : "#64748b",
+                    }}
+                  >
+                    <Box
+                      component="span"
+                      className="material-symbols-outlined"
+                      sx={{ fontSize: 20 }}
+                    >
+                      {m.icon}
+                    </Box>
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      m.labelHindi ? `${m.label} (${m.labelHindi})` : m.label
+                    }
+                    primaryTypographyProps={{
+                      fontWeight: activeNav === m.key ? 600 : 500,
+                      fontSize: "0.8rem",
+                    }}
+                  />
+                  {activeNav === m.key && (
+                    <CheckIcon
+                      fontSize="small"
+                      sx={{ color: m.color || "#0f172a" }}
+                    />
+                  )}
+                </MenuItem>
+              ))}
           </Menu>
 
           <Divider
