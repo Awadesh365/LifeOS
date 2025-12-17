@@ -77,6 +77,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "minutes",
         label: "Meeting Minutes",
+        labelKey: "sidebar.district.minutes",
         icon: "description",
         route: "district/minutes",
         enabled: true,
@@ -84,6 +85,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "vip-visits",
         label: "VIP Visits",
+        labelKey: "sidebar.district.vipVisits",
         icon: "stars",
         route: "district/vip-visits",
         enabled: true,
@@ -93,12 +95,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "orders",
     label: "आदेश (Orders)",
+    labelKey: "sidebar.district.orders",
     icon: "gavel",
     enabled: true,
     items: [
       {
         key: "district-orders",
         label: "District Orders",
+        labelKey: "sidebar.district.districtOrders",
         icon: "article",
         route: "district/orders",
         enabled: true,
@@ -106,6 +110,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "circulars",
         label: "Circulars",
+        labelKey: "sidebar.district.circulars",
         icon: "campaign",
         route: "district/circulars",
         enabled: true,
@@ -113,6 +118,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "directives",
         label: "Central Directives",
+        labelKey: "sidebar.district.directives",
         icon: "flag",
         route: "district/directives",
         enabled: true,
@@ -122,12 +128,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "staff",
     label: "कर्मचारी (Staff)",
+    labelKey: "sidebar.district.staff",
     icon: "badge",
     enabled: true,
     items: [
       {
         key: "officer-directory",
         label: "Officer Directory",
+        labelKey: "sidebar.district.officerDirectory",
         icon: "people",
         route: "district/officers",
         enabled: true,
@@ -135,6 +143,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "transfers",
         label: "Transfers & Postings",
+        labelKey: "sidebar.district.transfers",
         icon: "swap_horiz",
         route: "district/transfers",
         enabled: true,
@@ -142,6 +151,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       {
         key: "attendance",
         label: "Attendance",
+        labelKey: "sidebar.district.attendance",
         icon: "schedule",
         route: "district/attendance",
         enabled: true,
