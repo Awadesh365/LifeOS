@@ -1,4 +1,4 @@
-import { Column, SortOrder } from '../../components/organisms/DataTable/DataTable.types';
+import { Column, SortOrder } from '../../components/ui/DataTable/DataTable.types';
 
 /**
  * Utility functions for data manipulation in DataTable

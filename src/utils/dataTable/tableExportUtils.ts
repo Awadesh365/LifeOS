@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
-import { Column } from '../../components/organisms/DataTable/DataTable.types';
+import { Column } from '../../components/ui/DataTable/DataTable.types';
 import { getAccessorValue } from './tableUtils';
 
 /**

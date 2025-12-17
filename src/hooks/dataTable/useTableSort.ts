@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Column, SortOrder, SortState } from '../../components/organisms/DataTable/DataTable.types';
+import { Column, SortOrder, SortState } from '../../components/ui/DataTable/DataTable.types';
 import { sortData } from '../../utils/dataTable/tableUtils';
 
 /**

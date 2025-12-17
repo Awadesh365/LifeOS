@@ -6,6 +6,7 @@
 export interface NavItem {
   key: string;
   label: string;
+  labelKey?: string; // i18n translation key
   icon?: string;
   route?: string;
   enabled: boolean;

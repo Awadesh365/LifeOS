@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Column } from '../../components/organisms/DataTable/DataTable.types';
+import { Column } from '../../components/ui/DataTable/DataTable.types';
 
 /**
  * Custom hook for managing column visibility

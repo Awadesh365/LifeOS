@@ -1,6 +1,6 @@
 import { Box, Chip } from "@mui/material";
-import { DataTable } from "../../components/organisms/DataTable/DataTable";
-import { Column, RowAction } from "../../components/organisms/DataTable/DataTable.types";
+import { DataTable } from "../../components/ui/DataTable/DataTable";
+import { Column, RowAction } from "../../components/ui/DataTable/DataTable.types";
 import { Edit, Visibility, Archive, Delete, Settings } from "@mui/icons-material";
 
 interface Station {
