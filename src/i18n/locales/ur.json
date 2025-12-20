@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "لاگ ان",
+    "register": "رجسٹر",
+    "forgotPassword": "پاس ورڈ بھول گئے",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "rememberMe": "مجھے یاد رکھیں",
+    "loginButton": "سائن ان کریں",
+    "noAccount": "اکاؤنٹ نہیں ہے؟",
+    "createAccount": "اکاؤنٹ بنائیں"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "خوش آمدید",
+    "overview": "جائزہ",
+    "recentActivity": "حالیہ سرگرمی",
+    "quickActions": "فوری اقدامات"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "صفحہ نہیں ملا",
+    "unauthorized": "غیر مجاز رسائی",
+    "serverError": "سرور کی خرابی",
+    "networkError": "نیٹ ورک کی خرابی"
   }
 }

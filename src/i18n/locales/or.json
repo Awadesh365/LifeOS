@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "ଲଗଇନ୍",
+    "register": "ରେଜିଷ୍ଟର୍",
+    "forgotPassword": "ପାସ୍‌ୱର୍ଡ ଭୁଲିଗଲେ",
+    "email": "ଇମେଲ୍",
+    "password": "ପାସ୍‌ୱର୍ଡ",
+    "rememberMe": "ମୋତେ ମନେ ରଖନ୍ତୁ",
+    "loginButton": "ସାଇନ୍ ଇନ୍ କରନ୍ତୁ",
+    "noAccount": "ଆକାଉଣ୍ଟ ନାହିଁ?",
+    "createAccount": "ଆକାଉଣ୍ଟ ତିଆରି କରନ୍ତୁ"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "ସ୍ୱାଗତ",
+    "overview": "ସମୀକ୍ଷା",
+    "recentActivity": "ସମ୍ପ୍ରତି କାର୍ଯ୍ୟକଳାପ",
+    "quickActions": "ଦ୍ରୁତ କାର୍ଯ୍ୟ"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "ପୃଷ୍ଠା ମିଳିଲା ନାହିଁ",
+    "unauthorized": "ଅନଧିକୃତ ପ୍ରବେଶ",
+    "serverError": "ସର୍ଭର୍ ତ୍ରୁଟି",
+    "networkError": "ନେଟ୍‌ୱର୍କ ତ୍ରୁଟି"
   }
 }

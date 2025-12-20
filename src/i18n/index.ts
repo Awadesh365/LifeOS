@@ -21,6 +21,16 @@ import pa from "./locales/pa.json";
 import or from "./locales/or.json";
 import as from "./locales/as.json";
 import ur from "./locales/ur.json";
+import mai from "./locales/mai.json";
+import sa from "./locales/sa.json";
+import ks from "./locales/ks.json";
+import ne from "./locales/ne.json";
+import sd from "./locales/sd.json";
+import kok from "./locales/kok.json";
+import doi from "./locales/doi.json";
+import mni from "./locales/mni.json";
+import sat from "./locales/sat.json";
+import bo from "./locales/bo.json";
 
 // Language Configuration - All Official Indian Languages
 export interface LanguageOption {
@@ -207,6 +217,16 @@ const resources = {
   or: { translation: or },
   as: { translation: as },
   ur: { translation: ur },
+  mai: { translation: mai },
+  sa: { translation: sa },
+  ks: { translation: ks },
+  ne: { translation: ne },
+  sd: { translation: sd },
+  kok: { translation: kok },
+  doi: { translation: doi },
+  mni: { translation: mni },
+  sat: { translation: sat },
+  bo: { translation: bo },
 };
 
 i18n

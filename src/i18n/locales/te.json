@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "లాగిన్",
+    "register": "రిజిస్టర్",
+    "forgotPassword": "పాస్‌వర్డ్ మరచిపోయారా",
+    "email": "ఇమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "rememberMe": "నన్ను గుర్తుంచుకోండి",
+    "loginButton": "సైన్ ఇన్ చేయండి",
+    "noAccount": "ఖాతా లేదా?",
+    "createAccount": "ఖాతా సృష్టించండి"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "స్వాగతం",
+    "overview": "అవలోకనం",
+    "recentActivity": "ఇటీవలి కార్యాచరణ",
+    "quickActions": "త్వరిత చర్యలు"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "పేజీ కనుగొనబడలేదు",
+    "unauthorized": "అనధికార ప్రవేశం",
+    "serverError": "సర్వర్ లోపం",
+    "networkError": "నెట్‌వర్క్ లోపం"
   }
 }

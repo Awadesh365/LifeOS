@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "ಲಾಗಿನ್",
+    "register": "ನೋಂದಣಿ",
+    "forgotPassword": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ",
+    "email": "ಇಮೇಲ್",
+    "password": "ಪಾಸ್‌ವರ್ಡ್",
+    "rememberMe": "ನನ್ನನ್ನು ನೆನಪಿಡಿ",
+    "loginButton": "ಸೈನ್ ಇನ್ ಮಾಡಿ",
+    "noAccount": "ಖಾತೆ ಇಲ್ಲವೇ?",
+    "createAccount": "ಖಾತೆ ತೆರೆಯಿರಿ"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "ಸ್ವಾಗತ",
+    "overview": "ಅವಲೋಕನ",
+    "recentActivity": "ಇತ್ತೀಚಿನ ಚಟುವಟಿಕೆ",
+    "quickActions": "ತ್ವರಿತ ಕ್ರಿಯೆಗಳು"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "ಪುಟ ಸಿಗಲಿಲ್ಲ",
+    "unauthorized": "ಅನಧಿಕೃತ ಪ್ರವೇಶ",
+    "serverError": "ಸರ್ವರ್ ದೋಷ",
+    "networkError": "ನೆಟ್‌ವರ್ಕ್ ದೋಷ"
   }
 }

@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "ലോഗിൻ",
+    "register": "രജിസ്റ്റർ",
+    "forgotPassword": "പാസ്വേഡ് മറന്നു",
+    "email": "ഇമെയിൽ",
+    "password": "പാസ്വേഡ്",
+    "rememberMe": "എന്നെ ഓർക്കുക",
+    "loginButton": "സൈൻ ഇൻ",
+    "noAccount": "അക്കൗണ്ട് ഇല്ലേ?",
+    "createAccount": "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "സ്വാഗതം",
+    "overview": "അവലോകനം",
+    "recentActivity": "സമീപകാല പ്രവർത്തനം",
+    "quickActions": "ദ്രുത പ്രവർത്തനങ്ങൾ"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "പേജ് കണ്ടെത്തിയില്ല",
+    "unauthorized": "അനധികൃത പ്രവേശം",
+    "serverError": "സെർവർ പിശക്",
+    "networkError": "നെറ്റ്‌വർക്ക് പിശക്"
   }
 }

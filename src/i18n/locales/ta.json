@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "உள்நுழைவு",
+    "register": "பதிவு",
+    "forgotPassword": "கடவுச்சொல்லை மறந்துவிட்டீர்களா",
+    "email": "மின்னஞ்சல்",
+    "password": "கடவுச்சொல்",
+    "rememberMe": "என்னை நினைவில் வைத்திருங்கள்",
+    "loginButton": "உள்நுழைக",
+    "noAccount": "கணக்கு இல்லையா?",
+    "createAccount": "கணக்கை உருவாக்கு"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "வரவேற்கிறோம்",
+    "overview": "கண்ணோட்டம்",
+    "recentActivity": "சமீபத்திய செயல்பாடு",
+    "quickActions": "விரைவு செயல்கள்"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "பக்கம் கிடைக்கவில்லை",
+    "unauthorized": "அங்கீகரிக்கப்படாத அணுகல்",
+    "serverError": "சர்வர் பிழை",
+    "networkError": "நெட்வொர்க் பிழை"
   }
 }

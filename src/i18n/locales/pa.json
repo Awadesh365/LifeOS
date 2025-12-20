@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "ਲੌਗ ਇਨ",
+    "register": "ਰਜਿਸਟਰ",
+    "forgotPassword": "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ",
+    "email": "ਈਮੇਲ",
+    "password": "ਪਾਸਵਰਡ",
+    "rememberMe": "ਮੈਨੂੰ ਯਾਦ ਰੱਖੋ",
+    "loginButton": "ਸਾਇਨ ਇਨ ਕਰੋ",
+    "noAccount": "ਖਾਤਾ ਨਹੀਂ ਹੈ?",
+    "createAccount": "ਖਾਤਾ ਬਣਾਓ"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "ਸਵਾਗਤ ਹੈ",
+    "overview": "ਸੰਖੇਪ",
+    "recentActivity": "ਹਾਲੀਆ ਸਰਗਰਮੀ",
+    "quickActions": "ਤੇਜ਼ ਕਾਰਵਾਈਆਂ"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "ਪੇਜ ਨਹੀਂ ਮਿਲਿਆ",
+    "unauthorized": "ਅਧਿਕਾਰਿਤ ਪਹੁੰਚ",
+    "serverError": "ਸਰਵਰ ਗਲਤੀ",
+    "networkError": "ਨੈਟਵਰਕ ਗਲਤੀ"
   }
 }
