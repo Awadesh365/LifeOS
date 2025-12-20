@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "लॉगिन",
+    "register": "नोंदणी",
+    "forgotPassword": "पासवर्ड विसरलात",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "rememberMe": "मला लक्षात ठेवा",
+    "loginButton": "साइन इन करा",
+    "noAccount": "खाते नाही?",
+    "createAccount": "खाते तयार करा"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "स्वागत",
+    "overview": "आढावा",
+    "recentActivity": "अलीकडील क्रियाकलाप",
+    "quickActions": "द्रुत क्रिया"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "पृष्ठ सापडले नाही",
+    "unauthorized": "अनधिकृत प्रवेश",
+    "serverError": "सर्व्हर त्रुटी",
+    "networkError": "नेटवर्क त्रुटी"
   }
 }

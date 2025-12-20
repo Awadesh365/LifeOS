@@ -322,26 +322,26 @@
     }
   },
   "auth": {
-    "login": "Login",
-    "register": "Register",
-    "forgotPassword": "Forgot Password",
-    "email": "Email",
-    "password": "Password",
-    "rememberMe": "Remember Me",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "login": "લૉગઇન",
+    "register": "નોંધણી",
+    "forgotPassword": "પાસવર્ડ ભૂલી ગયા",
+    "email": "ઇમેઇલ",
+    "password": "પાસવર્ડ",
+    "rememberMe": "મને યાદ રાખો",
+    "loginButton": "સાઇન ઇન કરો",
+    "noAccount": "એકાઉન્ટ નથી?",
+    "createAccount": "એકાઉન્ટ બનાવો"
   },
   "dashboard": {
-    "welcome": "Welcome",
-    "overview": "Overview",
-    "recentActivity": "Recent Activity",
-    "quickActions": "Quick Actions"
+    "welcome": "સ્વાગત છે",
+    "overview": "ઝાંખી",
+    "recentActivity": "હાલની પ્રવૃત્તિ",
+    "quickActions": "ઝડપી ક્રિયાઓ"
   },
   "errors": {
-    "pageNotFound": "Page Not Found",
-    "unauthorized": "Unauthorized Access",
-    "serverError": "Server Error",
-    "networkError": "Network Error"
+    "pageNotFound": "પેજ મળ્યું નથી",
+    "unauthorized": "અનધિકૃત એક્સેસ",
+    "serverError": "સર્વર ભૂલ",
+    "networkError": "નેટવર્ક ભૂલ"
   }
 }
