@@ -15,7 +15,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
     label: "जिला Dashboard",
     labelKey: "sidebar.district.dashboard",
     icon: "dashboard",
-    route: "/dashboard",
+    route: "dashboard",
     enabled: true,
   },
   {
@@ -168,7 +168,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
     key: "state-dashboard",
     label: "राज्य Dashboard",
     icon: "domain",
-    route: "/state/dashboard",
+    route: "state/dashboard",
     enabled: true,
   },
   {
@@ -268,7 +268,7 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
     key: "citizen-portal",
     label: "सुविधा Portal",
     icon: "home",
-    route: "/services/overview",
+    route: "services/overview",
     enabled: true,
   },
   {
@@ -425,7 +425,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
     key: "scheme-dashboard",
     label: "योजना Dashboard",
     icon: "trending_up",
-    route: "/schemes/dashboard",
+    route: "schemes/dashboard",
     enabled: true,
   },
   {
@@ -546,7 +546,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
     key: "command-center",
     label: "Command Center",
     icon: "crisis_alert",
-    route: "/emergency/command",
+    route: "emergency/map",
     enabled: true,
   },
   {
@@ -653,7 +653,7 @@ export const REVENUE_MODULE: NavItem[] = [
     key: "revenue-dashboard",
     label: "राजस्व Dashboard",
     icon: "account_balance",
-    route: "/revenue/dashboard",
+    route: "revenue/dashboard",
     enabled: true,
   },
   {
@@ -789,7 +789,7 @@ export const HEALTH_MODULE: NavItem[] = [
     key: "health-dashboard",
     label: "स्वास्थ्य Dashboard",
     icon: "local_hospital",
-    route: "/health/dashboard",
+    route: "health/dashboard",
     enabled: true,
   },
   {
@@ -939,7 +939,7 @@ export const EDUCATION_MODULE: NavItem[] = [
     key: "education-dashboard",
     label: "शिक्षा Dashboard",
     icon: "school",
-    route: "/education/dashboard",
+    route: "education/dashboard",
     enabled: true,
   },
   {
@@ -1089,7 +1089,7 @@ export const POLICE_MODULE: NavItem[] = [
     key: "police-dashboard",
     label: "पुलिस Dashboard",
     icon: "local_police",
-    route: "/police/dashboard",
+    route: "police/dashboard",
     enabled: true,
   },
   {
@@ -1261,7 +1261,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
     key: "env-dashboard",
     label: "पर्यावरण Dashboard",
     icon: "eco",
-    route: "/environment/dashboard",
+    route: "environment/dashboard",
     enabled: true,
   },
   {
@@ -1411,7 +1411,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
     key: "analytics-dashboard",
     label: "विश्लेषण Dashboard",
     icon: "insights",
-    route: "/analytics/dashboard",
+    route: "analytics/dashboard",
     enabled: true,
   },
   {
@@ -1540,7 +1540,7 @@ export const SYSTEM_ADMIN_MODULE: NavItem[] = [
     key: "system-status",
     label: "System Status",
     icon: "dns",
-    route: "/admin/status",
+    route: "admin/status",
     enabled: true,
   },
   {

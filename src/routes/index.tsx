@@ -7,7 +7,7 @@ import { PlaceholderPage } from "../components/ui/PlaceholderPage";
 
 // Lazy imports for pages
 const LandingPage = Loadable(
-  lazy(() => import("../pages/Landing/LandingPage"))
+  lazy(() => import("../pages/Landing/LandingPage")),
 );
 const LoginPage = Loadable(lazy(() => import("../pages/Auth/LoginPage")));
 
@@ -16,15 +16,15 @@ const StationsList = Loadable(
   lazy(() =>
     import("../pages/Stations/StationsList").then((module) => ({
       default: module.StationsList,
-    }))
-  )
+    })),
+  ),
 );
 
 const ResourceList = Loadable(
-  lazy(() => import("../pages/Resources/ResourceList"))
+  lazy(() => import("../pages/Resources/ResourceList")),
 );
 const ResourceDetail = Loadable(
-  lazy(() => import("../pages/Resources/ResourceDetail"))
+  lazy(() => import("../pages/Resources/ResourceDetail")),
 );
 
 // Inline components from App.tsx - extracted for clarity
@@ -305,6 +305,11 @@ export default function Router() {
                   element: <PlaceholderPage title="All Users" />,
                 },
               ],
+            },
+            // Catch-all route for unmatched paths
+            {
+              path: "*",
+              element: <Navigate to="/dashboard" replace />,
             },
           ],
         },
