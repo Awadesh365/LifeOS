@@ -237,6 +237,10 @@ export default function Router() {
                       ),
                     },
                     {
+                      path: "compare",
+                      element: <PlaceholderPage title="Comparative Analysis" />,
+                    },
+                    {
                       path: "reports",
                       element: (
                         <PlaceholderPage title="Monthly District Reports" />
@@ -259,11 +263,30 @@ export default function Router() {
                         <PlaceholderPage title="State Schemes (CM Yojana)" />
                       ),
                     },
+                    {
+                      path: "status",
+                      element: (
+                        <PlaceholderPage title="Implementation Status" />
+                      ),
+                    },
                   ],
                 },
                 {
                   path: "reports",
-                  element: <PlaceholderPage title="High Command Reports" />,
+                  children: [
+                    {
+                      path: "high-command",
+                      element: <PlaceholderPage title="High Command Reports" />,
+                    },
+                    {
+                      path: "cabinet",
+                      element: <PlaceholderPage title="Cabinet Briefings" />,
+                    },
+                    {
+                      path: "legislature",
+                      element: <PlaceholderPage title="Legislature Reports" />,
+                    },
+                  ],
                 },
               ],
             },
