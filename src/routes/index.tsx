@@ -7,7 +7,7 @@ import { PlaceholderPage } from "../components/ui/PlaceholderPage";
 
 // Lazy imports for pages
 const LandingPage = Loadable(
-  lazy(() => import("../pages/Landing/LandingPage")),
+  lazy(() => import("../pages/Landing/LandingPage"))
 );
 const LoginPage = Loadable(lazy(() => import("../pages/Auth/LoginPage")));
 
@@ -16,15 +16,15 @@ const StationsList = Loadable(
   lazy(() =>
     import("../pages/Stations/StationsList").then((module) => ({
       default: module.StationsList,
-    })),
-  ),
+    }))
+  )
 );
 
 const ResourceList = Loadable(
-  lazy(() => import("../pages/Resources/ResourceList")),
+  lazy(() => import("../pages/Resources/ResourceList"))
 );
 const ResourceDetail = Loadable(
-  lazy(() => import("../pages/Resources/ResourceDetail")),
+  lazy(() => import("../pages/Resources/ResourceDetail"))
 );
 
 // Inline components from App.tsx - extracted for clarity
@@ -57,7 +57,74 @@ export default function Router() {
           children: [
             { path: "dashboard", element: <DashboardPage /> },
 
-            // District Admin / Command Center Routes
+            // District Admin Routes (Detailed)
+            {
+              path: "district",
+              children: [
+                {
+                  path: "collectorate",
+                  element: (
+                    <PlaceholderPage title="Collectorate (District Magistrate)" />
+                  ),
+                },
+                {
+                  path: "sub-divisions",
+                  element: (
+                    <PlaceholderPage title="Sub-Divisions (SDM Offices)" />
+                  ),
+                },
+                {
+                  path: "tehsils",
+                  element: (
+                    <PlaceholderPage title="Tehsils (Tehsildar Offices)" />
+                  ),
+                },
+                {
+                  path: "blocks",
+                  element: (
+                    <PlaceholderPage title="Development Blocks (BDO Offices)" />
+                  ),
+                },
+                {
+                  path: "calendar",
+                  element: <PlaceholderPage title="Meeting Calendar" />,
+                },
+                {
+                  path: "minutes",
+                  element: <PlaceholderPage title="Meeting Minutes" />,
+                },
+                {
+                  path: "vip-visits",
+                  element: <PlaceholderPage title="VIP Visits Protocol" />,
+                },
+                {
+                  path: "orders",
+                  element: <PlaceholderPage title="District Orders" />,
+                },
+                {
+                  path: "circulars",
+                  element: <PlaceholderPage title="Official Circulars" />,
+                },
+                {
+                  path: "directives",
+                  element: <PlaceholderPage title="Central Directives" />,
+                },
+                {
+                  path: "officers",
+                  element: <PlaceholderPage title="Officer Directory" />,
+                },
+                {
+                  path: "transfers",
+                  element: <PlaceholderPage title="Transfers & Postings" />,
+                },
+                {
+                  path: "attendance",
+                  element: <PlaceholderPage title="Staff Attendance" />,
+                },
+              ],
+            },
+
+            // Emergency / Command Center Routes (Expanded)
             {
               path: "emergency",
               children: [
@@ -68,6 +135,10 @@ export default function Router() {
                   ),
                 },
                 {
+                  path: "incidents/resolved",
+                  element: <PlaceholderPage title="Resolved Incidents" />,
+                },
+                {
                   path: "dispatch",
                   element: <PlaceholderPage title="Dispatch Queue" />,
                 },
@@ -75,8 +146,38 @@ export default function Router() {
                   path: "map",
                   element: <PlaceholderPage title="Live Resource Map" />,
                 },
+                {
+                  path: "map/resources",
+                  element: <PlaceholderPage title="Resource Locations" />,
+                },
+                {
+                  path: "map/hotspots",
+                  element: <PlaceholderPage title="Incident Hotspots" />,
+                },
+                {
+                  path: "map/traffic",
+                  element: <PlaceholderPage title="Traffic Status" />,
+                },
+                {
+                  path: "resources/fire",
+                  element: <PlaceholderPage title="Fire Stations" />,
+                },
+                {
+                  path: "resources/ambulance",
+                  element: <PlaceholderPage title="Ambulance Services" />,
+                },
+                {
+                  path: "resources/police",
+                  element: <PlaceholderPage title="Police Vehicles" />,
+                },
+                {
+                  path: "resources/equipment",
+                  element: <PlaceholderPage title="Emergency Equipment" />,
+                },
               ],
             },
+
+            // Operations Routes (Maintained)
             {
               path: "ops",
               children: [
@@ -98,6 +199,8 @@ export default function Router() {
                 },
               ],
             },
+
+            // Grievance Routes (Maintained)
             {
               path: "grievance",
               children: [
