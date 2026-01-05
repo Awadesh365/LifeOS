@@ -388,6 +388,80 @@ export default function Router() {
               ],
             },
 
+            // Development Schemes Routes
+            {
+              path: "schemes",
+              children: [
+                {
+                  path: "dashboard",
+                  element: <PlaceholderPage title="Yojana Dashboard" />,
+                },
+                {
+                  path: "central",
+                  children: [
+                    {
+                      path: "pm-awas",
+                      element: <PlaceholderPage title="PM Awas Yojana" />,
+                    },
+                    {
+                      path: "pm-kisan",
+                      element: <PlaceholderPage title="PM Kisan Samman" />,
+                    },
+                    {
+                      path: "mgnrega",
+                      element: <PlaceholderPage title="MGNREGA" />,
+                    },
+                    {
+                      path: "ujjwala",
+                      element: <PlaceholderPage title="Ujjwala Yojana" />,
+                    },
+                    {
+                      path: "ayushman",
+                      element: <PlaceholderPage title="Ayushman Bharat" />,
+                    },
+                  ],
+                },
+                {
+                  path: "state",
+                  children: [
+                    {
+                      path: "cm",
+                      element: <PlaceholderPage title="CM Schemes" />,
+                    },
+                    {
+                      path: "subsidies",
+                      element: <PlaceholderPage title="State Subsidies" />,
+                    },
+                    {
+                      path: "local",
+                      element: <PlaceholderPage title="Local Development" />,
+                    },
+                  ],
+                },
+                {
+                  path: "implementation",
+                  children: [
+                    {
+                      path: "beneficiaries",
+                      element: <PlaceholderPage title="Beneficiary List" />,
+                    },
+                    {
+                      path: "funds",
+                      element: <PlaceholderPage title="Fund Utilization" />,
+                    },
+                    {
+                      path: "progress",
+                      element: <PlaceholderPage title="Progress Reports" />,
+                    },
+                    {
+                      path: "geo",
+                      element: <PlaceholderPage title="Geo-tagging" />,
+                    },
+                  ],
+                },
+              ],
+            },
+
             // Analytics Routes
             {
               path: "analytics",
