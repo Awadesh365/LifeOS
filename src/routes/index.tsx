@@ -300,22 +300,90 @@ export default function Router() {
                   element: <PlaceholderPage title="Suvidha Overview" />,
                 },
                 {
-                  path: "registry",
-                  element: (
-                    <PlaceholderPage title="Janam-Mrityu (Birth & Death)" />
-                  ),
+                  path: "certificates",
+                  children: [
+                    {
+                      path: "birth",
+                      element: <PlaceholderPage title="Birth Certificate" />,
+                    },
+                    {
+                      path: "death",
+                      element: <PlaceholderPage title="Death Certificate" />,
+                    },
+                    {
+                      path: "caste",
+                      element: <PlaceholderPage title="Caste Certificate" />,
+                    },
+                    {
+                      path: "income",
+                      element: <PlaceholderPage title="Income Certificate" />,
+                    },
+                    {
+                      path: "domicile",
+                      element: <PlaceholderPage title="Domicile Certificate" />,
+                    },
+                    {
+                      path: "character",
+                      element: (
+                        <PlaceholderPage title="Character Certificate" />
+                      ),
+                    },
+                  ],
                 },
                 {
-                  path: "utilities",
-                  element: (
-                    <PlaceholderPage title="Utilities & Billing (Bijli/Pani)" />
-                  ),
+                  path: "payments",
+                  children: [
+                    {
+                      path: "property-tax",
+                      element: <PlaceholderPage title="Property Tax" />,
+                    },
+                    {
+                      path: "water",
+                      element: <PlaceholderPage title="Water Bill" />,
+                    },
+                    {
+                      path: "electricity",
+                      element: <PlaceholderPage title="Electricity Bill" />,
+                    },
+                    {
+                      path: "trade-license",
+                      element: <PlaceholderPage title="Trade License" />,
+                    },
+                  ],
                 },
                 {
-                  path: "tax",
-                  element: (
-                    <PlaceholderPage title="Sampatti Kar (Property Tax)" />
-                  ),
+                  path: "grievances",
+                  children: [
+                    {
+                      path: "new",
+                      element: <PlaceholderPage title="File Complaint" />,
+                    },
+                    {
+                      path: "track",
+                      element: <PlaceholderPage title="Track Status" />,
+                    },
+                    {
+                      path: "cm-helpline",
+                      element: <PlaceholderPage title="CM Helpline" />,
+                    },
+                  ],
+                },
+                {
+                  path: "e-district",
+                  children: [
+                    {
+                      path: "rti",
+                      element: <PlaceholderPage title="RTI Applications" />,
+                    },
+                    {
+                      path: "arms",
+                      element: <PlaceholderPage title="Arms License" />,
+                    },
+                    {
+                      path: "other",
+                      element: <PlaceholderPage title="Other Services" />,
+                    },
+                  ],
                 },
               ],
             },
