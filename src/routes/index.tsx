@@ -124,55 +124,76 @@ export default function Router() {
               ],
             },
 
-            // Emergency / Command Center Routes (Expanded)
+            // Emergency / Command Center Routes (Refactored)
             {
               path: "emergency",
               children: [
+                // Incidents Group
                 {
-                  path: "incidents/active",
-                  element: (
-                    <PlaceholderPage title="Active Incidents (Aapatkaleen)" />
-                  ),
+                  path: "incidents",
+                  children: [
+                    {
+                      path: "active",
+                      element: (
+                        <PlaceholderPage title="Active Incidents (Aapatkaleen)" />
+                      ),
+                    },
+                    {
+                      path: "resolved",
+                      element: <PlaceholderPage title="Resolved Incidents" />,
+                    },
+                  ],
                 },
-                {
-                  path: "incidents/resolved",
-                  element: <PlaceholderPage title="Resolved Incidents" />,
-                },
+                // Dispatch (Direct route as per config)
                 {
                   path: "dispatch",
                   element: <PlaceholderPage title="Dispatch Queue" />,
                 },
+                // Map & Command Center Group
                 {
                   path: "map",
-                  element: <PlaceholderPage title="Live Resource Map" />,
+                  children: [
+                    {
+                      index: true,
+                      element: (
+                        <PlaceholderPage title="Command Center (Live Map)" />
+                      ),
+                    },
+                    {
+                      path: "resources",
+                      element: <PlaceholderPage title="Resource Locations" />,
+                    },
+                    {
+                      path: "hotspots",
+                      element: <PlaceholderPage title="Incident Hotspots" />,
+                    },
+                    {
+                      path: "traffic",
+                      element: <PlaceholderPage title="Traffic Status" />,
+                    },
+                  ],
                 },
+                // Emergency Resources Group
                 {
-                  path: "map/resources",
-                  element: <PlaceholderPage title="Resource Locations" />,
-                },
-                {
-                  path: "map/hotspots",
-                  element: <PlaceholderPage title="Incident Hotspots" />,
-                },
-                {
-                  path: "map/traffic",
-                  element: <PlaceholderPage title="Traffic Status" />,
-                },
-                {
-                  path: "resources/fire",
-                  element: <PlaceholderPage title="Fire Stations" />,
-                },
-                {
-                  path: "resources/ambulance",
-                  element: <PlaceholderPage title="Ambulance Services" />,
-                },
-                {
-                  path: "resources/police",
-                  element: <PlaceholderPage title="Police Vehicles" />,
-                },
-                {
-                  path: "resources/equipment",
-                  element: <PlaceholderPage title="Emergency Equipment" />,
+                  path: "resources",
+                  children: [
+                    {
+                      path: "fire",
+                      element: <PlaceholderPage title="Fire Stations" />,
+                    },
+                    {
+                      path: "ambulance",
+                      element: <PlaceholderPage title="Ambulance Services" />,
+                    },
+                    {
+                      path: "police",
+                      element: <PlaceholderPage title="Police Vehicles" />,
+                    },
+                    {
+                      path: "equipment",
+                      element: <PlaceholderPage title="Emergency Equipment" />,
+                    },
+                  ],
                 },
               ],
             },
