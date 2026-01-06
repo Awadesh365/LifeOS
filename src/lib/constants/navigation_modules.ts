@@ -12,7 +12,7 @@ import { NavItem } from "../../types/navigation";
 export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
     key: "district-dashboard",
-    label: "जिला Dashboard",
+    label: "District Dashboard",
     labelKey: "sidebar.district.dashboard",
     icon: "dashboard",
     route: "dashboard",
@@ -20,14 +20,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "offices",
-    label: "कार्यालय (Offices)",
+    label: "Offices",
     labelKey: "sidebar.district.offices",
     icon: "business",
     enabled: true,
     items: [
       {
         key: "collectorate",
-        label: "Collectorate",
+        label: "District Magistrate Office",
         labelKey: "sidebar.district.collectorate",
         icon: "account_balance",
         route: "district/collectorate",
@@ -43,7 +43,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       },
       {
         key: "tehsils",
-        label: "Tehsils",
+        label: "Sub-Districts",
         labelKey: "sidebar.district.tehsils",
         icon: "location_city",
         route: "district/tehsils",
@@ -51,7 +51,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
       },
       {
         key: "blocks",
-        label: "Blocks",
+        label: "Development Blocks",
         labelKey: "sidebar.district.blocks",
         icon: "grid_view",
         route: "district/blocks",
@@ -61,7 +61,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "meetings",
-    label: "बैठक (Meetings)",
+    label: "Meetings",
     labelKey: "sidebar.district.meetings",
     icon: "event",
     enabled: true,
@@ -94,7 +94,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "orders",
-    label: "आदेश (Orders)",
+    label: "Orders",
     labelKey: "sidebar.district.orders",
     icon: "gavel",
     enabled: true,
@@ -127,7 +127,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "staff",
-    label: "कर्मचारी (Staff)",
+    label: "Staff",
     labelKey: "sidebar.district.staff",
     icon: "badge",
     enabled: true,
@@ -166,14 +166,14 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
 export const STATE_ADMIN_MODULE: NavItem[] = [
   {
     key: "state-dashboard",
-    label: "राज्य Dashboard",
+    label: "State Dashboard",
     icon: "domain",
     route: "state/dashboard",
     enabled: true,
   },
   {
     key: "district-monitoring",
-    label: "जिला निगरानी",
+    label: "District Monitoring",
     icon: "monitoring",
     enabled: true,
     items: [
@@ -202,7 +202,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "schemes-policies",
-    label: "योजना नीति",
+    label: "Schemes & Policies",
     icon: "policy",
     enabled: true,
     items: [
@@ -231,7 +231,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "state-reports",
-    label: "राज्य रिपोर्ट",
+    label: "State Reports",
     icon: "assessment",
     enabled: true,
     items: [
@@ -266,14 +266,14 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
 export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   {
     key: "citizen-portal",
-    label: "सुविधा Portal",
+    label: "Citizen Portal",
     icon: "home",
     route: "services/overview",
     enabled: true,
   },
   {
     key: "certificates",
-    label: "प्रमाण पत्र",
+    label: "Certificates",
     icon: "verified",
     enabled: true,
     items: [
@@ -323,7 +323,7 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   },
   {
     key: "payments",
-    label: "भुगतान (Payments)",
+    label: "Payments",
     icon: "payments",
     enabled: true,
     items: [
@@ -359,7 +359,7 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   },
   {
     key: "grievances",
-    label: "शिकायत (Grievances)",
+    label: "Grievances",
     icon: "support_agent",
     enabled: true,
     items: [
@@ -423,27 +423,27 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
 export const DEV_SCHEMES_MODULE: NavItem[] = [
   {
     key: "scheme-dashboard",
-    label: "योजना Dashboard",
+    label: "Schemes Dashboard",
     icon: "trending_up",
     route: "schemes/dashboard",
     enabled: true,
   },
   {
     key: "central-schemes",
-    label: "केंद्रीय योजना",
+    label: "Central Schemes",
     icon: "flag",
     enabled: true,
     items: [
       {
         key: "pm-awas",
-        label: "PM Awas Yojana",
+        label: "PM Housing Scheme",
         icon: "home",
         route: "schemes/central/pm-awas",
         enabled: true,
       },
       {
         key: "pm-kisan",
-        label: "PM Kisan Samman",
+        label: "PM Farmers Fund",
         icon: "agriculture",
         route: "schemes/central/pm-kisan",
         enabled: true,
@@ -457,14 +457,14 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
       },
       {
         key: "ujjwala",
-        label: "Ujjwala Yojana",
+        label: "PM Clean Fuel Scheme",
         icon: "local_fire_department",
         route: "schemes/central/ujjwala",
         enabled: true,
       },
       {
         key: "ayushman",
-        label: "Ayushman Bharat",
+        label: "PM Health Scheme",
         icon: "health_and_safety",
         route: "schemes/central/ayushman",
         enabled: true,
@@ -473,7 +473,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
   },
   {
     key: "state-schemes",
-    label: "राज्य योजना",
+    label: "State Schemes",
     icon: "campaign",
     enabled: true,
     items: [
@@ -502,7 +502,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
   },
   {
     key: "implementation",
-    label: "कार्यान्वयन",
+    label: "Implementation",
     icon: "task_alt",
     enabled: true,
     items: [
@@ -551,7 +551,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
   },
   {
     key: "incidents",
-    label: "घटनाएं (Incidents)",
+    label: "Incidents",
     icon: "warning",
     enabled: true,
     items: [
@@ -609,7 +609,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
   },
   {
     key: "emergency-resources",
-    label: "संसाधन (Resources)",
+    label: "Resources",
     icon: "inventory_2",
     enabled: true,
     items: [
@@ -651,20 +651,20 @@ export const EMERGENCY_MODULE: NavItem[] = [
 export const REVENUE_MODULE: NavItem[] = [
   {
     key: "revenue-dashboard",
-    label: "राजस्व Dashboard",
+    label: "Revenue Dashboard",
     icon: "account_balance",
     route: "revenue/dashboard",
     enabled: true,
   },
   {
     key: "land-records",
-    label: "भूमि अभिलेख",
+    label: "Land Records",
     icon: "landscape",
     enabled: true,
     items: [
       {
         key: "khatauni",
-        label: "Khatauni/Khasra",
+        label: "Rights Records (RoR)",
         icon: "description",
         route: "revenue/land/khatauni",
         enabled: true,
@@ -694,7 +694,7 @@ export const REVENUE_MODULE: NavItem[] = [
   },
   {
     key: "disputes",
-    label: "विवाद (Disputes)",
+    label: "Disputes",
     icon: "gavel",
     enabled: true,
     items: [
@@ -723,7 +723,7 @@ export const REVENUE_MODULE: NavItem[] = [
   },
   {
     key: "collection",
-    label: "संग्रह (Collection)",
+    label: "Collection",
     icon: "payments",
     enabled: true,
     items: [
@@ -752,7 +752,7 @@ export const REVENUE_MODULE: NavItem[] = [
   },
   {
     key: "patwari",
-    label: "पटवारी Module",
+    label: "Revenue Officer Module",
     icon: "person",
     enabled: true,
     items: [
@@ -787,14 +787,14 @@ export const REVENUE_MODULE: NavItem[] = [
 export const HEALTH_MODULE: NavItem[] = [
   {
     key: "health-dashboard",
-    label: "स्वास्थ्य Dashboard",
+    label: "Health Dashboard",
     icon: "local_hospital",
     route: "health/dashboard",
     enabled: true,
   },
   {
     key: "facilities",
-    label: "सुविधाएं (Facilities)",
+    label: "Facilities",
     icon: "medical_services",
     enabled: true,
     items: [
@@ -830,7 +830,7 @@ export const HEALTH_MODULE: NavItem[] = [
   },
   {
     key: "programs",
-    label: "कार्यक्रम (Programs)",
+    label: "Programs",
     icon: "vaccines",
     enabled: true,
     items: [
@@ -866,7 +866,7 @@ export const HEALTH_MODULE: NavItem[] = [
   },
   {
     key: "surveillance",
-    label: "निगरानी (Surveillance)",
+    label: "Surveillance",
     icon: "biotech",
     enabled: true,
     items: [
@@ -895,7 +895,7 @@ export const HEALTH_MODULE: NavItem[] = [
   },
   {
     key: "health-resources",
-    label: "संसाधन",
+    label: "Health Resources",
     icon: "inventory",
     enabled: true,
     items: [
@@ -937,14 +937,14 @@ export const HEALTH_MODULE: NavItem[] = [
 export const EDUCATION_MODULE: NavItem[] = [
   {
     key: "education-dashboard",
-    label: "शिक्षा Dashboard",
+    label: "Education Dashboard",
     icon: "school",
     route: "education/dashboard",
     enabled: true,
   },
   {
     key: "schools",
-    label: "विद्यालय (Schools)",
+    label: "Schools",
     icon: "apartment",
     enabled: true,
     items: [
@@ -962,13 +962,7 @@ export const EDUCATION_MODULE: NavItem[] = [
         route: "education/schools/private",
         enabled: true,
       },
-      {
-        key: "madarsas",
-        label: "Madarsas",
-        icon: "mosque",
-        route: "education/schools/madarsa",
-        enabled: true,
-      },
+
       {
         key: "special",
         label: "Special Schools",
@@ -980,7 +974,7 @@ export const EDUCATION_MODULE: NavItem[] = [
   },
   {
     key: "students",
-    label: "छात्र (Students)",
+    label: "Students",
     icon: "people",
     enabled: true,
     items: [
@@ -1016,7 +1010,7 @@ export const EDUCATION_MODULE: NavItem[] = [
   },
   {
     key: "teachers",
-    label: "शिक्षक (Teachers)",
+    label: "Teachers",
     icon: "person",
     enabled: true,
     items: [
@@ -1052,7 +1046,7 @@ export const EDUCATION_MODULE: NavItem[] = [
   },
   {
     key: "exams",
-    label: "परीक्षा (Exams)",
+    label: "Exams",
     icon: "quiz",
     enabled: true,
     items: [
@@ -1087,20 +1081,20 @@ export const EDUCATION_MODULE: NavItem[] = [
 export const POLICE_MODULE: NavItem[] = [
   {
     key: "police-dashboard",
-    label: "पुलिस Dashboard",
+    label: "Police Dashboard",
     icon: "local_police",
     route: "police/dashboard",
     enabled: true,
   },
   {
     key: "stations",
-    label: "थाना (Stations)",
+    label: "Stations",
     icon: "business",
     enabled: true,
     items: [
       {
         key: "all-thanas",
-        label: "All Thanas",
+        label: "All Stations",
         icon: "local_police",
         route: "police/stations/all",
         enabled: true,
@@ -1159,7 +1153,7 @@ export const POLICE_MODULE: NavItem[] = [
   },
   {
     key: "crime-analytics",
-    label: "अपराध विश्लेषण",
+    label: "Crime Analytics",
     icon: "analytics",
     enabled: true,
     items: [
@@ -1188,7 +1182,7 @@ export const POLICE_MODULE: NavItem[] = [
   },
   {
     key: "personnel",
-    label: "कार्मिक (Personnel)",
+    label: "Personnel",
     icon: "badge",
     enabled: true,
     items: [
@@ -1224,7 +1218,7 @@ export const POLICE_MODULE: NavItem[] = [
   },
   {
     key: "emergency-police",
-    label: "आपातकाल",
+    label: "Emergency",
     icon: "emergency",
     enabled: true,
     items: [
@@ -1259,14 +1253,14 @@ export const POLICE_MODULE: NavItem[] = [
 export const ENVIRONMENT_MODULE: NavItem[] = [
   {
     key: "env-dashboard",
-    label: "पर्यावरण Dashboard",
+    label: "Environment Dashboard",
     icon: "eco",
     route: "environment/dashboard",
     enabled: true,
   },
   {
     key: "swachh-bharat",
-    label: "स्वच्छ भारत",
+    label: "Clean India Mission",
     icon: "cleaning_services",
     enabled: true,
     items: [
@@ -1302,7 +1296,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
   },
   {
     key: "green",
-    label: "हरित पहल (Green)",
+    label: "Green Initiatives",
     icon: "park",
     enabled: true,
     items: [
@@ -1338,7 +1332,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
   },
   {
     key: "urban",
-    label: "नगरीय सेवा",
+    label: "Urban Services",
     icon: "location_city",
     enabled: true,
     items: [
@@ -1374,7 +1368,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
   },
   {
     key: "compliance",
-    label: "अनुपालन",
+    label: "Compliance",
     icon: "verified",
     enabled: true,
     items: [
@@ -1409,14 +1403,14 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
 export const ANALYTICS_MODULE: NavItem[] = [
   {
     key: "analytics-dashboard",
-    label: "विश्लेषण Dashboard",
+    label: "Analytics Dashboard",
     icon: "insights",
     route: "analytics/dashboard",
     enabled: true,
   },
   {
     key: "performance",
-    label: "प्रदर्शन (Performance)",
+    label: "Performance",
     icon: "speed",
     enabled: true,
     items: [
@@ -1445,7 +1439,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
   },
   {
     key: "custom-reports",
-    label: "रिपोर्ट",
+    label: "Reports",
     icon: "summarize",
     enabled: true,
     items: [
@@ -1503,7 +1497,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
   },
   {
     key: "statutory",
-    label: "विधिक रिपोर्ट",
+    label: "Statutory Reports",
     icon: "article",
     enabled: true,
     items: [

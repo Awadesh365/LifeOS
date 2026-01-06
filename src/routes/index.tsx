@@ -64,26 +64,20 @@ export default function Router() {
                 {
                   path: "collectorate",
                   element: (
-                    <PlaceholderPage title="Collectorate (District Magistrate)" />
+                    <PlaceholderPage title="District Magistrate Office" />
                   ),
                 },
                 {
                   path: "sub-divisions",
-                  element: (
-                    <PlaceholderPage title="Sub-Divisions (SDM Offices)" />
-                  ),
+                  element: <PlaceholderPage title="Sub-Divisions" />,
                 },
                 {
                   path: "tehsils",
-                  element: (
-                    <PlaceholderPage title="Tehsils (Tehsildar Offices)" />
-                  ),
+                  element: <PlaceholderPage title="Sub-Districts" />,
                 },
                 {
                   path: "blocks",
-                  element: (
-                    <PlaceholderPage title="Development Blocks (BDO Offices)" />
-                  ),
+                  element: <PlaceholderPage title="Development Blocks" />,
                 },
                 {
                   path: "calendar",
@@ -134,9 +128,7 @@ export default function Router() {
                   children: [
                     {
                       path: "active",
-                      element: (
-                        <PlaceholderPage title="Active Incidents (Aapatkaleen)" />
-                      ),
+                      element: <PlaceholderPage title="Active Incidents" />,
                     },
                     {
                       path: "resolved",
@@ -155,9 +147,7 @@ export default function Router() {
                   children: [
                     {
                       path: "overview",
-                      element: (
-                        <PlaceholderPage title="Command Center (Live Map)" />
-                      ),
+                      element: <PlaceholderPage title="Command Center" />,
                     },
                     {
                       path: "resources",
@@ -227,13 +217,11 @@ export default function Router() {
               children: [
                 {
                   path: "reports",
-                  element: (
-                    <PlaceholderPage title="Citizen Reports (Jan Shikayat)" />
-                  ),
+                  element: <PlaceholderPage title="Citizen Reports" />,
                 },
                 {
                   path: "tickets",
-                  element: <PlaceholderPage title="Ticket Status (Nivaran)" />,
+                  element: <PlaceholderPage title="Ticket Status" />,
                 },
               ],
             },
@@ -244,9 +232,7 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: (
-                    <PlaceholderPage title="Rajya Dashboard (State Overview)" />
-                  ),
+                  element: <PlaceholderPage title="State Dashboard" />,
                 },
                 {
                   path: "districts",
@@ -274,15 +260,11 @@ export default function Router() {
                   children: [
                     {
                       path: "central",
-                      element: (
-                        <PlaceholderPage title="Central Schemes (PM Yojana)" />
-                      ),
+                      element: <PlaceholderPage title="Central Schemes" />,
                     },
                     {
                       path: "state",
-                      element: (
-                        <PlaceholderPage title="State Schemes (CM Yojana)" />
-                      ),
+                      element: <PlaceholderPage title="State Schemes" />,
                     },
                     {
                       path: "status",
@@ -318,7 +300,7 @@ export default function Router() {
               children: [
                 {
                   path: "overview",
-                  element: <PlaceholderPage title="Suvidha Overview" />,
+                  element: <PlaceholderPage title="Citizen Portal Overview" />,
                 },
                 {
                   path: "certificates",
@@ -415,18 +397,18 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Yojana Dashboard" />,
+                  element: <PlaceholderPage title="Schemes Dashboard" />,
                 },
                 {
                   path: "central",
                   children: [
                     {
                       path: "pm-awas",
-                      element: <PlaceholderPage title="PM Awas Yojana" />,
+                      element: <PlaceholderPage title="PM Housing Scheme" />,
                     },
                     {
                       path: "pm-kisan",
-                      element: <PlaceholderPage title="PM Kisan Samman" />,
+                      element: <PlaceholderPage title="PM Farmers Fund" />,
                     },
                     {
                       path: "mgnrega",
@@ -434,11 +416,11 @@ export default function Router() {
                     },
                     {
                       path: "ujjwala",
-                      element: <PlaceholderPage title="Ujjwala Yojana" />,
+                      element: <PlaceholderPage title="PM Clean Fuel Scheme" />,
                     },
                     {
                       path: "ayushman",
-                      element: <PlaceholderPage title="Ayushman Bharat" />,
+                      element: <PlaceholderPage title="PM Health Scheme" />,
                     },
                   ],
                 },
@@ -489,16 +471,14 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Rajya Revenue Dashboard" />,
+                  element: <PlaceholderPage title="Revenue Dashboard" />,
                 },
                 {
                   path: "land",
                   children: [
                     {
                       path: "khatauni",
-                      element: (
-                        <PlaceholderPage title="Khatauni/Khasra Records" />
-                      ),
+                      element: <PlaceholderPage title="Rights Records (RoR)" />,
                     },
                     {
                       path: "maps",
@@ -550,7 +530,7 @@ export default function Router() {
                     },
                     {
                       path: "land",
-                      element: <PlaceholderPage title="Land Revenue (Lagan)" />,
+                      element: <PlaceholderPage title="Land Revenue" />,
                     },
                   ],
                 },
@@ -560,7 +540,7 @@ export default function Router() {
                     {
                       path: "daily",
                       element: (
-                        <PlaceholderPage title="Patwari Daily Reports" />
+                        <PlaceholderPage title="Revenue Officer Reports" />
                       ),
                     },
                     {
@@ -582,7 +562,7 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Swasthya Dashboard" />,
+                  element: <PlaceholderPage title="Health Dashboard" />,
                 },
                 {
                   path: "facilities",
@@ -673,7 +653,7 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Shiksha Dashboard" />,
+                  element: <PlaceholderPage title="Education Dashboard" />,
                 },
                 {
                   path: "schools",
@@ -686,10 +666,7 @@ export default function Router() {
                       path: "private",
                       element: <PlaceholderPage title="Private Schools" />,
                     },
-                    {
-                      path: "madarsa",
-                      element: <PlaceholderPage title="Madarsas" />,
-                    },
+
                     {
                       path: "special",
                       element: <PlaceholderPage title="Special Schools" />,
@@ -771,7 +748,7 @@ export default function Router() {
                   children: [
                     {
                       path: "all",
-                      element: <PlaceholderPage title="All Thanas" />,
+                      element: <PlaceholderPage title="All Stations" />,
                     },
                     {
                       path: "outposts",
@@ -868,7 +845,7 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Paryavaran Dashboard" />,
+                  element: <PlaceholderPage title="Environment Dashboard" />,
                 },
                 {
                   path: "swachh",
@@ -959,7 +936,7 @@ export default function Router() {
               children: [
                 {
                   path: "dashboard",
-                  element: <PlaceholderPage title="Vishleshan Dashboard" />,
+                  element: <PlaceholderPage title="Analytics Dashboard" />,
                 },
                 {
                   path: "performance",
