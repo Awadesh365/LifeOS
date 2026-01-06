@@ -546,7 +546,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
     key: "command-center",
     label: "Command Center",
     icon: "crisis_alert",
-    route: "emergency/map",
+    route: "emergency/map/overview",
     enabled: true,
   },
   {
