@@ -14,7 +14,7 @@ import {
   Collapse,
   Divider,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -71,9 +71,32 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
   const { user: authUser } = useAuth();
   const { t } = useTranslation();
 
+  // Auto-expand items based on current route
+  useEffect(() => {
+    const toExpand: string[] = [];
+    const findExpanded = (item: NavItem) => {
+      if (item.items) {
+        const routeParts = item.route
+          ? item.route.split("/").filter(Boolean)
+          : [];
+        if (routeParts.length > 0) {
+          const prefix = "/" + routeParts[0];
+          if (location.pathname.startsWith(prefix)) {
+            toExpand.push(item.key);
+          }
+        }
+      }
+    };
+    items.forEach(findExpanded);
+    setExpandedItems((prev) => {
+      const newSet = new Set([...prev, ...toExpand]);
+      return Array.from(newSet);
+    });
+  }, [location.pathname, items]);
+
   const handleToggleExpand = (key: string) => {
     setExpandedItems((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
     );
   };
 
@@ -113,11 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
           <Tooltip title={!isOpen ? label : ""} placement="right" arrow>
             <ListItemButton
               component={item.route ? Link : "div"}
-              to={
-                item.route && item.route.startsWith("/")
-                  ? item.route
-                  : `/${item.route}`
-              }
+              to={item.route ? `/${item.route}` : undefined}
               onClick={handleClick}
               sx={{
                 minHeight: 48,

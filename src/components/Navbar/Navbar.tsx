@@ -50,13 +50,9 @@ const StyledAppBar = styled(AppBar, {
   color: "#0f172a",
   display: "flex",
   justifyContent: "center",
-  transition: theme.transitions.create(["width", "left"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
 }));
 
-const ModuleSwitcher = styled(Button)(({ theme }) => ({
+const ModuleSwitcher = styled(Button)(() => ({
   textTransform: "none",
   color: "#0f172a",
   padding: "6px 12px",
@@ -72,7 +68,7 @@ const ModuleSwitcher = styled(Button)(({ theme }) => ({
   },
 }));
 
-const ModuleIconBox = styled(Box)(({ theme }) => ({
+const ModuleIconBox = styled(Box)(() => ({
   width: 32,
   height: 32,
   borderRadius: 8,
@@ -169,7 +165,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moduleMenuAnchor, setModuleMenuAnchor] = useState<null | HTMLElement>(
-    null
+    null,
   );
   const location = useLocation();
   const navigate = useNavigate();
@@ -214,7 +210,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
       navigate(
         selectedModule.items[0].route.startsWith("/")
           ? selectedModule.items[0].route
-          : `/${selectedModule.items[0].route}`
+          : `/${selectedModule.items[0].route}`,
       );
     }
   };
