@@ -20,13 +20,6 @@ const StationsList = Loadable(
   )
 );
 
-const ResourceList = Loadable(
-  lazy(() => import("../pages/Resources/ResourceList"))
-);
-const ResourceDetail = Loadable(
-  lazy(() => import("../pages/Resources/ResourceDetail"))
-);
-
 // Inline components from App.tsx - extracted for clarity
 const DashboardPage = () => (
   <PlaceholderPage
@@ -132,14 +125,14 @@ export default function Router() {
                     },
                     {
                       path: "resolved",
-                      element: <PlaceholderPage title="Resolved Incidents" />,
+                      element: <PlaceholderPage title="Closed Incidents" />,
                     },
                   ],
                 },
                 // Dispatch (Direct route as per config)
                 {
                   path: "dispatch",
-                  element: <PlaceholderPage title="Dispatch Queue" />,
+                  element: <PlaceholderPage title="Dispatch Operations" />,
                 },
                 // Map & Command Center Group
                 {
@@ -151,15 +144,15 @@ export default function Router() {
                     },
                     {
                       path: "resources",
-                      element: <PlaceholderPage title="Resource Locations" />,
+                      element: <PlaceholderPage title="Asset Tracking" />,
                     },
                     {
                       path: "hotspots",
-                      element: <PlaceholderPage title="Incident Hotspots" />,
+                      element: <PlaceholderPage title="Risk Heatmaps" />,
                     },
                     {
                       path: "traffic",
-                      element: <PlaceholderPage title="Traffic Status" />,
+                      element: <PlaceholderPage title="Traffic Conditions" />,
                     },
                   ],
                 },
@@ -173,11 +166,11 @@ export default function Router() {
                     },
                     {
                       path: "ambulance",
-                      element: <PlaceholderPage title="Ambulance Services" />,
+                      element: <PlaceholderPage title="Ambulance Fleet" />,
                     },
                     {
                       path: "police",
-                      element: <PlaceholderPage title="Police Vehicles" />,
+                      element: <PlaceholderPage title="Patrol Vehicles" />,
                     },
                     {
                       path: "equipment",
@@ -260,11 +253,11 @@ export default function Router() {
                   children: [
                     {
                       path: "central",
-                      element: <PlaceholderPage title="Central Schemes" />,
+                      element: <PlaceholderPage title="Central Gov Schemes" />,
                     },
                     {
                       path: "state",
-                      element: <PlaceholderPage title="State Schemes" />,
+                      element: <PlaceholderPage title="State Gov Schemes" />,
                     },
                     {
                       path: "status",
@@ -279,7 +272,7 @@ export default function Router() {
                   children: [
                     {
                       path: "high-command",
-                      element: <PlaceholderPage title="High Command Reports" />,
+                      element: <PlaceholderPage title="Ministry Reports" />,
                     },
                     {
                       path: "cabinet",
@@ -287,7 +280,7 @@ export default function Router() {
                     },
                     {
                       path: "legislature",
-                      element: <PlaceholderPage title="Legislature Reports" />,
+                      element: <PlaceholderPage title="Legislative Reports" />,
                     },
                   ],
                 },
@@ -342,11 +335,11 @@ export default function Router() {
                     },
                     {
                       path: "water",
-                      element: <PlaceholderPage title="Water Bill" />,
+                      element: <PlaceholderPage title="Water Charges" />,
                     },
                     {
                       path: "electricity",
-                      element: <PlaceholderPage title="Electricity Bill" />,
+                      element: <PlaceholderPage title="Electricity Charges" />,
                     },
                     {
                       path: "trade-license",
@@ -367,7 +360,7 @@ export default function Router() {
                     },
                     {
                       path: "cm-helpline",
-                      element: <PlaceholderPage title="CM Helpline" />,
+                      element: <PlaceholderPage title="State Helpline" />,
                     },
                   ],
                 },
@@ -376,7 +369,7 @@ export default function Router() {
                   children: [
                     {
                       path: "rti",
-                      element: <PlaceholderPage title="RTI Applications" />,
+                      element: <PlaceholderPage title="RTI (Right to Info)" />,
                     },
                     {
                       path: "arms",
@@ -412,7 +405,9 @@ export default function Router() {
                     },
                     {
                       path: "mgnrega",
-                      element: <PlaceholderPage title="MGNREGA" />,
+                      element: (
+                        <PlaceholderPage title="Rural Employment (MGNREGA)" />
+                      ),
                     },
                     {
                       path: "ujjwala",
@@ -429,15 +424,19 @@ export default function Router() {
                   children: [
                     {
                       path: "cm",
-                      element: <PlaceholderPage title="CM Schemes" />,
+                      element: (
+                        <PlaceholderPage title="Chief Minister Schemes" />
+                      ),
                     },
                     {
                       path: "subsidies",
-                      element: <PlaceholderPage title="State Subsidies" />,
+                      element: <PlaceholderPage title="Subsidies & Grants" />,
                     },
                     {
                       path: "local",
-                      element: <PlaceholderPage title="Local Development" />,
+                      element: (
+                        <PlaceholderPage title="Local Area Development" />
+                      ),
                     },
                   ],
                 },
@@ -458,7 +457,7 @@ export default function Router() {
                     },
                     {
                       path: "geo",
-                      element: <PlaceholderPage title="Geo-tagging" />,
+                      element: <PlaceholderPage title="Geo-Tagging Status" />,
                     },
                   ],
                 },
@@ -505,7 +504,7 @@ export default function Router() {
                     },
                     {
                       path: "court",
-                      element: <PlaceholderPage title="Revenue Court" />,
+                      element: <PlaceholderPage title="Land Court" />,
                     },
                     {
                       path: "appeals",
@@ -518,15 +517,11 @@ export default function Router() {
                   children: [
                     {
                       path: "stamp",
-                      element: (
-                        <PlaceholderPage title="Stamp Duty Collection" />
-                      ),
+                      element: <PlaceholderPage title="Stamp Duties" />,
                     },
                     {
                       path: "registration",
-                      element: (
-                        <PlaceholderPage title="Property Registration" />
-                      ),
+                      element: <PlaceholderPage title="Land Registration" />,
                     },
                     {
                       path: "land",
@@ -573,11 +568,13 @@ export default function Router() {
                     },
                     {
                       path: "chc-phc",
-                      element: <PlaceholderPage title="CHC/PHC Network" />,
+                      element: (
+                        <PlaceholderPage title="Health Centers (CHC/PHC)" />
+                      ),
                     },
                     {
                       path: "sub-centers",
-                      element: <PlaceholderPage title="Sub-Centers" />,
+                      element: <PlaceholderPage title="Health Sub-Centers" />,
                     },
                     {
                       path: "private",
@@ -594,11 +591,11 @@ export default function Router() {
                     },
                     {
                       path: "maternal",
-                      element: <PlaceholderPage title="Maternal Health" />,
+                      element: <PlaceholderPage title="Maternal Care" />,
                     },
                     {
                       path: "family",
-                      element: <PlaceholderPage title="Family Planning" />,
+                      element: <PlaceholderPage title="Family Welfare" />,
                     },
                     {
                       path: "disease",
@@ -611,7 +608,7 @@ export default function Router() {
                   children: [
                     {
                       path: "outbreaks",
-                      element: <PlaceholderPage title="Outbreak Alerts" />,
+                      element: <PlaceholderPage title="Disease Alerts" />,
                     },
                     {
                       path: "epidemic",
@@ -632,7 +629,7 @@ export default function Router() {
                     },
                     {
                       path: "medicine",
-                      element: <PlaceholderPage title="Medicine Stock" />,
+                      element: <PlaceholderPage title="Medical Inventory" />,
                     },
                     {
                       path: "equipment",
@@ -682,15 +679,15 @@ export default function Router() {
                     },
                     {
                       path: "dropout",
-                      element: <PlaceholderPage title="Dropout Tracking" />,
+                      element: <PlaceholderPage title="Retention Tracking" />,
                     },
                     {
                       path: "scholarship",
-                      element: <PlaceholderPage title="Scholarship Status" />,
+                      element: <PlaceholderPage title="Scholarships" />,
                     },
                     {
                       path: "mdm",
-                      element: <PlaceholderPage title="Mid-Day Meal" />,
+                      element: <PlaceholderPage title="Nutrition Program" />,
                     },
                   ],
                 },
@@ -720,15 +717,15 @@ export default function Router() {
                   children: [
                     {
                       path: "board",
-                      element: <PlaceholderPage title="Board Exams" />,
+                      element: <PlaceholderPage title="Board Examinations" />,
                     },
                     {
                       path: "competitive",
-                      element: <PlaceholderPage title="Competitive Exams" />,
+                      element: <PlaceholderPage title="Competitive Tests" />,
                     },
                     {
                       path: "results",
-                      element: <PlaceholderPage title="Result Analysis" />,
+                      element: <PlaceholderPage title="Performance Analysis" />,
                     },
                   ],
                 },
@@ -748,7 +745,7 @@ export default function Router() {
                   children: [
                     {
                       path: "all",
-                      element: <PlaceholderPage title="All Stations" />,
+                      element: <PlaceholderPage title="Police Stations" />,
                     },
                     {
                       path: "outposts",
@@ -756,7 +753,7 @@ export default function Router() {
                     },
                     {
                       path: "checkposts",
-                      element: <PlaceholderPage title="Check Posts" />,
+                      element: <PlaceholderPage title="Checkpoints" />,
                     },
                   ],
                 },
@@ -765,7 +762,7 @@ export default function Router() {
                   children: [
                     {
                       path: "register",
-                      element: <PlaceholderPage title="Register FIR" />,
+                      element: <PlaceholderPage title="File New Report" />,
                     },
                     {
                       path: "pending",
@@ -773,7 +770,7 @@ export default function Router() {
                     },
                     {
                       path: "challan",
-                      element: <PlaceholderPage title="Challan Status" />,
+                      element: <PlaceholderPage title="Traffic Fines" />,
                     },
                     {
                       path: "court",
@@ -824,15 +821,17 @@ export default function Router() {
                   children: [
                     {
                       path: "112",
-                      element: <PlaceholderPage title="112 Calls" />,
+                      element: (
+                        <PlaceholderPage title="Emergency Calls (112)" />
+                      ),
                     },
                     {
                       path: "women",
-                      element: <PlaceholderPage title="Women Safety" />,
+                      element: <PlaceholderPage title="Women's Safety" />,
                     },
                     {
                       path: "vip",
-                      element: <PlaceholderPage title="VIP Security" />,
+                      element: <PlaceholderPage title="VIP Protection" />,
                     },
                   ],
                 },
@@ -852,11 +851,15 @@ export default function Router() {
                   children: [
                     {
                       path: "odf",
-                      element: <PlaceholderPage title="ODF Status" />,
+                      element: (
+                        <PlaceholderPage title="Open Defecation Free (ODF)" />
+                      ),
                     },
                     {
                       path: "toilets",
-                      element: <PlaceholderPage title="Toilet Construction" />,
+                      element: (
+                        <PlaceholderPage title="Sanitation Infrastructure" />
+                      ),
                     },
                     {
                       path: "garbage",
@@ -894,7 +897,7 @@ export default function Router() {
                   children: [
                     {
                       path: "lights",
-                      element: <PlaceholderPage title="Street Lights" />,
+                      element: <PlaceholderPage title="Street Lighting" />,
                     },
                     {
                       path: "roads",
@@ -906,7 +909,9 @@ export default function Router() {
                     },
                     {
                       path: "parks",
-                      element: <PlaceholderPage title="Parks & Gardens" />,
+                      element: (
+                        <PlaceholderPage title="Public Parks & Gardens" />
+                      ),
                     },
                   ],
                 },
@@ -915,7 +920,9 @@ export default function Router() {
                   children: [
                     {
                       path: "ngt",
-                      element: <PlaceholderPage title="NGT Orders" />,
+                      element: (
+                        <PlaceholderPage title="Green Tribunal Orders" />
+                      ),
                     },
                     {
                       path: "reports",
@@ -947,7 +954,7 @@ export default function Router() {
                     },
                     {
                       path: "kpis",
-                      element: <PlaceholderPage title="Department KPIs" />,
+                      element: <PlaceholderPage title="Departmental KPIs" />,
                     },
                     {
                       path: "compare",
@@ -985,7 +992,9 @@ export default function Router() {
                     },
                     {
                       path: "infrastructure",
-                      element: <PlaceholderPage title="Infrastructure Maps" />,
+                      element: (
+                        <PlaceholderPage title="Infrastructure Mapping" />
+                      ),
                     },
                   ],
                 },
@@ -998,7 +1007,7 @@ export default function Router() {
                     },
                     {
                       path: "quarterly",
-                      element: <PlaceholderPage title="Quarterly Reviews" />,
+                      element: <PlaceholderPage title="Quarterly Reports" />,
                     },
                     {
                       path: "annual",
@@ -1051,7 +1060,7 @@ export default function Router() {
                     },
                     {
                       path: "branding",
-                      element: <PlaceholderPage title="Branding Config" />,
+                      element: <PlaceholderPage title="Branding Settings" />,
                     },
                     {
                       path: "integrations",
@@ -1064,11 +1073,15 @@ export default function Router() {
                   children: [
                     {
                       path: "email-sms",
-                      element: <PlaceholderPage title="Email/SMS Config" />,
+                      element: (
+                        <PlaceholderPage title="Communication Channels" />
+                      ),
                     },
                     {
                       path: "notifications",
-                      element: <PlaceholderPage title="Notification Rules" />,
+                      element: (
+                        <PlaceholderPage title="Notification Policies" />
+                      ),
                     },
                     {
                       path: "backup",

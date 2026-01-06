@@ -7,7 +7,7 @@
 import { NavItem } from "../../types/navigation";
 
 // =============================================================================
-// 1. DISTRICT ADMINISTRATION (जिला प्रशासन)
+// 1. DISTRICT ADMINISTRATION
 // =============================================================================
 export const DISTRICT_ADMIN_MODULE: NavItem[] = [
   {
@@ -161,7 +161,7 @@ export const DISTRICT_ADMIN_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 2. STATE ADMINISTRATION (राज्य प्रशासन)
+// 2. STATE ADMINISTRATION
 // =============================================================================
 export const STATE_ADMIN_MODULE: NavItem[] = [
   {
@@ -208,14 +208,14 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
     items: [
       {
         key: "central-schemes",
-        label: "Central Schemes (PM)",
+        label: "Central Gov Schemes",
         icon: "flag",
         route: "state/schemes/central",
         enabled: true,
       },
       {
         key: "state-schemes",
-        label: "State Schemes (CM)",
+        label: "State Gov Schemes",
         icon: "campaign",
         route: "state/schemes/state",
         enabled: true,
@@ -237,7 +237,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
     items: [
       {
         key: "high-command",
-        label: "High Command Reports",
+        label: "Ministry Reports",
         icon: "summarize",
         route: "state/reports/high-command",
         enabled: true,
@@ -251,7 +251,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
       },
       {
         key: "legislature",
-        label: "Legislature Reports",
+        label: "Legislative Reports",
         icon: "account_balance",
         route: "state/reports/legislature",
         enabled: true,
@@ -261,7 +261,7 @@ export const STATE_ADMIN_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 3. CITIZEN SERVICES (नागरिक सेवा)
+// 3. CITIZEN SERVICES
 // =============================================================================
 export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   {
@@ -336,14 +336,14 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
       },
       {
         key: "water-bill",
-        label: "Water Bill",
+        label: "Water Charges",
         icon: "water_drop",
         route: "services/payments/water",
         enabled: true,
       },
       {
         key: "electricity",
-        label: "Electricity Bill",
+        label: "Electricity Charges",
         icon: "bolt",
         route: "services/payments/electricity",
         enabled: true,
@@ -379,7 +379,7 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
       },
       {
         key: "cm-helpline",
-        label: "CM Helpline",
+        label: "State Helpline",
         icon: "phone",
         route: "services/grievances/cm-helpline",
         enabled: true,
@@ -388,13 +388,13 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
   },
   {
     key: "e-district",
-    label: "e-District",
+    label: "District Services",
     icon: "computer",
     enabled: true,
     items: [
       {
         key: "rti",
-        label: "RTI Applications",
+        label: "RTI (Right to Info)",
         icon: "info",
         route: "services/e-district/rti",
         enabled: true,
@@ -418,7 +418,7 @@ export const CITIZEN_SERVICES_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 4. DEVELOPMENT SCHEMES (विकास योजना)
+// 4. DEVELOPMENT SCHEMES
 // =============================================================================
 export const DEV_SCHEMES_MODULE: NavItem[] = [
   {
@@ -450,7 +450,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
       },
       {
         key: "mgnrega",
-        label: "MGNREGA",
+        label: "Employment (MGNREGA)",
         icon: "engineering",
         route: "schemes/central/mgnrega",
         enabled: true,
@@ -479,21 +479,21 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
     items: [
       {
         key: "cm-schemes",
-        label: "CM Schemes",
+        label: "Chief Minister Schemes",
         icon: "star",
         route: "schemes/state/cm",
         enabled: true,
       },
       {
         key: "subsidies",
-        label: "State Subsidies",
+        label: "Subsidies & Grants",
         icon: "redeem",
         route: "schemes/state/subsidies",
         enabled: true,
       },
       {
         key: "local-dev",
-        label: "Local Development",
+        label: "Local Area Development",
         icon: "location_city",
         route: "schemes/state/local",
         enabled: true,
@@ -529,7 +529,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
       },
       {
         key: "geo-tagging",
-        label: "Geo-tagging",
+        label: "Geo-Tagging Status",
         icon: "location_on",
         route: "schemes/implementation/geo",
         enabled: true,
@@ -539,7 +539,7 @@ export const DEV_SCHEMES_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 5. EMERGENCY SERVICES (आपातकाल)
+// 5. EMERGENCY SERVICES
 // =============================================================================
 export const EMERGENCY_MODULE: NavItem[] = [
   {
@@ -564,14 +564,14 @@ export const EMERGENCY_MODULE: NavItem[] = [
       },
       {
         key: "dispatch",
-        label: "Dispatch Queue",
+        label: "Dispatch Operations",
         icon: "local_shipping",
         route: "emergency/dispatch",
         enabled: true,
       },
       {
         key: "resolved",
-        label: "Resolved Cases",
+        label: "Closed Incidents",
         icon: "check_circle",
         route: "emergency/incidents/resolved",
         enabled: true,
@@ -586,21 +586,21 @@ export const EMERGENCY_MODULE: NavItem[] = [
     items: [
       {
         key: "resources",
-        label: "Resource Locations",
+        label: "Asset Tracking",
         icon: "pin_drop",
         route: "emergency/map/resources",
         enabled: true,
       },
       {
         key: "hotspots",
-        label: "Incident Hotspots",
+        label: "Risk Heatmaps",
         icon: "whatshot",
         route: "emergency/map/hotspots",
         enabled: true,
       },
       {
         key: "traffic",
-        label: "Traffic Status",
+        label: "Traffic Conditions",
         icon: "traffic",
         route: "emergency/map/traffic",
         enabled: true,
@@ -609,7 +609,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
   },
   {
     key: "emergency-resources",
-    label: "Resources",
+    label: "Emergency Assets",
     icon: "inventory_2",
     enabled: true,
     items: [
@@ -622,14 +622,14 @@ export const EMERGENCY_MODULE: NavItem[] = [
       },
       {
         key: "ambulances",
-        label: "Ambulances",
+        label: "Ambulance Fleet",
         icon: "local_hospital",
         route: "emergency/resources/ambulance",
         enabled: true,
       },
       {
         key: "police-vehicles",
-        label: "Police Vehicles",
+        label: "Patrol Vehicles",
         icon: "local_police",
         route: "emergency/resources/police",
         enabled: true,
@@ -646,7 +646,7 @@ export const EMERGENCY_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 6. REVENUE & LAND (राजस्व एवं भूमि)
+// 6. REVENUE & LAND
 // =============================================================================
 export const REVENUE_MODULE: NavItem[] = [
   {
@@ -707,7 +707,7 @@ export const REVENUE_MODULE: NavItem[] = [
       },
       {
         key: "revenue-court",
-        label: "Revenue Court",
+        label: "Land Court",
         icon: "balance",
         route: "revenue/disputes/court",
         enabled: true,
@@ -729,14 +729,14 @@ export const REVENUE_MODULE: NavItem[] = [
     items: [
       {
         key: "stamp-duty",
-        label: "Stamp Duty",
+        label: "Stamp Duties",
         icon: "receipt",
         route: "revenue/collection/stamp",
         enabled: true,
       },
       {
         key: "registration",
-        label: "Registration",
+        label: "Land Registration",
         icon: "edit_document",
         route: "revenue/collection/registration",
         enabled: true,
@@ -782,7 +782,7 @@ export const REVENUE_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 7. HEALTH SERVICES (स्वास्थ्य सेवा)
+// 7. HEALTH SERVICES
 // =============================================================================
 export const HEALTH_MODULE: NavItem[] = [
   {
@@ -807,14 +807,14 @@ export const HEALTH_MODULE: NavItem[] = [
       },
       {
         key: "chc-phc",
-        label: "CHC/PHC",
+        label: "Health Centers (CHC/PHC)",
         icon: "health_and_safety",
         route: "health/facilities/chc-phc",
         enabled: true,
       },
       {
         key: "sub-centers",
-        label: "Sub-Centers",
+        label: "Health Sub-Centers",
         icon: "medical_information",
         route: "health/facilities/sub-centers",
         enabled: true,
@@ -843,14 +843,14 @@ export const HEALTH_MODULE: NavItem[] = [
       },
       {
         key: "maternal",
-        label: "Maternal Health",
+        label: "Maternal Care",
         icon: "pregnant_woman",
         route: "health/programs/maternal",
         enabled: true,
       },
       {
         key: "family-planning",
-        label: "Family Planning",
+        label: "Family Welfare",
         icon: "family_restroom",
         route: "health/programs/family",
         enabled: true,
@@ -872,7 +872,7 @@ export const HEALTH_MODULE: NavItem[] = [
     items: [
       {
         key: "outbreaks",
-        label: "Outbreak Alerts",
+        label: "Disease Alerts",
         icon: "warning",
         route: "health/surveillance/outbreaks",
         enabled: true,
@@ -908,7 +908,7 @@ export const HEALTH_MODULE: NavItem[] = [
       },
       {
         key: "medicine",
-        label: "Medicine Stock",
+        label: "Medical Inventory",
         icon: "medication",
         route: "health/resources/medicine",
         enabled: true,
@@ -932,7 +932,7 @@ export const HEALTH_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 8. EDUCATION (शिक्षा)
+// 8. EDUCATION
 // =============================================================================
 export const EDUCATION_MODULE: NavItem[] = [
   {
@@ -987,21 +987,21 @@ export const EDUCATION_MODULE: NavItem[] = [
       },
       {
         key: "dropout",
-        label: "Dropout Tracking",
+        label: "Retention Tracking",
         icon: "person_off",
         route: "education/students/dropout",
         enabled: true,
       },
       {
         key: "scholarship",
-        label: "Scholarship Status",
+        label: "Scholarships",
         icon: "card_giftcard",
         route: "education/students/scholarship",
         enabled: true,
       },
       {
         key: "mdm",
-        label: "Mid-Day Meal",
+        label: "Nutrition Program",
         icon: "restaurant",
         route: "education/students/mdm",
         enabled: true,
@@ -1052,21 +1052,21 @@ export const EDUCATION_MODULE: NavItem[] = [
     items: [
       {
         key: "board",
-        label: "Board Exams",
+        label: "Board Examinations",
         icon: "grading",
         route: "education/exams/board",
         enabled: true,
       },
       {
         key: "competitive",
-        label: "Competitive Exams",
+        label: "Competitive Tests",
         icon: "emoji_events",
         route: "education/exams/competitive",
         enabled: true,
       },
       {
         key: "results",
-        label: "Result Analysis",
+        label: "Performance Analysis",
         icon: "analytics",
         route: "education/exams/results",
         enabled: true,
@@ -1076,7 +1076,7 @@ export const EDUCATION_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 9. POLICE & SECURITY (पुलिस एवं सुरक्षा)
+// 9. POLICE & SECURITY
 // =============================================================================
 export const POLICE_MODULE: NavItem[] = [
   {
@@ -1094,7 +1094,7 @@ export const POLICE_MODULE: NavItem[] = [
     items: [
       {
         key: "all-thanas",
-        label: "All Stations",
+        label: "Police Stations",
         icon: "local_police",
         route: "police/stations/all",
         enabled: true,
@@ -1108,7 +1108,7 @@ export const POLICE_MODULE: NavItem[] = [
       },
       {
         key: "checkposts",
-        label: "Check Posts",
+        label: "Checkpoints",
         icon: "traffic",
         route: "police/stations/checkposts",
         enabled: true,
@@ -1117,13 +1117,13 @@ export const POLICE_MODULE: NavItem[] = [
   },
   {
     key: "fir",
-    label: "FIR Management",
+    label: "First Info Reports (FIR)",
     icon: "description",
     enabled: true,
     items: [
       {
         key: "register-fir",
-        label: "Register FIR",
+        label: "File New Report",
         icon: "add_circle",
         route: "police/fir/register",
         enabled: true,
@@ -1137,7 +1137,7 @@ export const POLICE_MODULE: NavItem[] = [
       },
       {
         key: "challan",
-        label: "Challan Status",
+        label: "Traffic Fines",
         icon: "receipt",
         route: "police/fir/challan",
         enabled: true,
@@ -1224,21 +1224,21 @@ export const POLICE_MODULE: NavItem[] = [
     items: [
       {
         key: "112-calls",
-        label: "112 Calls",
+        label: "Emergency Calls (112)",
         icon: "phone",
         route: "police/emergency/112",
         enabled: true,
       },
       {
         key: "women-safety",
-        label: "Women Safety",
+        label: "Women's Safety",
         icon: "woman",
         route: "police/emergency/women",
         enabled: true,
       },
       {
         key: "vip-security",
-        label: "VIP Security",
+        label: "VIP Protection",
         icon: "stars",
         route: "police/emergency/vip",
         enabled: true,
@@ -1248,7 +1248,7 @@ export const POLICE_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 10. ENVIRONMENT & SANITATION (पर्यावरण एवं स्वच्छता)
+// 10. ENVIRONMENT & SANITATION
 // =============================================================================
 export const ENVIRONMENT_MODULE: NavItem[] = [
   {
@@ -1266,14 +1266,14 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
     items: [
       {
         key: "odf",
-        label: "ODF Status",
+        label: "Open Defecation Free (ODF)",
         icon: "wc",
         route: "environment/swachh/odf",
         enabled: true,
       },
       {
         key: "toilets",
-        label: "Toilet Construction",
+        label: "Sanitation Infrastructure",
         icon: "bathroom",
         route: "environment/swachh/toilets",
         enabled: true,
@@ -1338,7 +1338,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
     items: [
       {
         key: "street-lights",
-        label: "Street Lights",
+        label: "Street Lighting",
         icon: "lightbulb",
         route: "environment/urban/lights",
         enabled: true,
@@ -1352,14 +1352,14 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
       },
       {
         key: "drainage",
-        label: "Drainage",
+        label: "Drainage Systems",
         icon: "water_damage",
         route: "environment/urban/drainage",
         enabled: true,
       },
       {
         key: "parks",
-        label: "Parks & Gardens",
+        label: "Public Parks & Gardens",
         icon: "park",
         route: "environment/urban/parks",
         enabled: true,
@@ -1374,7 +1374,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
     items: [
       {
         key: "ngt",
-        label: "NGT Orders",
+        label: "Green Tribunal Orders",
         icon: "gavel",
         route: "environment/compliance/ngt",
         enabled: true,
@@ -1398,7 +1398,7 @@ export const ENVIRONMENT_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 11. ANALYTICS & REPORTS (विश्लेषण)
+// 11. ANALYTICS & REPORTS
 // =============================================================================
 export const ANALYTICS_MODULE: NavItem[] = [
   {
@@ -1423,7 +1423,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
       },
       {
         key: "kpis",
-        label: "Department KPIs",
+        label: "Departmental KPIs",
         icon: "trending_up",
         route: "analytics/performance/kpis",
         enabled: true,
@@ -1488,7 +1488,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
       },
       {
         key: "infra-maps",
-        label: "Infrastructure Maps",
+        label: "Infrastructure Mapping",
         icon: "domain",
         route: "analytics/gis/infrastructure",
         enabled: true,
@@ -1510,7 +1510,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
       },
       {
         key: "quarterly",
-        label: "Quarterly Reviews",
+        label: "Quarterly Reports",
         icon: "date_range",
         route: "analytics/statutory/quarterly",
         enabled: true,
@@ -1527,7 +1527,7 @@ export const ANALYTICS_MODULE: NavItem[] = [
 ];
 
 // =============================================================================
-// 12. SYSTEM ADMINISTRATION (व्यवस्था प्रशासन)
+// 12. SYSTEM ADMINISTRATION
 // =============================================================================
 export const SYSTEM_ADMIN_MODULE: NavItem[] = [
   {
@@ -1575,7 +1575,7 @@ export const SYSTEM_ADMIN_MODULE: NavItem[] = [
   },
   {
     key: "tenant-config",
-    label: "Tenant Config",
+    label: "Tenant Configuration",
     icon: "domain",
     enabled: true,
     items: [
@@ -1595,7 +1595,7 @@ export const SYSTEM_ADMIN_MODULE: NavItem[] = [
       },
       {
         key: "branding",
-        label: "Branding",
+        label: "Branding Settings",
         icon: "palette",
         route: "admin/tenant/branding",
         enabled: true,
@@ -1617,14 +1617,14 @@ export const SYSTEM_ADMIN_MODULE: NavItem[] = [
     items: [
       {
         key: "email-sms",
-        label: "Email/SMS Config",
+        label: "Communication Channels",
         icon: "mail",
         route: "admin/settings/email-sms",
         enabled: true,
       },
       {
         key: "notifications",
-        label: "Notification Rules",
+        label: "Notification Policies",
         icon: "notifications",
         route: "admin/settings/notifications",
         enabled: true,
