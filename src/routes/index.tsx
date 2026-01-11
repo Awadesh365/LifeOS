@@ -11,6 +11,14 @@ const LandingPage = Loadable(
 );
 const LoginPage = Loadable(lazy(() => import("../pages/Auth/LoginPage")));
 
+const DistrictMagistrateOffice = Loadable(
+  lazy(() => import("../pages/District/DistrictMagistrateOffice"))
+);
+
+const PoliceStationsPage = Loadable(
+  lazy(() => import("../pages/Police/PoliceStationsPage"))
+);
+
 // Handle named export for StationsList
 const StationsList = Loadable(
   lazy(() =>
@@ -18,6 +26,10 @@ const StationsList = Loadable(
       default: module.StationsList,
     }))
   )
+);
+
+const ResourceTablePage = Loadable(
+  lazy(() => import("../components/ui/DataTable/ResourceTablePage"))
 );
 
 // Inline components from App.tsx - extracted for clarity
@@ -56,57 +68,55 @@ export default function Router() {
               children: [
                 {
                   path: "collectorate",
-                  element: (
-                    <PlaceholderPage title="District Magistrate Office" />
-                  ),
+                  element: <DistrictMagistrateOffice />,
                 },
                 {
                   path: "sub-divisions",
-                  element: <PlaceholderPage title="Sub-Divisions" />,
+                  element: <ResourceTablePage title="Sub-Divisions" />,
                 },
                 {
                   path: "tehsils",
-                  element: <PlaceholderPage title="Sub-Districts" />,
+                  element: <ResourceTablePage title="Sub-Districts" />,
                 },
                 {
                   path: "blocks",
-                  element: <PlaceholderPage title="Development Blocks" />,
+                  element: <ResourceTablePage title="Development Blocks" />,
                 },
                 {
                   path: "calendar",
-                  element: <PlaceholderPage title="Meeting Calendar" />,
+                  element: <ResourceTablePage title="Meeting Calendar" />,
                 },
                 {
                   path: "minutes",
-                  element: <PlaceholderPage title="Meeting Minutes" />,
+                  element: <ResourceTablePage title="Meeting Minutes" />,
                 },
                 {
                   path: "vip-visits",
-                  element: <PlaceholderPage title="VIP Visits Protocol" />,
+                  element: <ResourceTablePage title="VIP Visits Protocol" />,
                 },
                 {
                   path: "orders",
-                  element: <PlaceholderPage title="District Orders" />,
+                  element: <ResourceTablePage title="District Orders" />,
                 },
                 {
                   path: "circulars",
-                  element: <PlaceholderPage title="Official Circulars" />,
+                  element: <ResourceTablePage title="Official Circulars" />,
                 },
                 {
                   path: "directives",
-                  element: <PlaceholderPage title="Central Directives" />,
+                  element: <ResourceTablePage title="Central Directives" />,
                 },
                 {
                   path: "officers",
-                  element: <PlaceholderPage title="Officer Directory" />,
+                  element: <ResourceTablePage title="Officer Directory" />,
                 },
                 {
                   path: "transfers",
-                  element: <PlaceholderPage title="Transfers & Postings" />,
+                  element: <ResourceTablePage title="Transfers & Postings" />,
                 },
                 {
                   path: "attendance",
-                  element: <PlaceholderPage title="Staff Attendance" />,
+                  element: <ResourceTablePage title="Staff Attendance" />,
                 },
               ],
             },
@@ -121,18 +131,18 @@ export default function Router() {
                   children: [
                     {
                       path: "active",
-                      element: <PlaceholderPage title="Active Incidents" />,
+                      element: <ResourceTablePage title="Active Incidents" />,
                     },
                     {
                       path: "resolved",
-                      element: <PlaceholderPage title="Closed Incidents" />,
+                      element: <ResourceTablePage title="Closed Incidents" />,
                     },
                   ],
                 },
                 // Dispatch (Direct route as per config)
                 {
                   path: "dispatch",
-                  element: <PlaceholderPage title="Dispatch Operations" />,
+                  element: <ResourceTablePage title="Dispatch Operations" />,
                 },
                 // Map & Command Center Group
                 {
@@ -144,15 +154,15 @@ export default function Router() {
                     },
                     {
                       path: "resources",
-                      element: <PlaceholderPage title="Asset Tracking" />,
+                      element: <ResourceTablePage title="Asset Tracking" />,
                     },
                     {
                       path: "hotspots",
-                      element: <PlaceholderPage title="Risk Heatmaps" />,
+                      element: <ResourceTablePage title="Risk Heatmaps" />,
                     },
                     {
                       path: "traffic",
-                      element: <PlaceholderPage title="Traffic Conditions" />,
+                      element: <ResourceTablePage title="Traffic Conditions" />,
                     },
                   ],
                 },
@@ -162,19 +172,21 @@ export default function Router() {
                   children: [
                     {
                       path: "fire",
-                      element: <PlaceholderPage title="Fire Stations" />,
+                      element: <ResourceTablePage title="Fire Stations" />,
                     },
                     {
                       path: "ambulance",
-                      element: <PlaceholderPage title="Ambulance Fleet" />,
+                      element: <ResourceTablePage title="Ambulance Fleet" />,
                     },
                     {
                       path: "police",
-                      element: <PlaceholderPage title="Patrol Vehicles" />,
+                      element: <ResourceTablePage title="Patrol Vehicles" />,
                     },
                     {
                       path: "equipment",
-                      element: <PlaceholderPage title="Emergency Equipment" />,
+                      element: (
+                        <ResourceTablePage title="Emergency Equipment" />
+                      ),
                     },
                   ],
                 },
@@ -187,19 +199,19 @@ export default function Router() {
               children: [
                 {
                   path: "police",
-                  element: <PlaceholderPage title="Police & Security Ops" />,
+                  element: <ResourceTablePage title="Police & Security Ops" />,
                 },
                 {
                   path: "health",
-                  element: <PlaceholderPage title="Health & Medical Ops" />,
+                  element: <ResourceTablePage title="Health & Medical Ops" />,
                 },
                 {
                   path: "fire",
-                  element: <PlaceholderPage title="Fire & Safety Ops" />,
+                  element: <ResourceTablePage title="Fire & Safety Ops" />,
                 },
                 {
                   path: "public-works",
-                  element: <PlaceholderPage title="Public Works Ops" />,
+                  element: <ResourceTablePage title="Public Works Ops" />,
                 },
               ],
             },
@@ -210,11 +222,11 @@ export default function Router() {
               children: [
                 {
                   path: "reports",
-                  element: <PlaceholderPage title="Citizen Reports" />,
+                  element: <ResourceTablePage title="Citizen Reports" />,
                 },
                 {
                   path: "tickets",
-                  element: <PlaceholderPage title="Ticket Status" />,
+                  element: <ResourceTablePage title="Ticket Status" />,
                 },
               ],
             },
@@ -233,17 +245,19 @@ export default function Router() {
                     {
                       path: "performance",
                       element: (
-                        <PlaceholderPage title="District Performance Metrics" />
+                        <ResourceTablePage title="District Performance Metrics" />
                       ),
                     },
                     {
                       path: "compare",
-                      element: <PlaceholderPage title="Comparative Analysis" />,
+                      element: (
+                        <ResourceTablePage title="Comparative Analysis" />
+                      ),
                     },
                     {
                       path: "reports",
                       element: (
-                        <PlaceholderPage title="Monthly District Reports" />
+                        <ResourceTablePage title="Monthly District Reports" />
                       ),
                     },
                   ],
@@ -253,16 +267,18 @@ export default function Router() {
                   children: [
                     {
                       path: "central",
-                      element: <PlaceholderPage title="Central Gov Schemes" />,
+                      element: (
+                        <ResourceTablePage title="Central Gov Schemes" />
+                      ),
                     },
                     {
                       path: "state",
-                      element: <PlaceholderPage title="State Gov Schemes" />,
+                      element: <ResourceTablePage title="State Gov Schemes" />,
                     },
                     {
                       path: "status",
                       element: (
-                        <PlaceholderPage title="Implementation Status" />
+                        <ResourceTablePage title="Implementation Status" />
                       ),
                     },
                   ],
@@ -272,15 +288,17 @@ export default function Router() {
                   children: [
                     {
                       path: "high-command",
-                      element: <PlaceholderPage title="Ministry Reports" />,
+                      element: <ResourceTablePage title="Ministry Reports" />,
                     },
                     {
                       path: "cabinet",
-                      element: <PlaceholderPage title="Cabinet Briefings" />,
+                      element: <ResourceTablePage title="Cabinet Briefings" />,
                     },
                     {
                       path: "legislature",
-                      element: <PlaceholderPage title="Legislative Reports" />,
+                      element: (
+                        <ResourceTablePage title="Legislative Reports" />
+                      ),
                     },
                   ],
                 },
@@ -293,35 +311,39 @@ export default function Router() {
               children: [
                 {
                   path: "overview",
-                  element: <PlaceholderPage title="Citizen Portal Overview" />,
+                  element: (
+                    <ResourceTablePage title="Citizen Portal Overview" />
+                  ),
                 },
                 {
                   path: "certificates",
                   children: [
                     {
                       path: "birth",
-                      element: <PlaceholderPage title="Birth Certificate" />,
+                      element: <ResourceTablePage title="Birth Certificate" />,
                     },
                     {
                       path: "death",
-                      element: <PlaceholderPage title="Death Certificate" />,
+                      element: <ResourceTablePage title="Death Certificate" />,
                     },
                     {
                       path: "caste",
-                      element: <PlaceholderPage title="Caste Certificate" />,
+                      element: <ResourceTablePage title="Caste Certificate" />,
                     },
                     {
                       path: "income",
-                      element: <PlaceholderPage title="Income Certificate" />,
+                      element: <ResourceTablePage title="Income Certificate" />,
                     },
                     {
                       path: "domicile",
-                      element: <PlaceholderPage title="Domicile Certificate" />,
+                      element: (
+                        <ResourceTablePage title="Domicile Certificate" />
+                      ),
                     },
                     {
                       path: "character",
                       element: (
-                        <PlaceholderPage title="Character Certificate" />
+                        <ResourceTablePage title="Character Certificate" />
                       ),
                     },
                   ],
@@ -331,19 +353,21 @@ export default function Router() {
                   children: [
                     {
                       path: "property-tax",
-                      element: <PlaceholderPage title="Property Tax" />,
+                      element: <ResourceTablePage title="Property Tax" />,
                     },
                     {
                       path: "water",
-                      element: <PlaceholderPage title="Water Charges" />,
+                      element: <ResourceTablePage title="Water Charges" />,
                     },
                     {
                       path: "electricity",
-                      element: <PlaceholderPage title="Electricity Charges" />,
+                      element: (
+                        <ResourceTablePage title="Electricity Charges" />
+                      ),
                     },
                     {
                       path: "trade-license",
-                      element: <PlaceholderPage title="Trade License" />,
+                      element: <ResourceTablePage title="Trade License" />,
                     },
                   ],
                 },
@@ -352,15 +376,15 @@ export default function Router() {
                   children: [
                     {
                       path: "new",
-                      element: <PlaceholderPage title="File Complaint" />,
+                      element: <ResourceTablePage title="File Complaint" />,
                     },
                     {
                       path: "track",
-                      element: <PlaceholderPage title="Track Status" />,
+                      element: <ResourceTablePage title="Track Status" />,
                     },
                     {
                       path: "cm-helpline",
-                      element: <PlaceholderPage title="State Helpline" />,
+                      element: <ResourceTablePage title="State Helpline" />,
                     },
                   ],
                 },
@@ -369,15 +393,17 @@ export default function Router() {
                   children: [
                     {
                       path: "rti",
-                      element: <PlaceholderPage title="RTI (Right to Info)" />,
+                      element: (
+                        <ResourceTablePage title="RTI (Right to Info)" />
+                      ),
                     },
                     {
                       path: "arms",
-                      element: <PlaceholderPage title="Arms License" />,
+                      element: <ResourceTablePage title="Arms License" />,
                     },
                     {
                       path: "other",
-                      element: <PlaceholderPage title="Other Services" />,
+                      element: <ResourceTablePage title="Other Services" />,
                     },
                   ],
                 },
@@ -397,25 +423,27 @@ export default function Router() {
                   children: [
                     {
                       path: "pm-awas",
-                      element: <PlaceholderPage title="PM Housing Scheme" />,
+                      element: <ResourceTablePage title="PM Housing Scheme" />,
                     },
                     {
                       path: "pm-kisan",
-                      element: <PlaceholderPage title="PM Farmers Fund" />,
+                      element: <ResourceTablePage title="PM Farmers Fund" />,
                     },
                     {
                       path: "mgnrega",
                       element: (
-                        <PlaceholderPage title="Rural Employment (MGNREGA)" />
+                        <ResourceTablePage title="Rural Employment (MGNREGA)" />
                       ),
                     },
                     {
                       path: "ujjwala",
-                      element: <PlaceholderPage title="PM Clean Fuel Scheme" />,
+                      element: (
+                        <ResourceTablePage title="PM Clean Fuel Scheme" />
+                      ),
                     },
                     {
                       path: "ayushman",
-                      element: <PlaceholderPage title="PM Health Scheme" />,
+                      element: <ResourceTablePage title="PM Health Scheme" />,
                     },
                   ],
                 },
@@ -425,17 +453,17 @@ export default function Router() {
                     {
                       path: "cm",
                       element: (
-                        <PlaceholderPage title="Chief Minister Schemes" />
+                        <ResourceTablePage title="Chief Minister Schemes" />
                       ),
                     },
                     {
                       path: "subsidies",
-                      element: <PlaceholderPage title="Subsidies & Grants" />,
+                      element: <ResourceTablePage title="Subsidies & Grants" />,
                     },
                     {
                       path: "local",
                       element: (
-                        <PlaceholderPage title="Local Area Development" />
+                        <ResourceTablePage title="Local Area Development" />
                       ),
                     },
                   ],
@@ -445,19 +473,19 @@ export default function Router() {
                   children: [
                     {
                       path: "beneficiaries",
-                      element: <PlaceholderPage title="Beneficiary List" />,
+                      element: <ResourceTablePage title="Beneficiary List" />,
                     },
                     {
                       path: "funds",
-                      element: <PlaceholderPage title="Fund Utilization" />,
+                      element: <ResourceTablePage title="Fund Utilization" />,
                     },
                     {
                       path: "progress",
-                      element: <PlaceholderPage title="Progress Reports" />,
+                      element: <ResourceTablePage title="Progress Reports" />,
                     },
                     {
                       path: "geo",
-                      element: <PlaceholderPage title="Geo-Tagging Status" />,
+                      element: <ResourceTablePage title="Geo-Tagging Status" />,
                     },
                   ],
                 },
@@ -477,19 +505,23 @@ export default function Router() {
                   children: [
                     {
                       path: "khatauni",
-                      element: <PlaceholderPage title="Rights Records (RoR)" />,
+                      element: (
+                        <ResourceTablePage title="Rights Records (RoR)" />
+                      ),
                     },
                     {
                       path: "maps",
-                      element: <PlaceholderPage title="Digital Land Maps" />,
+                      element: <ResourceTablePage title="Digital Land Maps" />,
                     },
                     {
                       path: "mutation",
-                      element: <PlaceholderPage title="Mutation Records" />,
+                      element: <ResourceTablePage title="Mutation Records" />,
                     },
                     {
                       path: "digitization",
-                      element: <PlaceholderPage title="Digitization Status" />,
+                      element: (
+                        <ResourceTablePage title="Digitization Status" />
+                      ),
                     },
                   ],
                 },
@@ -499,16 +531,18 @@ export default function Router() {
                     {
                       path: "pending",
                       element: (
-                        <PlaceholderPage title="Pending Revenue Cases" />
+                        <ResourceTablePage title="Pending Revenue Cases" />
                       ),
                     },
                     {
                       path: "court",
-                      element: <PlaceholderPage title="Land Court" />,
+                      element: <ResourceTablePage title="Land Court" />,
                     },
                     {
                       path: "appeals",
-                      element: <PlaceholderPage title="Appeals & Tribunals" />,
+                      element: (
+                        <ResourceTablePage title="Appeals & Tribunals" />
+                      ),
                     },
                   ],
                 },
@@ -517,15 +551,15 @@ export default function Router() {
                   children: [
                     {
                       path: "stamp",
-                      element: <PlaceholderPage title="Stamp Duties" />,
+                      element: <ResourceTablePage title="Stamp Duties" />,
                     },
                     {
                       path: "registration",
-                      element: <PlaceholderPage title="Land Registration" />,
+                      element: <ResourceTablePage title="Land Registration" />,
                     },
                     {
                       path: "land",
-                      element: <PlaceholderPage title="Land Revenue" />,
+                      element: <ResourceTablePage title="Land Revenue" />,
                     },
                   ],
                 },
@@ -535,16 +569,16 @@ export default function Router() {
                     {
                       path: "daily",
                       element: (
-                        <PlaceholderPage title="Revenue Officer Reports" />
+                        <ResourceTablePage title="Revenue Officer Reports" />
                       ),
                     },
                     {
                       path: "visits",
-                      element: <PlaceholderPage title="Field Visit Logs" />,
+                      element: <ResourceTablePage title="Field Visit Logs" />,
                     },
                     {
                       path: "crop",
-                      element: <PlaceholderPage title="Crop Survey Data" />,
+                      element: <ResourceTablePage title="Crop Survey Data" />,
                     },
                   ],
                 },
@@ -564,21 +598,21 @@ export default function Router() {
                   children: [
                     {
                       path: "district",
-                      element: <PlaceholderPage title="District Hospital" />,
+                      element: <ResourceTablePage title="District Hospital" />,
                     },
                     {
                       path: "chc-phc",
                       element: (
-                        <PlaceholderPage title="Health Centers (CHC/PHC)" />
+                        <ResourceTablePage title="Health Centers (CHC/PHC)" />
                       ),
                     },
                     {
                       path: "sub-centers",
-                      element: <PlaceholderPage title="Health Sub-Centers" />,
+                      element: <ResourceTablePage title="Health Sub-Centers" />,
                     },
                     {
                       path: "private",
-                      element: <PlaceholderPage title="Private Hospitals" />,
+                      element: <ResourceTablePage title="Private Hospitals" />,
                     },
                   ],
                 },
@@ -587,19 +621,19 @@ export default function Router() {
                   children: [
                     {
                       path: "immunization",
-                      element: <PlaceholderPage title="Immunization" />,
+                      element: <ResourceTablePage title="Immunization" />,
                     },
                     {
                       path: "maternal",
-                      element: <PlaceholderPage title="Maternal Care" />,
+                      element: <ResourceTablePage title="Maternal Care" />,
                     },
                     {
                       path: "family",
-                      element: <PlaceholderPage title="Family Welfare" />,
+                      element: <ResourceTablePage title="Family Welfare" />,
                     },
                     {
                       path: "disease",
-                      element: <PlaceholderPage title="Disease Control" />,
+                      element: <ResourceTablePage title="Disease Control" />,
                     },
                   ],
                 },
@@ -608,15 +642,15 @@ export default function Router() {
                   children: [
                     {
                       path: "outbreaks",
-                      element: <PlaceholderPage title="Disease Alerts" />,
+                      element: <ResourceTablePage title="Disease Alerts" />,
                     },
                     {
                       path: "epidemic",
-                      element: <PlaceholderPage title="Epidemic Tracking" />,
+                      element: <ResourceTablePage title="Epidemic Tracking" />,
                     },
                     {
                       path: "lab",
-                      element: <PlaceholderPage title="Lab Reports" />,
+                      element: <ResourceTablePage title="Lab Reports" />,
                     },
                   ],
                 },
@@ -625,19 +659,21 @@ export default function Router() {
                   children: [
                     {
                       path: "doctors",
-                      element: <PlaceholderPage title="Doctor Availability" />,
+                      element: (
+                        <ResourceTablePage title="Doctor Availability" />
+                      ),
                     },
                     {
                       path: "medicine",
-                      element: <PlaceholderPage title="Medical Inventory" />,
+                      element: <ResourceTablePage title="Medical Inventory" />,
                     },
                     {
                       path: "equipment",
-                      element: <PlaceholderPage title="Equipment Status" />,
+                      element: <ResourceTablePage title="Equipment Status" />,
                     },
                     {
                       path: "ambulance",
-                      element: <PlaceholderPage title="Ambulance Fleet" />,
+                      element: <ResourceTablePage title="Ambulance Fleet" />,
                     },
                   ],
                 },
@@ -657,16 +693,16 @@ export default function Router() {
                   children: [
                     {
                       path: "government",
-                      element: <PlaceholderPage title="Government Schools" />,
+                      element: <ResourceTablePage title="Government Schools" />,
                     },
                     {
                       path: "private",
-                      element: <PlaceholderPage title="Private Schools" />,
+                      element: <ResourceTablePage title="Private Schools" />,
                     },
 
                     {
                       path: "special",
-                      element: <PlaceholderPage title="Special Schools" />,
+                      element: <ResourceTablePage title="Special Schools" />,
                     },
                   ],
                 },
@@ -675,19 +711,19 @@ export default function Router() {
                   children: [
                     {
                       path: "enrollment",
-                      element: <PlaceholderPage title="Enrollment Data" />,
+                      element: <ResourceTablePage title="Enrollment Data" />,
                     },
                     {
                       path: "dropout",
-                      element: <PlaceholderPage title="Retention Tracking" />,
+                      element: <ResourceTablePage title="Retention Tracking" />,
                     },
                     {
                       path: "scholarship",
-                      element: <PlaceholderPage title="Scholarships" />,
+                      element: <ResourceTablePage title="Scholarships" />,
                     },
                     {
                       path: "mdm",
-                      element: <PlaceholderPage title="Nutrition Program" />,
+                      element: <ResourceTablePage title="Nutrition Program" />,
                     },
                   ],
                 },
@@ -696,19 +732,19 @@ export default function Router() {
                   children: [
                     {
                       path: "directory",
-                      element: <PlaceholderPage title="Teacher Directory" />,
+                      element: <ResourceTablePage title="Teacher Directory" />,
                     },
                     {
                       path: "training",
-                      element: <PlaceholderPage title="Training Programs" />,
+                      element: <ResourceTablePage title="Training Programs" />,
                     },
                     {
                       path: "transfers",
-                      element: <PlaceholderPage title="Transfer Requests" />,
+                      element: <ResourceTablePage title="Transfer Requests" />,
                     },
                     {
                       path: "attendance",
-                      element: <PlaceholderPage title="Teacher Attendance" />,
+                      element: <ResourceTablePage title="Teacher Attendance" />,
                     },
                   ],
                 },
@@ -717,15 +753,17 @@ export default function Router() {
                   children: [
                     {
                       path: "board",
-                      element: <PlaceholderPage title="Board Examinations" />,
+                      element: <ResourceTablePage title="Board Examinations" />,
                     },
                     {
                       path: "competitive",
-                      element: <PlaceholderPage title="Competitive Tests" />,
+                      element: <ResourceTablePage title="Competitive Tests" />,
                     },
                     {
                       path: "results",
-                      element: <PlaceholderPage title="Performance Analysis" />,
+                      element: (
+                        <ResourceTablePage title="Performance Analysis" />
+                      ),
                     },
                   ],
                 },
@@ -745,15 +783,15 @@ export default function Router() {
                   children: [
                     {
                       path: "all",
-                      element: <PlaceholderPage title="Police Stations" />,
+                      element: <PoliceStationsPage />,
                     },
                     {
                       path: "outposts",
-                      element: <PlaceholderPage title="Police Outposts" />,
+                      element: <ResourceTablePage title="Police Outposts" />,
                     },
                     {
                       path: "checkposts",
-                      element: <PlaceholderPage title="Checkpoints" />,
+                      element: <ResourceTablePage title="Checkpoints" />,
                     },
                   ],
                 },
@@ -762,19 +800,19 @@ export default function Router() {
                   children: [
                     {
                       path: "register",
-                      element: <PlaceholderPage title="File New Report" />,
+                      element: <ResourceTablePage title="File New Report" />,
                     },
                     {
                       path: "pending",
-                      element: <PlaceholderPage title="Pending Cases" />,
+                      element: <ResourceTablePage title="Pending Cases" />,
                     },
                     {
                       path: "challan",
-                      element: <PlaceholderPage title="Traffic Fines" />,
+                      element: <ResourceTablePage title="Traffic Fines" />,
                     },
                     {
                       path: "court",
-                      element: <PlaceholderPage title="Court Cases" />,
+                      element: <ResourceTablePage title="Court Cases" />,
                     },
                   ],
                 },
@@ -783,15 +821,15 @@ export default function Router() {
                   children: [
                     {
                       path: "hotspots",
-                      element: <PlaceholderPage title="Crime Hotspots" />,
+                      element: <ResourceTablePage title="Crime Hotspots" />,
                     },
                     {
                       path: "trends",
-                      element: <PlaceholderPage title="Crime Trends" />,
+                      element: <ResourceTablePage title="Crime Trends" />,
                     },
                     {
                       path: "reports",
-                      element: <PlaceholderPage title="Monthly Reports" />,
+                      element: <ResourceTablePage title="Monthly Reports" />,
                     },
                   ],
                 },
@@ -800,19 +838,19 @@ export default function Router() {
                   children: [
                     {
                       path: "directory",
-                      element: <PlaceholderPage title="Staff Directory" />,
+                      element: <ResourceTablePage title="Staff Directory" />,
                     },
                     {
                       path: "roster",
-                      element: <PlaceholderPage title="Duty Roster" />,
+                      element: <ResourceTablePage title="Duty Roster" />,
                     },
                     {
                       path: "training",
-                      element: <PlaceholderPage title="Training" />,
+                      element: <ResourceTablePage title="Training" />,
                     },
                     {
                       path: "welfare",
-                      element: <PlaceholderPage title="Welfare" />,
+                      element: <ResourceTablePage title="Welfare" />,
                     },
                   ],
                 },
@@ -822,16 +860,16 @@ export default function Router() {
                     {
                       path: "112",
                       element: (
-                        <PlaceholderPage title="Emergency Calls (112)" />
+                        <ResourceTablePage title="Emergency Calls (112)" />
                       ),
                     },
                     {
                       path: "women",
-                      element: <PlaceholderPage title="Women's Safety" />,
+                      element: <ResourceTablePage title="Women's Safety" />,
                     },
                     {
                       path: "vip",
-                      element: <PlaceholderPage title="VIP Protection" />,
+                      element: <ResourceTablePage title="VIP Protection" />,
                     },
                   ],
                 },
@@ -852,22 +890,22 @@ export default function Router() {
                     {
                       path: "odf",
                       element: (
-                        <PlaceholderPage title="Open Defecation Free (ODF)" />
+                        <ResourceTablePage title="Open Defecation Free (ODF)" />
                       ),
                     },
                     {
                       path: "toilets",
                       element: (
-                        <PlaceholderPage title="Sanitation Infrastructure" />
+                        <ResourceTablePage title="Sanitation Infrastructure" />
                       ),
                     },
                     {
                       path: "garbage",
-                      element: <PlaceholderPage title="Garbage Collection" />,
+                      element: <ResourceTablePage title="Garbage Collection" />,
                     },
                     {
                       path: "waste",
-                      element: <PlaceholderPage title="Waste Processing" />,
+                      element: <ResourceTablePage title="Waste Processing" />,
                     },
                   ],
                 },
@@ -876,19 +914,19 @@ export default function Router() {
                   children: [
                     {
                       path: "plantation",
-                      element: <PlaceholderPage title="Plantation Drives" />,
+                      element: <ResourceTablePage title="Plantation Drives" />,
                     },
                     {
                       path: "forest",
-                      element: <PlaceholderPage title="Forest Cover" />,
+                      element: <ResourceTablePage title="Forest Cover" />,
                     },
                     {
                       path: "pollution",
-                      element: <PlaceholderPage title="Pollution Control" />,
+                      element: <ResourceTablePage title="Pollution Control" />,
                     },
                     {
                       path: "river",
-                      element: <PlaceholderPage title="River Cleaning" />,
+                      element: <ResourceTablePage title="River Cleaning" />,
                     },
                   ],
                 },
@@ -897,20 +935,20 @@ export default function Router() {
                   children: [
                     {
                       path: "lights",
-                      element: <PlaceholderPage title="Street Lighting" />,
+                      element: <ResourceTablePage title="Street Lighting" />,
                     },
                     {
                       path: "roads",
-                      element: <PlaceholderPage title="Road Maintenance" />,
+                      element: <ResourceTablePage title="Road Maintenance" />,
                     },
                     {
                       path: "drainage",
-                      element: <PlaceholderPage title="Drainage Systems" />,
+                      element: <ResourceTablePage title="Drainage Systems" />,
                     },
                     {
                       path: "parks",
                       element: (
-                        <PlaceholderPage title="Public Parks & Gardens" />
+                        <ResourceTablePage title="Public Parks & Gardens" />
                       ),
                     },
                   ],
@@ -921,16 +959,16 @@ export default function Router() {
                     {
                       path: "ngt",
                       element: (
-                        <PlaceholderPage title="Green Tribunal Orders" />
+                        <ResourceTablePage title="Green Tribunal Orders" />
                       ),
                     },
                     {
                       path: "reports",
-                      element: <PlaceholderPage title="Pollution Reports" />,
+                      element: <ResourceTablePage title="Pollution Reports" />,
                     },
                     {
                       path: "inspections",
-                      element: <PlaceholderPage title="Site Inspections" />,
+                      element: <ResourceTablePage title="Site Inspections" />,
                     },
                   ],
                 },
@@ -950,15 +988,17 @@ export default function Router() {
                   children: [
                     {
                       path: "scorecard",
-                      element: <PlaceholderPage title="District Scorecard" />,
+                      element: <ResourceTablePage title="District Scorecard" />,
                     },
                     {
                       path: "kpis",
-                      element: <PlaceholderPage title="Departmental KPIs" />,
+                      element: <ResourceTablePage title="Departmental KPIs" />,
                     },
                     {
                       path: "compare",
-                      element: <PlaceholderPage title="Comparative Analysis" />,
+                      element: (
+                        <ResourceTablePage title="Comparative Analysis" />
+                      ),
                     },
                   ],
                 },
@@ -967,15 +1007,15 @@ export default function Router() {
                   children: [
                     {
                       path: "builder",
-                      element: <PlaceholderPage title="Report Builder" />,
+                      element: <ResourceTablePage title="Report Builder" />,
                     },
                     {
                       path: "saved",
-                      element: <PlaceholderPage title="Saved Reports" />,
+                      element: <ResourceTablePage title="Saved Reports" />,
                     },
                     {
                       path: "scheduled",
-                      element: <PlaceholderPage title="Scheduled Reports" />,
+                      element: <ResourceTablePage title="Scheduled Reports" />,
                     },
                   ],
                 },
@@ -984,16 +1024,16 @@ export default function Router() {
                   children: [
                     {
                       path: "spatial",
-                      element: <PlaceholderPage title="Spatial Analysis" />,
+                      element: <ResourceTablePage title="Spatial Analysis" />,
                     },
                     {
                       path: "heatmaps",
-                      element: <PlaceholderPage title="Heatmaps" />,
+                      element: <ResourceTablePage title="Heatmaps" />,
                     },
                     {
                       path: "infrastructure",
                       element: (
-                        <PlaceholderPage title="Infrastructure Mapping" />
+                        <ResourceTablePage title="Infrastructure Mapping" />
                       ),
                     },
                   ],
@@ -1003,15 +1043,15 @@ export default function Router() {
                   children: [
                     {
                       path: "monthly",
-                      element: <PlaceholderPage title="Monthly Reports" />,
+                      element: <ResourceTablePage title="Monthly Reports" />,
                     },
                     {
                       path: "quarterly",
-                      element: <PlaceholderPage title="Quarterly Reports" />,
+                      element: <ResourceTablePage title="Quarterly Reports" />,
                     },
                     {
                       path: "annual",
-                      element: <PlaceholderPage title="Annual Reports" />,
+                      element: <ResourceTablePage title="Annual Reports" />,
                     },
                   ],
                 },
@@ -1024,26 +1064,28 @@ export default function Router() {
               children: [
                 {
                   path: "status",
-                  element: <PlaceholderPage title="System Status" />,
+                  element: <ResourceTablePage title="System Status" />,
                 },
                 {
                   path: "users",
                   children: [
                     {
                       path: "directory",
-                      element: <PlaceholderPage title="User Directory" />,
+                      element: <ResourceTablePage title="User Directory" />,
                     },
                     {
                       path: "roles",
-                      element: <PlaceholderPage title="Roles & Permissions" />,
+                      element: (
+                        <ResourceTablePage title="Roles & Permissions" />
+                      ),
                     },
                     {
                       path: "logs",
-                      element: <PlaceholderPage title="Access Logs" />,
+                      element: <ResourceTablePage title="Access Logs" />,
                     },
                     {
                       path: "password",
-                      element: <PlaceholderPage title="Password Reset" />,
+                      element: <ResourceTablePage title="Password Reset" />,
                     },
                   ],
                 },
@@ -1052,19 +1094,19 @@ export default function Router() {
                   children: [
                     {
                       path: "settings",
-                      element: <PlaceholderPage title="District Settings" />,
+                      element: <ResourceTablePage title="District Settings" />,
                     },
                     {
                       path: "features",
-                      element: <PlaceholderPage title="Feature Flags" />,
+                      element: <ResourceTablePage title="Feature Flags" />,
                     },
                     {
                       path: "branding",
-                      element: <PlaceholderPage title="Branding Settings" />,
+                      element: <ResourceTablePage title="Branding Settings" />,
                     },
                     {
                       path: "integrations",
-                      element: <PlaceholderPage title="Integrations" />,
+                      element: <ResourceTablePage title="Integrations" />,
                     },
                   ],
                 },
@@ -1074,22 +1116,22 @@ export default function Router() {
                     {
                       path: "email-sms",
                       element: (
-                        <PlaceholderPage title="Communication Channels" />
+                        <ResourceTablePage title="Communication Channels" />
                       ),
                     },
                     {
                       path: "notifications",
                       element: (
-                        <PlaceholderPage title="Notification Policies" />
+                        <ResourceTablePage title="Notification Policies" />
                       ),
                     },
                     {
                       path: "backup",
-                      element: <PlaceholderPage title="Backup & Restore" />,
+                      element: <ResourceTablePage title="Backup & Restore" />,
                     },
                     {
                       path: "api",
-                      element: <PlaceholderPage title="API Management" />,
+                      element: <ResourceTablePage title="API Management" />,
                     },
                   ],
                 },
@@ -1098,15 +1140,15 @@ export default function Router() {
                   children: [
                     {
                       path: "activity",
-                      element: <PlaceholderPage title="Activity Logs" />,
+                      element: <ResourceTablePage title="Activity Logs" />,
                     },
                     {
                       path: "errors",
-                      element: <PlaceholderPage title="Error Logs" />,
+                      element: <ResourceTablePage title="Error Logs" />,
                     },
                     {
                       path: "security",
-                      element: <PlaceholderPage title="Security Events" />,
+                      element: <ResourceTablePage title="Security Events" />,
                     },
                   ],
                 },
@@ -1120,7 +1162,7 @@ export default function Router() {
                 { path: "stations/all", element: <StationsList /> },
                 {
                   path: "stations/add",
-                  element: <PlaceholderPage title="Add Station" />,
+                  element: <ResourceTablePage title="Add Station" />,
                 },
               ],
             },
@@ -1129,7 +1171,7 @@ export default function Router() {
               children: [
                 {
                   path: "users/all",
-                  element: <PlaceholderPage title="All Users" />,
+                  element: <ResourceTablePage title="All Users" />,
                 },
               ],
             },
