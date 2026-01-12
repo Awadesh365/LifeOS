@@ -1,28 +1,59 @@
 import apiClient from "../lib/axios/client";
-import { Facility } from "../types/resources";
+import {
+  ApiResponse,
+  Resource,
+  CreateResourceDto,
+  UpdateResourceDto,
+} from "../types";
+
+const RESOURCE_ENDPOINT = "/resources";
 
 export const resourceService = {
-  getAll: async (): Promise<Facility[]> => {
-    const response = await apiClient.get<Facility[]>("/resources");
-    return response.data;
+  /**
+   * Get all resources
+   */
+  getAll: async (): Promise<Resource[]> => {
+    const response =
+      await apiClient.get<ApiResponse<Resource[]>>(RESOURCE_ENDPOINT);
+    return response.data.data;
   },
 
-  getById: async (id: string): Promise<Facility> => {
-    const response = await apiClient.get<Facility>(`/resources/${id}`);
-    return response.data;
+  /**
+   * Get a single resource by ID
+   */
+  getById: async (id: string): Promise<Resource> => {
+    const response = await apiClient.get<ApiResponse<Resource>>(
+      `${RESOURCE_ENDPOINT}/${id}`
+    );
+    return response.data.data;
   },
 
-  create: async (data: Omit<Facility, "id">): Promise<Facility> => {
-    const response = await apiClient.post<Facility>("/resources", data);
-    return response.data;
+  /**
+   * Create a new resource
+   */
+  create: async (data: CreateResourceDto): Promise<Resource> => {
+    const response = await apiClient.post<ApiResponse<Resource>>(
+      RESOURCE_ENDPOINT,
+      data
+    );
+    return response.data.data;
   },
 
-  update: async (id: string, data: Partial<Facility>): Promise<Facility> => {
-    const response = await apiClient.put<Facility>(`/resources/${id}`, data);
-    return response.data;
+  /**
+   * Update an existing resource
+   */
+  update: async (id: string, data: UpdateResourceDto): Promise<Resource> => {
+    const response = await apiClient.put<ApiResponse<Resource>>(
+      `${RESOURCE_ENDPOINT}/${id}`,
+      data
+    );
+    return response.data.data;
   },
 
+  /**
+   * Delete a resource
+   */
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/resources/${id}`);
+    await apiClient.delete(`${RESOURCE_ENDPOINT}/${id}`);
   },
 };

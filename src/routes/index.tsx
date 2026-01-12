@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import Loadable from "../components/ui/Loadable";
-import AppLayout from "../layout/AppLayout";
+import { OfficialLayout as AppLayout } from "../layouts";
 import ProtectedRoute from "./ProtectedRoute";
 import { PlaceholderPage } from "../components/ui/PlaceholderPage";
 

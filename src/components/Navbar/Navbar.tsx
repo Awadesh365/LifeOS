@@ -116,7 +116,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const ActionButton = styled(IconButton)(({ theme }) => ({
+const ActionButton = styled(IconButton)(() => ({
   color: "#64748b",
   borderRadius: 8,
   padding: 8,
@@ -165,7 +165,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moduleMenuAnchor, setModuleMenuAnchor] = useState<null | HTMLElement>(
-    null,
+    null
   );
   const location = useLocation();
   const navigate = useNavigate();
@@ -210,7 +210,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
       navigate(
         selectedModule.items[0].route.startsWith("/")
           ? selectedModule.items[0].route
-          : `/${selectedModule.items[0].route}`,
+          : `/${selectedModule.items[0].route}`
       );
     }
   };

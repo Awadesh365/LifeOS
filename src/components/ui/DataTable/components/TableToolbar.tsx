@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Toolbar,
   Typography,
@@ -8,20 +8,17 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
-  ListItemIcon,
   ListItemText,
   Checkbox,
-  Button,
-  Box
-} from '@mui/material';
+  Box,
+} from "@mui/material";
 import {
   FilterList as FilterListIcon,
   Search as SearchIcon,
   ViewColumn as ViewColumnIcon,
   Download as DownloadIcon,
-  MoreVert as MoreVertIcon
-} from '@mui/icons-material';
-import { Column } from '../../DataTable.types';
+} from "@mui/icons-material";
+import { Column } from "../DataTable.types";
 
 interface TableToolbarProps<T> {
   title?: string;
@@ -31,7 +28,7 @@ interface TableToolbarProps<T> {
   searchPlaceholder?: string;
   searchable?: boolean;
   // Export
-  onExport?: (format: 'csv' | 'xlsx') => void;
+  onExport?: (format: "csv" | "xlsx") => void;
   exportable?: boolean;
   // Column Visibility
   columns?: Column<T>[];
@@ -45,7 +42,7 @@ export function TableToolbar<T>({
   numSelected,
   onSearchChange,
   searchValue,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = "Search...",
   searchable,
   onExport,
   exportable,
@@ -55,8 +52,12 @@ export function TableToolbar<T>({
   columnVisibility,
 }: TableToolbarProps<T>) {
   // Menu states
-  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(null);
-  const [columnsAnchorEl, setColumnsAnchorEl] = useState<null | HTMLElement>(null);
+  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [columnsAnchorEl, setColumnsAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
 
   const handleExportClick = (event: React.MouseEvent<HTMLElement>) => {
     setExportAnchorEl(event.currentTarget);
@@ -66,7 +67,7 @@ export function TableToolbar<T>({
     setExportAnchorEl(null);
   };
 
-  const handleExport = (format: 'csv' | 'xlsx') => {
+  const handleExport = (format: "csv" | "xlsx") => {
     onExport?.(format);
     handleExportClose();
   };
@@ -86,7 +87,7 @@ export function TableToolbar<T>({
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
-            theme.palette.mode === 'light'
+            theme.palette.mode === "light"
               ? theme.palette.primary.main
               : theme.palette.primary.dark,
           color: (theme) => theme.palette.primary.contrastText,
@@ -95,7 +96,7 @@ export function TableToolbar<T>({
     >
       {numSelected > 0 ? (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
@@ -104,7 +105,7 @@ export function TableToolbar<T>({
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           variant="h6"
           id="tableTitle"
           component="div"
@@ -115,18 +116,18 @@ export function TableToolbar<T>({
 
       {numSelected === 0 && searchable && (
         <TextField
-            variant="standard"
-            placeholder={searchPlaceholder}
-            value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
-            InputProps={{
-                startAdornment: (
-                    <InputAdornment position="start">
-                        <SearchIcon color="action" />
-                    </InputAdornment>
-                )
-            }}
-            sx={{ mr: 2 }}
+          variant="standard"
+          placeholder={searchPlaceholder}
+          value={searchValue}
+          onChange={(e) => onSearchChange(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="action" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mr: 2 }}
         />
       )}
 
@@ -143,8 +144,12 @@ export function TableToolbar<T>({
             open={Boolean(exportAnchorEl)}
             onClose={handleExportClose}
           >
-            <MenuItem onClick={() => handleExport('csv')}>Export as CSV</MenuItem>
-            <MenuItem onClick={() => handleExport('xlsx')}>Export as Excel</MenuItem>
+            <MenuItem onClick={() => handleExport("csv")}>
+              Export as CSV
+            </MenuItem>
+            <MenuItem onClick={() => handleExport("xlsx")}>
+              Export as Excel
+            </MenuItem>
           </Menu>
         </>
       )}
@@ -165,7 +170,7 @@ export function TableToolbar<T>({
               style: { maxHeight: 300, width: 250 },
             }}
           >
-            <Box sx={{ p: 1, fontWeight: 'bold' }}>Visible Columns</Box>
+            <Box sx={{ p: 1, fontWeight: "bold" }}>Visible Columns</Box>
             {columns.map((col) => (
               <MenuItem key={col.id} onClick={() => onToggleColumn?.(col.id)}>
                 <Checkbox checked={visibleColumns.includes(col.id)} />

@@ -1,14 +1,13 @@
-import { Facility } from "../../types/resources";
+import { Resource } from "../../types";
 
-export const DUMMY_RESOURCES: Facility[] = [
+export const DUMMY_RESOURCES: Resource[] = [
   {
-    id: "h1",
+    _id: "h1",
     name: "KGMU (King George Medical University)",
     type: "hospital",
     address: "Shah Mina Rd, Chowk, Lucknow, Uttar Pradesh 226003",
     district: "Lucknow",
     head_of_dept: "Dr. Soniya Nityanand (VC)",
-    head_contact: "+91-522-2257540",
     contact_number: "0522-2258880",
     capacity: {
       total: 4500,
@@ -21,25 +20,25 @@ export const DUMMY_RESOURCES: Facility[] = [
     },
     vehicles: [
       {
-        id: "v1",
+        _id: "v1",
         type: "ambulance",
         plate_number: "UP-32-BG-1001",
         status: "available",
       },
       {
-        id: "v2",
+        _id: "v2",
         type: "ambulance",
         plate_number: "UP-32-BG-1002",
-        status: "dispatched",
+        status: "busy",
       },
       {
-        id: "v3",
+        _id: "v3",
         type: "ambulance",
         plate_number: "UP-32-BG-1003",
         status: "maintenance",
       },
       {
-        id: "v4",
+        _id: "v4",
         type: "ambulance",
         plate_number: "UP-32-BG-1004",
         status: "available",
@@ -47,7 +46,7 @@ export const DUMMY_RESOURCES: Facility[] = [
     ],
     staff: [
       {
-        id: "s1",
+        _id: "s1",
         name: "Dr. Ravi Kant",
         role: "Senior Surgeon",
         specialization: "Cardiology",
@@ -57,7 +56,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "9876543210",
       },
       {
-        id: "s2",
+        _id: "s2",
         name: "Dr. Meera Singh",
         role: "Resident Doctor",
         specialization: "Pediatrics",
@@ -67,7 +66,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "9876543211",
       },
       {
-        id: "s3",
+        _id: "s3",
         name: "Nurse Anjali",
         role: "Head Nurse",
         status: "on_duty",
@@ -76,7 +75,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "9876543212",
       },
       {
-        id: "s4",
+        _id: "s4",
         name: "Dr. P.K. Das",
         role: "Consultant",
         specialization: "Neurology",
@@ -88,13 +87,12 @@ export const DUMMY_RESOURCES: Facility[] = [
     ],
   },
   {
-    id: "p1",
+    _id: "p1",
     name: "Hazratganj Kotwali",
     type: "police_station",
     address: "Hazratganj, Lucknow, Uttar Pradesh 226001",
     district: "Lucknow",
     head_of_dept: "Inspector Akhilesh Mishra",
-    head_contact: "+91-9454403845",
     contact_number: "0522-2222222",
     capacity: {
       total: 20,
@@ -107,27 +105,27 @@ export const DUMMY_RESOURCES: Facility[] = [
     },
     vehicles: [
       {
-        id: "pv1",
+        _id: "pv1",
         type: "police_car",
         plate_number: "UP-32-AG-0100",
         status: "available",
       },
       {
-        id: "pv2",
+        _id: "pv2",
         type: "police_car",
         plate_number: "UP-32-AG-0101",
-        status: "dispatched",
+        status: "busy",
       },
       {
-        id: "pv3",
+        _id: "pv3",
         type: "police_car",
         plate_number: "UP-32-AG-0102",
-        status: "dispatched",
+        status: "busy",
       },
     ],
     staff: [
       {
-        id: "ps1",
+        _id: "ps1",
         name: "Constable Rajesh",
         role: "Constable",
         status: "on_duty",
@@ -136,7 +134,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "8877665544",
       },
       {
-        id: "ps2",
+        _id: "ps2",
         name: "SI Vinod Kumar",
         role: "Sub-Inspector",
         status: "on_duty",
@@ -145,7 +143,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "8877665545",
       },
       {
-        id: "ps3",
+        _id: "ps3",
         name: "Constable Suresh",
         role: "Driver",
         status: "off_duty",
@@ -156,13 +154,12 @@ export const DUMMY_RESOURCES: Facility[] = [
     ],
   },
   {
-    id: "sc1",
+    _id: "sc1",
     name: "City Montessori School (CMS)",
     type: "school",
     address: "Gomti Nagar Extension, Lucknow",
     district: "Lucknow",
     head_of_dept: "Mrs. Geeta Gandhi",
-    head_contact: "+91-522-2300000",
     contact_number: "0522-2300001",
     capacity: {
       total: 5000,
@@ -171,7 +168,7 @@ export const DUMMY_RESOURCES: Facility[] = [
     },
     staff: [
       {
-        id: "t1",
+        _id: "t1",
         name: "Mrs. Sharma",
         role: "Principal",
         status: "on_duty",
@@ -180,7 +177,7 @@ export const DUMMY_RESOURCES: Facility[] = [
         contact: "7766554433",
       },
       {
-        id: "t2",
+        _id: "t2",
         name: "Mr. Verma",
         role: "Senior Teacher",
         status: "on_duty",

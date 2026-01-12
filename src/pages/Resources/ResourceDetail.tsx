@@ -15,7 +15,7 @@ import {
   Button,
 } from "@mui/material";
 import { resourceService } from "../../services/resourceService";
-import { Facility } from "../../types/resources";
+import { Resource } from "../../types";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import SchoolIcon from "@mui/icons-material/School";
@@ -24,11 +24,12 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import PersonIcon from "@mui/icons-material/Person";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { PageLoader } from "../../components/common";
 
 const ResourceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [resource, setResource] = React.useState<Facility | null>(null);
+  const [resource, setResource] = React.useState<Resource | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -48,11 +49,18 @@ const ResourceDetail: React.FC = () => {
   }, [id]);
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return <PageLoader />;
   }
 
   if (!resource) {
-    return <Typography>Resource not found</Typography>;
+    return (
+      <Box sx={{ p: 3, textAlign: "center" }}>
+        <Typography variant="h5">Resource not found</Typography>
+        <Button onClick={() => navigate(-1)} sx={{ mt: 2 }}>
+          Back
+        </Button>
+      </Box>
+    );
   }
 
   const getIcon = () => {
@@ -159,36 +167,42 @@ const ResourceDetail: React.FC = () => {
               Live Status
             </Typography>
 
-            <Box sx={{ mb: 3 }}>
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
-              >
-                <Typography variant="body2" sx={{ color: "#64748b" }}>
-                  {resource.capacity?.label} Occupancy
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  {resource.capacity?.occupied} / {resource.capacity?.total}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: 8,
-                  bgcolor: "#f1f5f9",
-                  borderRadius: 4,
-                  overflow: "hidden",
-                }}
-              >
+            {resource.capacity && (
+              <Box sx={{ mb: 3 }}>
                 <Box
                   sx={{
-                    width: `${(resource.capacity!.occupied / resource.capacity!.total) * 100}%`,
-                    height: "100%",
-                    bgcolor:
-                      resource.type === "hospital" ? "#ef4444" : "#3b82f6",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
                   }}
-                />
+                >
+                  <Typography variant="body2" sx={{ color: "#64748b" }}>
+                    {resource.capacity.label} Occupancy
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {resource.capacity.occupied} / {resource.capacity.total}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 8,
+                    bgcolor: "#f1f5f9",
+                    borderRadius: 4,
+                    overflow: "hidden",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: `${(resource.capacity.occupied / resource.capacity.total) * 100}%`,
+                      height: "100%",
+                      bgcolor:
+                        resource.type === "hospital" ? "#ef4444" : "#3b82f6",
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
+            )}
 
             <Divider sx={{ my: 2 }} />
 
@@ -216,9 +230,9 @@ const ResourceDetail: React.FC = () => {
                 Fleet Status
               </Typography>
               <List disablePadding>
-                {resource.vehicles.map((vehicle) => (
+                {resource.vehicles.map((vehicle, index) => (
                   <ListItem
-                    key={vehicle.id}
+                    key={index}
                     sx={{ px: 0, py: 1.5, borderBottom: "1px solid #f1f5f9" }}
                   >
                     <ListItemAvatar>
@@ -273,15 +287,15 @@ const ResourceDetail: React.FC = () => {
                 Staff Roster & Duty
               </Typography>
               <Chip
-                label={`${resource.staff.filter((s) => s.status === "on_duty").length} On Duty`}
+                label={`${resource.staff?.filter((s) => s.status === "on_duty").length || 0} On Duty`}
                 color="success"
                 size="small"
               />
             </Box>
 
             <Grid container spacing={2}>
-              {resource.staff.map((staff) => (
-                <Grid size={{ xs: 12, sm: 6 }} key={staff.id}>
+              {resource.staff?.map((staff, index) => (
+                <Grid size={{ xs: 12, sm: 6 }} key={index}>
                   <Box
                     sx={{
                       p: 2,

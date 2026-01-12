@@ -9,17 +9,18 @@ import {
   InputBase,
 } from "@mui/material";
 import { resourceService } from "../../services/resourceService";
-import { Facility } from "../../types/resources";
+import { Resource } from "../../types";
 import { useNavigate } from "react-router-dom";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import SchoolIcon from "@mui/icons-material/School";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { PageLoader } from "../../components/common";
 
 const ResourceList: React.FC = () => {
   const navigate = useNavigate();
-  const [resources, setResources] = React.useState<Facility[]>([]);
+  const [resources, setResources] = React.useState<Resource[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -51,7 +52,7 @@ const ResourceList: React.FC = () => {
   };
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
+    return <PageLoader />;
   }
 
   return (
@@ -95,9 +96,9 @@ const ResourceList: React.FC = () => {
 
       <Grid container spacing={3}>
         {resources.map((resource) => (
-          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={resource.id}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }} key={resource._id}>
             <Card
-              onClick={() => navigate(`/admin/resources/${resource.id}`)}
+              onClick={() => navigate(`/admin/resources/${resource._id}`)}
               sx={{
                 p: 3,
                 borderRadius: 3,
@@ -174,7 +175,7 @@ const ResourceList: React.FC = () => {
                     Head of Dept
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {resource.head_of_dept.split(" ")[0]}...
+                    {resource.head_of_dept?.split(" ")[0]}...
                   </Typography>
                 </Box>
                 <IconButton size="small" sx={{ bgcolor: "#f8fafc" }}>

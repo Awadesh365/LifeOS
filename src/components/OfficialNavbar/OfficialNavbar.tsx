@@ -44,7 +44,7 @@ const StyledAppBar = styled(AppBar, {
   }),
 }));
 
-const CitySwitcher = styled(Button)(({ theme }) => ({
+const CitySwitcher = styled(Button)(() => ({
   textTransform: "none",
   color: "#0f172a",
   padding: "6px 12px",
