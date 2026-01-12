@@ -46,13 +46,14 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.42.1",
+    "@playwright/test": "^1.57.0",
     "@storybook/react": "^7.6.17",
     "@storybook/react-vite": "^7.6.17",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/file-saver": "^2.0.7",
+    "@types/node": "^25.0.6",
     "@types/papaparse": "^5.5.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
