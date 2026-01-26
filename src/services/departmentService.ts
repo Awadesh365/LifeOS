@@ -1,47 +1,37 @@
-import apiClient from "../lib/axios/client";
-import {
-  ApiResponse,
-  Department,
-  CreateDepartmentDto,
-  UpdateDepartmentDto,
-} from "../types";
-
-const DEPARTMENT_ENDPOINT = "/departments";
+import { MOCK_DEPARTMENTS } from "../mocks/data";
+import { Department, CreateDepartmentDto, UpdateDepartmentDto } from "../types";
 
 export const departmentService = {
   getAll: async (): Promise<Department[]> => {
-    const response =
-      await apiClient.get<ApiResponse<Department[]>>(DEPARTMENT_ENDPOINT);
-    return response.data.data;
+    return MOCK_DEPARTMENTS;
   },
 
   getById: async (id: string): Promise<Department> => {
-    const response = await apiClient.get<ApiResponse<Department>>(
-      `${DEPARTMENT_ENDPOINT}/${id}`
-    );
-    return response.data.data;
+    const department = MOCK_DEPARTMENTS.find((d) => d._id === id);
+    if (!department) throw new Error("Department not found");
+    return department;
   },
 
   create: async (data: CreateDepartmentDto): Promise<Department> => {
-    const response = await apiClient.post<ApiResponse<Department>>(
-      DEPARTMENT_ENDPOINT,
-      data
-    );
-    return response.data.data;
+    const newDepartment: Department = {
+      ...data,
+      _id: `dept-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return newDepartment;
   },
 
   update: async (
     id: string,
-    data: UpdateDepartmentDto
+    data: UpdateDepartmentDto,
   ): Promise<Department> => {
-    const response = await apiClient.put<ApiResponse<Department>>(
-      `${DEPARTMENT_ENDPOINT}/${id}`,
-      data
-    );
-    return response.data.data;
+    const department = MOCK_DEPARTMENTS.find((d) => d._id === id);
+    if (!department) throw new Error("Department not found");
+    return { ...department, ...data, updatedAt: new Date().toISOString() };
   },
 
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${DEPARTMENT_ENDPOINT}/${id}`);
+  delete: async (_id: string): Promise<void> => {
+    return Promise.resolve();
   },
 };

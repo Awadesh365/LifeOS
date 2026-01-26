@@ -1,42 +1,42 @@
-import apiClient from "../lib/axios/client";
-import {
-  LoginCredentials,
-  RegisterCredentials,
-  AuthResponse,
-  User,
-} from "../types/auth";
+import { LoginCredentials, RegisterCredentials, User } from "../types/auth";
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<User> => {
-    const response = await apiClient.post<AuthResponse>(
-      "/auth/login",
-      credentials
-    );
-    const user = {
-      ...response.data,
-      id: response.data._id,
+    // Mock login - accept any credentials
+    const mockUser: User = {
+      _id: "user-1",
+      id: "user-1",
+      email: credentials.email,
+      name: credentials.email.split("@")[0],
+      role: "admin",
+      token: "mock-jwt-token",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(user));
-    }
-    return user;
+
+    localStorage.setItem("token", mockUser.token || "");
+    localStorage.setItem("user", JSON.stringify(mockUser));
+
+    return mockUser;
   },
 
   register: async (credentials: RegisterCredentials): Promise<User> => {
-    const response = await apiClient.post<AuthResponse>(
-      "/auth/register",
-      credentials
-    );
-    const user = {
-      ...response.data,
-      id: response.data._id,
+    // Mock register
+    const mockUser: User = {
+      _id: "user-1",
+      id: "user-1",
+      email: credentials.email,
+      name: credentials.name,
+      role: "admin",
+      token: "mock-jwt-token",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(user));
-    }
-    return user;
+
+    localStorage.setItem("token", mockUser.token || "");
+    localStorage.setItem("user", JSON.stringify(mockUser));
+
+    return mockUser;
   },
 
   logout: () => {

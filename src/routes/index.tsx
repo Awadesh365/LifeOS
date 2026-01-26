@@ -7,16 +7,16 @@ import { PlaceholderPage } from "../components/ui/PlaceholderPage";
 
 // Lazy imports for pages
 const LandingPage = Loadable(
-  lazy(() => import("../pages/Landing/LandingPage"))
+  lazy(() => import("../pages/Landing/LandingPage")),
 );
 const LoginPage = Loadable(lazy(() => import("../pages/Auth/LoginPage")));
 
 const DistrictMagistrateOffice = Loadable(
-  lazy(() => import("../pages/District/DistrictMagistrateOffice"))
+  lazy(() => import("../pages/District/DistrictMagistrateOffice")),
 );
 
 const PoliceStationsPage = Loadable(
-  lazy(() => import("../pages/Police/PoliceStationsPage"))
+  lazy(() => import("../pages/Police/PoliceStationsPage")),
 );
 
 // Handle named export for StationsList
@@ -24,20 +24,16 @@ const StationsList = Loadable(
   lazy(() =>
     import("../pages/Stations/StationsList").then((module) => ({
       default: module.StationsList,
-    }))
-  )
+    })),
+  ),
 );
 
 const ResourceTablePage = Loadable(
-  lazy(() => import("../components/ui/DataTable/ResourceTablePage"))
+  lazy(() => import("../components/ui/DataTable/ResourceTablePage")),
 );
 
-// Inline components from App.tsx - extracted for clarity
-const DashboardPage = () => (
-  <PlaceholderPage
-    title="City Overview Dashboard"
-    description="Real-time metrics, safety index, and active emergency summaries."
-  />
+const DashboardPage = Loadable(
+  lazy(() => import("../pages/Dashboard/Dashboard")),
 );
 
 export default function Router() {

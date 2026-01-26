@@ -1,44 +1,34 @@
-import apiClient from "../lib/axios/client";
-import {
-  ApiResponse,
-  Citizen,
-  CreateCitizenDto,
-  UpdateCitizenDto,
-} from "../types";
-
-const CITIZEN_ENDPOINT = "/citizens";
+import { MOCK_CITIZENS } from "../mocks/data";
+import { Citizen, CreateCitizenDto, UpdateCitizenDto } from "../types";
 
 export const citizenService = {
   getAll: async (): Promise<Citizen[]> => {
-    const response =
-      await apiClient.get<ApiResponse<Citizen[]>>(CITIZEN_ENDPOINT);
-    return response.data.data;
+    return MOCK_CITIZENS;
   },
 
   getById: async (id: string): Promise<Citizen> => {
-    const response = await apiClient.get<ApiResponse<Citizen>>(
-      `${CITIZEN_ENDPOINT}/${id}`
-    );
-    return response.data.data;
+    const citizen = MOCK_CITIZENS.find((c) => c._id === id);
+    if (!citizen) throw new Error("Citizen not found");
+    return citizen;
   },
 
   create: async (data: CreateCitizenDto): Promise<Citizen> => {
-    const response = await apiClient.post<ApiResponse<Citizen>>(
-      CITIZEN_ENDPOINT,
-      data
-    );
-    return response.data.data;
+    const newCitizen: Citizen = {
+      ...data,
+      _id: `cit-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return newCitizen;
   },
 
   update: async (id: string, data: UpdateCitizenDto): Promise<Citizen> => {
-    const response = await apiClient.put<ApiResponse<Citizen>>(
-      `${CITIZEN_ENDPOINT}/${id}`,
-      data
-    );
-    return response.data.data;
+    const citizen = MOCK_CITIZENS.find((c) => c._id === id);
+    if (!citizen) throw new Error("Citizen not found");
+    return { ...citizen, ...data, updatedAt: new Date().toISOString() };
   },
 
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${CITIZEN_ENDPOINT}/${id}`);
+  delete: async (_id: string): Promise<void> => {
+    return Promise.resolve();
   },
 };

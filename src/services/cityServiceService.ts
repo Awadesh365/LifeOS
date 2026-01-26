@@ -1,44 +1,35 @@
-import apiClient from "../lib/axios/client";
-import {
-  ApiResponse,
-  CityService,
-  CreateServiceDto,
-  UpdateServiceDto,
-} from "../types";
-
-const SERVICE_ENDPOINT = "/services";
+import { MOCK_CITY_SERVICES } from "../mocks/data";
+import { CityService, CreateServiceDto, UpdateServiceDto } from "../types";
 
 export const cityServiceService = {
   getAll: async (): Promise<CityService[]> => {
-    const response =
-      await apiClient.get<ApiResponse<CityService[]>>(SERVICE_ENDPOINT);
-    return response.data.data;
+    return MOCK_CITY_SERVICES;
   },
 
   getById: async (id: string): Promise<CityService> => {
-    const response = await apiClient.get<ApiResponse<CityService>>(
-      `${SERVICE_ENDPOINT}/${id}`
-    );
-    return response.data.data;
+    const service = MOCK_CITY_SERVICES.find((s) => s._id === id);
+    if (!service) throw new Error("Service not found");
+    return service;
   },
 
   create: async (data: CreateServiceDto): Promise<CityService> => {
-    const response = await apiClient.post<ApiResponse<CityService>>(
-      SERVICE_ENDPOINT,
-      data
-    );
-    return response.data.data;
+    const newService: CityService = {
+      ...data,
+      _id: `svc-${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isActive: true,
+    };
+    return newService;
   },
 
   update: async (id: string, data: UpdateServiceDto): Promise<CityService> => {
-    const response = await apiClient.put<ApiResponse<CityService>>(
-      `${SERVICE_ENDPOINT}/${id}`,
-      data
-    );
-    return response.data.data;
+    const service = MOCK_CITY_SERVICES.find((s) => s._id === id);
+    if (!service) throw new Error("Service not found");
+    return { ...service, ...data, updatedAt: new Date().toISOString() };
   },
 
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${SERVICE_ENDPOINT}/${id}`);
+  delete: async (_id: string): Promise<void> => {
+    return Promise.resolve();
   },
 };

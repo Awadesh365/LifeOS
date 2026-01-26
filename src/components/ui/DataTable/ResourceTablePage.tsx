@@ -12,7 +12,7 @@ const ResourceTablePage: React.FC<ResourceTablePageProps> = ({
   title,
   description,
 }) => {
-  // Define some generic columns since we don't have real data yet
+  // Define some generic columns
   const columns: Column<any>[] = [
     { id: "id", label: "ID", minWidth: 70 },
     { id: "name", label: "Name", minWidth: 170 },
@@ -20,6 +20,17 @@ const ResourceTablePage: React.FC<ResourceTablePageProps> = ({
     { id: "updatedAt", label: "Last Updated", minWidth: 170 },
     { id: "actions", label: "Actions", minWidth: 100, align: "right" },
   ];
+
+  // Generate some generic dummy data
+  const dummyData = React.useMemo(() => {
+    return Array.from({ length: 15 }).map((_, index) => ({
+      id: `ITEM-${1000 + index}`,
+      name: `${title} Entry ${index + 1}`,
+      status:
+        index % 3 === 0 ? "Pending" : index % 3 === 1 ? "Active" : "Closed",
+      updatedAt: new Date(Date.now() - index * 86400000).toLocaleDateString(),
+    }));
+  }, [title]);
 
   return (
     <Box sx={{ p: 3, display: "flex", flexDirection: "column", gap: 3 }}>
@@ -40,7 +51,7 @@ const ResourceTablePage: React.FC<ResourceTablePageProps> = ({
       <DataTable
         title={`${title} List`}
         columns={columns}
-        data={[]}
+        data={dummyData}
         searchable={true}
         filterable={true}
         paginated={true}

@@ -18,6 +18,8 @@ export interface User {
   department?: string;
   location?: string;
   token?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LoginCredentials {
