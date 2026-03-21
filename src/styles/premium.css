@@ -1,114 +1,196 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* ============================================================
+   CityOS Design System — CSS Custom Properties & Utilities
+   Inspired by the reference design: Plus Jakarta Sans + Crimson/Navy
+   ============================================================ */
 
+/* ---- Design Tokens ---------------------------------------- */
+:root {
+  /* Primary brand — Crimson Red */
+  --primary: 0 88% 46%;
+  --primary-foreground: 0 0% 98%;
+  --primary-strong: 0 80% 38%;
+
+  /* Brand secondary — Dark Navy */
+  --brand-secondary: 215 31% 13%;
+  --brand-secondary-foreground: 0 0% 98%;
+  --brand-secondary-muted: 216 18% 76%;
+  --brand-secondary-elevated: 215 28% 18%;
+
+  /* Semantic colours */
+  --blue: 208 69% 47%;
+  --green: 143 45% 33%;
+  --red: 0 88% 46%;
+  --yellow: 39 82% 53%;
+  --purple: 258 32% 54%;
+  --teal: 174 46% 37%;
+
+  /* Soft semantic backgrounds */
+  --success-soft: 143 48% 92%;
+  --warning-soft: 39 100% 92%;
+  --danger-soft: 0 100% 94%;
+  --info-soft: 208 100% 95%;
+
+  /* Neutrals */
+  --background: 0 0% 99%;
+  --foreground: 215 28% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 28% 10%;
+  --surface: 0 0% 100%;
+  --surface-alt: 210 20% 97%;
+  --surface-elevated: 210 16% 95%;
+  --surface-tint: 0 0% 100%;
+  --surface-tint-strong: 210 20% 97%;
+  --muted: 215 16% 47%;
+  --muted-2: 215 14% 60%;
+  --border: 214 20% 88%;
+  --input: 214 16% 86%;
+  --ring: 0 88% 46%;
+  --accent: 210 16% 96%;
+  --accent-foreground: 215 28% 10%;
+  --destructive: 5 72% 57%;
+
+  /* Shell (sidebar bg tokens) */
+  --shell: 215 31% 13%;
+  --shell-foreground: 0 0% 98%;
+  --shell-muted: 216 18% 76%;
+  --shell-elevated: 215 28% 18%;
+
+  /* Shadows */
+  --shadow-card: 0 16px 36px -28px hsl(var(--foreground) / 0.24);
+  --shadow-soft: 0 28px 72px -44px hsl(var(--foreground) / 0.18);
+  --shadow-panel: 0 28px 60px -44px hsl(var(--foreground) / 0.18);
+  --shadow-glow: 0 14px 30px -18px hsl(var(--primary) / 0.26);
+  --shadow-toolbar: 0 12px 28px -22px hsl(var(--foreground) / 0.16);
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
+}
+
+/* ---- Base -------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  background-image:
+    radial-gradient(circle at top left, hsl(var(--brand-secondary) / 0.06), transparent 20%),
+    linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-tint)));
+  background-attachment: fixed;
+}
+
+/* ---- Panel / Card surfaces --------------------------------- */
+.panel-surface {
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border) / 0.88);
+  background: linear-gradient(180deg, hsl(var(--card) / 0.98), hsl(var(--surface-tint) / 0.94));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 24px 56px -42px hsl(var(--shell) / 0.22);
+  backdrop-filter: blur(4px);
+}
+
+.panel-surface-alt {
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border) / 0.82);
+  background: linear-gradient(180deg, hsl(var(--surface-tint-strong) / 0.94), hsl(var(--surface-alt) / 0.92));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 16px 36px -34px hsl(var(--shell) / 0.16);
+  backdrop-filter: blur(4px);
+}
+
+.workspace-tile {
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border) / 0.84);
+  background: linear-gradient(180deg, hsl(var(--surface) / 0.96), hsl(var(--surface-tint) / 0.9));
+  box-shadow: 0 14px 28px -28px hsl(var(--shell) / 0.18);
+}
+
+/* ---- Typography utilities --------------------------------- */
+.system-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: hsl(var(--muted));
+}
+
+.metric-value {
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}
+
+.display-title {
+  font-size: clamp(1.6rem, 0.9rem + 1.5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  font-family: var(--font-sans);
+}
+
+/* ---- Stat card icon tones --------------------------------- */
+.tone-primary  { background-color: hsl(var(--primary) / 0.1);          color: hsl(var(--primary)); }
+.tone-navy     { background-color: hsl(var(--brand-secondary) / 0.08); color: hsl(var(--brand-secondary)); }
+.tone-blue     { background-color: hsl(var(--blue) / 0.1);             color: hsl(var(--blue)); }
+.tone-green    { background-color: hsl(var(--green) / 0.1);            color: hsl(var(--green)); }
+.tone-red      { background-color: hsl(var(--red) / 0.1);              color: hsl(var(--red)); }
+.tone-yellow   { background-color: hsl(var(--yellow) / 0.12);          color: hsl(var(--yellow)); }
+.tone-purple   { background-color: hsl(var(--purple) / 0.1);           color: hsl(var(--purple)); }
+.tone-teal     { background-color: hsl(var(--teal) / 0.1);             color: hsl(var(--teal)); }
+
+/* ---- Badge ------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 2px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.badge-primary { background-color: hsl(var(--primary) / 0.1);          color: hsl(var(--primary));          border-color: hsl(var(--primary) / 0.2); }
+.badge-navy    { background-color: hsl(var(--brand-secondary) / 0.1);  color: hsl(var(--brand-secondary));  border-color: hsl(var(--brand-secondary) / 0.2); }
+.badge-blue    { background-color: hsl(var(--blue) / 0.1);             color: hsl(var(--blue));             border-color: hsl(var(--blue) / 0.2); }
+.badge-green   { background-color: hsl(var(--green) / 0.1);            color: hsl(var(--green));            border-color: hsl(var(--green) / 0.2); }
+.badge-red     { background-color: hsl(var(--red) / 0.1);              color: hsl(var(--red));              border-color: hsl(var(--red) / 0.2); }
+.badge-yellow  { background-color: hsl(var(--yellow) / 0.12);          color: hsl(var(--yellow));           border-color: hsl(var(--yellow) / 0.24); }
+.badge-purple  { background-color: hsl(var(--purple) / 0.1);           color: hsl(var(--purple));           border-color: hsl(var(--purple) / 0.2); }
+.badge-teal    { background-color: hsl(var(--teal) / 0.1);             color: hsl(var(--teal));             border-color: hsl(var(--teal) / 0.2); }
+
+/* ---- Scrollbar -------------------------------------------- */
+::-webkit-scrollbar           { width: 6px; height: 6px; }
+::-webkit-scrollbar-track     { background: hsl(var(--surface-alt)); }
+::-webkit-scrollbar-thumb     { background: hsl(var(--border)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-2)); }
+
+/* ---- Animations ------------------------------------------ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 @keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
 }
-
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-@keyframes meshShift {
-    0% {
-        background-position: 0% 0%;
-    }
-    50% {
-        background-position: 100% 100%;
-    }
-    100% {
-        background-position: 0% 0%;
-    }
-}
-
 @keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
 }
 
-@keyframes glow {
-
-    0%,
-    100% {
-        box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
-    }
-}
-
-
-.gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.glassmorphism {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-gradient {
-    background-size: 200% 200%;
-    animation: gradientShift 3s ease infinite;
-}
-
-.animate-float {
-    animation: float 3s ease-in-out infinite;
-}
-
-.animate-glow {
-    animation: glow 2s ease-in-out infinite;
-}
-
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #8b9cff 0%, #9367c9 100%);
-}
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+.animate-pulse   { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-float   { animation: float 3s ease-in-out infinite; }

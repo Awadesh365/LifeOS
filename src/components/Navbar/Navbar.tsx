@@ -30,120 +30,131 @@ import { useAuth } from "../../hooks/useAuth";
 import { NavItem } from "../../types/navigation";
 import { LanguagePicker } from "../LanguagePicker";
 
-interface StyledAppBarProps {
-  isSidebarOpen: boolean;
-}
+// Design token colours
+const C = {
+  navBg: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.96) 100%)",
+  border: "rgba(216,224,234,0.84)",
+  shadow: "0 1px 0 rgba(216,224,234,0.6), 0 8px 24px -20px rgba(16,24,40,0.12)",
+  fg: "#111827",
+  muted: "#667085",
+  muted2: "#98A2B3",
+  hoverBg: "rgba(30,37,48,0.04)",
+  activeBg: "rgba(30,37,48,0.06)",
+  navy: "#1E2530",
+  primary: "#E55555",
+  inputBg: "rgba(241,245,249,0.8)",
+  inputBorder: "rgba(216,224,234,0.9)",
+  inputFocusBorder: "#E55555",
+};
 
-// Clean, Professional Header
+interface StyledAppBarProps { isSidebarOpen: boolean; }
+
 const StyledAppBar = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== "isSidebarOpen",
-})<StyledAppBarProps>(({ theme, isSidebarOpen }) => ({
+})<StyledAppBarProps>(({ isSidebarOpen }) => ({
   position: "fixed",
   top: 0,
-  left: isSidebarOpen ? 272 : 72, // Shift based on sidebar state
-  width: isSidebarOpen ? "calc(100% - 272px)" : "calc(100% - 72px)", // Adjust width
+  left: isSidebarOpen ? 264 : 72,
+  width: isSidebarOpen ? "calc(100% - 264px)" : "calc(100% - 72px)",
   height: 64,
-  background: "#ffffff",
-  borderBottom: "1px solid #e2e8f0",
-  boxShadow: "none",
-  zIndex: theme.zIndex.drawer + 1,
-  color: "#0f172a",
+  background: C.navBg,
+  borderBottom: `1px solid ${C.border}`,
+  boxShadow: C.shadow,
+  zIndex: 1100,
+  color: C.fg,
   display: "flex",
   justifyContent: "center",
+  transition: "left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)",
 }));
 
 const ModuleSwitcher = styled(Button)(() => ({
   textTransform: "none",
-  color: "#0f172a",
-  padding: "6px 12px",
-  borderRadius: 8,
-  border: "1px solid transparent",
-  transition: "all 0.2s ease",
+  color: C.fg,
+  padding: "6px 10px",
+  borderRadius: "10px",
+  border: `1px solid ${C.inputBorder}`,
+  background: "rgba(255,255,255,0.7)",
+  backdropFilter: "blur(4px)",
+  gap: 0,
+  transition: "all 0.18s ease",
   "&:hover": {
-    backgroundColor: "#f1f5f9",
-    borderColor: "#e2e8f0",
+    backgroundColor: C.hoverBg,
+    borderColor: "rgba(30,37,48,0.2)",
   },
-  "& .MuiButton-startIcon": {
-    marginRight: 12,
-  },
+  "& .MuiButton-startIcon": { marginRight: 10 },
+  "& .MuiButton-endIcon": { marginLeft: 4 },
 }));
 
 const ModuleIconBox = styled(Box)(() => ({
-  width: 32,
-  height: 32,
-  borderRadius: 8,
+  width: 30,
+  height: 30,
+  borderRadius: "8px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+  background: C.navy,
   color: "#fff",
-  boxShadow: "0 2px 4px rgba(59, 130, 246, 0.2)",
+  flexShrink: 0,
 }));
 
-const SearchBox = styled(Box)(({ theme }) => ({
+const SearchBox = styled(Box)(() => ({
   position: "relative",
-  borderRadius: 8,
-  backgroundColor: "#f1f5f9",
-  border: "1px solid transparent",
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
+  borderRadius: "10px",
+  backgroundColor: C.inputBg,
+  border: `1px solid ${C.inputBorder}`,
   width: "100%",
-  maxWidth: 400,
-  transition: "all 0.2s ease",
-  "&:hover": {
-    backgroundColor: "#e2e8f0",
-  },
+  maxWidth: 360,
+  transition: "all 0.18s ease",
+  "&:hover": { backgroundColor: "rgba(241,245,249,1)" },
   "&:focus-within": {
     backgroundColor: "#ffffff",
-    borderColor: "#3b82f6",
-    boxShadow: "0 0 0 2px rgba(59, 130, 246, 0.1)",
+    borderColor: C.inputFocusBorder,
+    boxShadow: `0 0 0 3px rgba(229,85,85,0.1)`,
   },
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "#0f172a",
+  color: C.fg,
   width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(3)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
+    paddingLeft: "calc(1em + 28px)",
     fontSize: "0.875rem",
-    "&::placeholder": {
-      color: "#64748b",
-      opacity: 1,
-    },
+    fontFamily: '"Plus Jakarta Sans", "DM Sans", sans-serif',
+    "&::placeholder": { color: C.muted, opacity: 1 },
   },
 }));
 
-const ActionButton = styled(IconButton)(() => ({
-  color: "#64748b",
-  borderRadius: 8,
-  padding: 8,
+const ActionBtn = styled(IconButton)(() => ({
+  color: C.muted,
+  borderRadius: "9999px",
+  padding: "8px",
+  width: 36,
+  height: 36,
+  border: `1px solid rgba(216,224,234,0.9)`,
+  background:
+    "linear-gradient(180deg,rgba(255,255,255,0.9) 0%,rgba(248,250,252,0.85) 100%)",
+  backdropFilter: "blur(6px)",
+  boxShadow: "0 1px 3px rgba(16,24,40,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
+  transition: "all 0.18s ease",
   "&:hover": {
-    backgroundColor: "#f1f5f9",
-    color: "#0f172a",
+    background:
+      "linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(244,246,249,0.95) 100%)",
+    borderColor: "rgba(30,37,48,0.22)",
+    boxShadow: "0 2px 6px rgba(16,24,40,0.1), inset 0 1px 0 rgba(255,255,255,1)",
+    color: C.fg,
   },
 }));
 
 export type ModuleType =
-  | "district-admin"
-  | "state-admin"
-  | "citizen-services"
-  | "dev-schemes"
-  | "emergency"
-  | "revenue"
-  | "health"
-  | "education"
-  | "police"
-  | "environment"
-  | "analytics"
-  | "system-admin";
+  | "district-admin" | "state-admin" | "citizen-services" | "dev-schemes"
+  | "emergency" | "revenue" | "health" | "education" | "police"
+  | "environment" | "analytics" | "system-admin";
 
 interface TopNavItemProp {
   key: string;
-  labelKey: string; // i18n translation key
-  descriptionKey: string; // i18n translation key
+  labelKey: string;
+  descriptionKey: string;
   icon: string;
   color?: string;
   enabled: boolean;
@@ -157,65 +168,38 @@ interface NavbarProps {
   isSidebarOpen: boolean;
 }
 
-const SimpleNavbar: React.FC<NavbarProps> = ({
-  items,
-  activeNav,
-  setActiveNav,
-  isSidebarOpen,
-}) => {
+const SimpleNavbar: React.FC<NavbarProps> = ({ items, activeNav, setActiveNav, isSidebarOpen }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [moduleMenuAnchor, setModuleMenuAnchor] = useState<null | HTMLElement>(
-    null
-  );
+  const [moduleMenuAnchor, setModuleMenuAnchor] = useState<null | HTMLElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  // Generate breadcrumbs based on current path
-  const pathnames = location.pathname.split("/").filter((x) => x);
-
   const { user: authUser, logout } = useAuth();
+
+  const pathnames = location.pathname.split("/").filter((x) => x);
 
   const user = {
     name: authUser?.name || "Guest",
     role: authUser?.designation || "Visitor",
     initials: authUser?.name
-      ? authUser.name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .substring(0, 2)
+      ? authUser.name.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
       : "G",
   };
 
-  const handleUserClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleModuleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setModuleMenuAnchor(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setModuleMenuAnchor(null);
-  };
+  const handleUserClick = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+  const handleModuleClick = (e: React.MouseEvent<HTMLElement>) => setModuleMenuAnchor(e.currentTarget);
+  const handleClose = () => { setAnchorEl(null); setModuleMenuAnchor(null); };
 
   const handleModuleSelect = (moduleKey: string) => {
     setActiveNav(moduleKey);
     handleClose();
-    // Navigate to first route of the selected module
-    const selectedModule = items.find((m) => m.key === moduleKey);
-    if (selectedModule?.items?.[0]?.route) {
-      navigate(
-        selectedModule.items[0].route.startsWith("/")
-          ? selectedModule.items[0].route
-          : `/${selectedModule.items[0].route}`
-      );
+    const selected = items.find((m) => m.key === moduleKey);
+    if (selected?.items?.[0]?.route) {
+      const route = selected.items[0].route;
+      navigate(route.startsWith("/") ? route : `/${route}`);
     }
   };
 
-  // Get active module from items prop
   const activeModuleData = items.find((m) => m.key === activeNav) || items[0];
 
   return (
@@ -226,45 +210,45 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
           alignItems: "center",
           justifyContent: "space-between",
           px: 3,
+          height: "100%",
+          width: "100%",
         }}
       >
-        {/* Left: Module Switcher & Breadcrumbs */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+        {/* LEFT — Module switcher + breadcrumbs */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <ModuleSwitcher
             onClick={handleModuleClick}
-            endIcon={
-              <KeyboardArrowDownIcon sx={{ color: "#94a3b8", fontSize: 18 }} />
-            }
             startIcon={
-              <ModuleIconBox
-                sx={{ background: activeModuleData?.color || "#3b82f6" }}
-              >
-                <Box
-                  component="span"
-                  className="material-symbols-outlined"
-                  sx={{ fontSize: 18 }}
-                >
+              <ModuleIconBox sx={{ background: activeModuleData?.color || C.navy }}>
+                <Box component="span" className="material-symbols-outlined" sx={{ fontSize: 17 }}>
                   {activeModuleData?.icon || "dashboard"}
                 </Box>
               </ModuleIconBox>
             }
+            endIcon={<KeyboardArrowDownIcon sx={{ color: C.muted2, fontSize: 16 }} />}
           >
             <Box sx={{ textAlign: "left" }}>
               <Typography
-                variant="subtitle2"
-                sx={{ fontWeight: 700, lineHeight: 1.1 }}
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.8125rem",
+                  lineHeight: 1.15,
+                  color: C.fg,
+                  fontFamily: '"Plus Jakarta Sans", sans-serif',
+                  letterSpacing: "-0.01em",
+                }}
               >
                 {t(activeModuleData?.labelKey || "modules.districtAdmin.title")}
               </Typography>
               <Typography
-                variant="caption"
-                sx={{ color: "#64748b", fontSize: "0.7rem" }}
+                sx={{ color: C.muted, fontSize: "0.6875rem", fontWeight: 500, lineHeight: 1 }}
               >
                 {user.role}
               </Typography>
             </Box>
           </ModuleSwitcher>
 
+          {/* Module switcher dropdown */}
           <Menu
             anchorEl={moduleMenuAnchor}
             open={Boolean(moduleMenuAnchor)}
@@ -273,96 +257,89 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
             PaperProps={{
               sx: {
                 mt: 1,
-                width: 260,
-                borderRadius: 3,
-                boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)",
-                border: "1px solid #e2e8f0",
+                width: 268,
+                borderRadius: "14px",
+                boxShadow: "0 16px 48px -12px rgba(16,24,40,0.18), 0 0 0 1px rgba(216,224,234,0.6)",
+                border: "1px solid rgba(216,224,234,0.7)",
                 p: 1,
+                background: "rgba(255,255,255,0.98)",
+                backdropFilter: "blur(12px)",
               },
             }}
           >
             <Typography
-              variant="caption"
-              sx={{ px: 2, py: 1, color: "#94a3b8", fontWeight: 600 }}
+              sx={{
+                px: 1.5,
+                pt: 0.5,
+                pb: 1,
+                fontSize: "0.6875rem",
+                color: C.muted,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                display: "block",
+              }}
             >
               {t("navbar.switchContext")}
             </Typography>
-            {items
-              .filter((m) => m.enabled)
-              .map((m) => (
-                <MenuItem
-                  key={m.key}
-                  onClick={() => handleModuleSelect(m.key)}
-                  sx={{
-                    borderRadius: 2,
-                    mb: 0.5,
-                    py: 1,
-                    backgroundColor:
-                      activeNav === m.key ? "#f1f5f9" : "transparent",
-                  }}
+            {items.filter((m) => m.enabled).map((m) => (
+              <MenuItem
+                key={m.key}
+                onClick={() => handleModuleSelect(m.key)}
+                sx={{
+                  borderRadius: "8px",
+                  mb: 0.5,
+                  py: 1,
+                  px: 1.5,
+                  backgroundColor: activeNav === m.key ? "rgba(30,37,48,0.06)" : "transparent",
+                  "&:hover": { backgroundColor: "rgba(30,37,48,0.04)" },
+                }}
+              >
+                <ListItemIcon
+                  sx={{ minWidth: 34, color: activeNav === m.key ? m.color || C.navy : C.muted }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 32,
-                      color:
-                        activeNav === m.key ? m.color || "#0f172a" : "#64748b",
-                    }}
-                  >
-                    <Box
-                      component="span"
-                      className="material-symbols-outlined"
-                      sx={{ fontSize: 20 }}
-                    >
-                      {m.icon}
-                    </Box>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t(m.labelKey)}
-                    secondary={t(m.descriptionKey)}
-                    primaryTypographyProps={{
-                      fontWeight: activeNav === m.key ? 600 : 500,
-                      fontSize: "0.8rem",
-                    }}
-                    secondaryTypographyProps={{
-                      fontSize: "0.7rem",
-                      color: "#94a3b8",
-                    }}
-                  />
-                  {activeNav === m.key && (
-                    <CheckIcon
-                      fontSize="small"
-                      sx={{ color: m.color || "#0f172a" }}
-                    />
-                  )}
-                </MenuItem>
-              ))}
+                  <Box component="span" className="material-symbols-outlined" sx={{ fontSize: 20 }}>
+                    {m.icon}
+                  </Box>
+                </ListItemIcon>
+                <ListItemText
+                  primary={t(m.labelKey)}
+                  secondary={t(m.descriptionKey)}
+                  primaryTypographyProps={{
+                    fontWeight: activeNav === m.key ? 700 : 500,
+                    fontSize: "0.8125rem",
+                    fontFamily: '"Plus Jakarta Sans", sans-serif',
+                    letterSpacing: "-0.01em",
+                    color: C.fg,
+                  }}
+                  secondaryTypographyProps={{ fontSize: "0.6875rem", color: C.muted }}
+                />
+                {activeNav === m.key && (
+                  <CheckIcon fontSize="small" sx={{ color: m.color || C.navy, fontSize: 16 }} />
+                )}
+              </MenuItem>
+            ))}
           </Menu>
 
-          <Divider
-            orientation="vertical"
-            flexItem
-            sx={{ height: 24, alignSelf: "center" }}
-          />
+          <Box sx={{ width: "1px", height: 22, bgcolor: C.border }} />
 
           <Breadcrumbs
-            separator={
-              <NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />
-            }
+            separator={<NavigateNextIcon sx={{ fontSize: 14, color: C.muted2 }} />}
             aria-label="breadcrumb"
             sx={{ display: { xs: "none", md: "block" } }}
           >
             {pathnames.map((value, index) => {
               const last = index === pathnames.length - 1;
               const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-              const label = value.charAt(0).toUpperCase() + value.slice(1);
-
+              const label = value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, " ");
               return last ? (
                 <Typography
                   key={to}
                   sx={{
-                    fontSize: "0.875rem",
-                    fontWeight: 500,
-                    color: "#64748b",
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: C.muted,
+                    fontFamily: '"Plus Jakarta Sans", sans-serif',
                   }}
                 >
                   {label}
@@ -373,8 +350,7 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                   to={to}
                   key={to}
                   underline="hover"
-                  color="inherit"
-                  sx={{ fontSize: "0.875rem", color: "#94a3b8" }}
+                  sx={{ fontSize: "0.8125rem", color: C.muted2, fontFamily: '"Plus Jakarta Sans", sans-serif' }}
                 >
                   {label}
                 </MuiLink>
@@ -383,8 +359,8 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
           </Breadcrumbs>
         </Box>
 
-        {/* Right: Search & Actions */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {/* RIGHT — search, actions, profile */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
           <SearchBox>
             <Box
               sx={{
@@ -393,10 +369,10 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                 top: "50%",
                 transform: "translateY(-50%)",
                 display: "flex",
-                color: "#64748b",
+                color: C.muted,
               }}
             >
-              <SearchIcon fontSize="small" />
+              <SearchIcon sx={{ fontSize: 18 }} />
             </Box>
             <StyledInputBase placeholder="Search..." />
             <Box
@@ -405,36 +381,40 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
                 right: 10,
                 top: "50%",
                 transform: "translateY(-50%)",
-                border: "1px solid #e2e8f0",
-                borderRadius: 1,
-                px: 0.5,
-                bgcolor: "#fff",
+                border: `1px solid ${C.inputBorder}`,
+                borderRadius: "6px",
+                px: 0.75,
+                py: 0.25,
+                bgcolor: "rgba(255,255,255,0.8)",
               }}
             >
-              <Typography
-                variant="caption"
-                sx={{ color: "#94a3b8", fontSize: 10, fontWeight: 700 }}
-              >
+              <Typography sx={{ color: C.muted2, fontSize: 10, fontWeight: 700, lineHeight: 1.4 }}>
                 ⌘K
               </Typography>
             </Box>
           </SearchBox>
 
-          <ActionButton size="small">
+          <ActionBtn size="small">
             <Badge
               badgeContent={4}
-              color="error"
               sx={{
-                "& .MuiBadge-badge": { fontSize: 10, height: 16, minWidth: 16 },
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#E55555",
+                  color: "#fff",
+                  fontSize: 9,
+                  height: 15,
+                  minWidth: 15,
+                  fontWeight: 700,
+                },
               }}
             >
-              <NotificationsIcon fontSize="small" />
+              <NotificationsIcon sx={{ fontSize: 19 }} />
             </Badge>
-          </ActionButton>
+          </ActionBtn>
 
-          {/* Language Picker */}
           <LanguagePicker variant="button" />
 
+          {/* Avatar / profile trigger — pill button */}
           <Box
             onClick={handleUserClick}
             sx={{
@@ -442,24 +422,56 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
               alignItems: "center",
               gap: 1,
               cursor: "pointer",
-              p: 0.5,
-              ml: 1,
-              borderRadius: 2,
-              transition: "all 0.2s",
-              "&:hover": { bgcolor: "#f8fafc" },
+              pl: 0.5,
+              pr: 1.25,
+              py: 0.4,
+              ml: 0.25,
+              height: 36,
+              borderRadius: "9999px",
+              border: "1px solid rgba(216,224,234,0.9)",
+              background:
+                "linear-gradient(180deg,rgba(255,255,255,0.9) 0%,rgba(248,250,252,0.85) 100%)",
+              backdropFilter: "blur(6px)",
+              boxShadow:
+                "0 1px 3px rgba(16,24,40,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
+              transition: "all 0.18s ease",
+              "&:hover": {
+                background:
+                  "linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(244,246,249,0.95) 100%)",
+                borderColor: "rgba(30,37,48,0.22)",
+                boxShadow:
+                  "0 2px 6px rgba(16,24,40,0.1), inset 0 1px 0 rgba(255,255,255,1)",
+              },
             }}
           >
             <Avatar
               sx={{
-                width: 32,
-                height: 32,
-                background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
-                fontSize: "0.875rem",
-                fontWeight: 600,
+                width: 26,
+                height: 26,
+                background: "linear-gradient(135deg, #1E2530 0%, #2D3748 100%)",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                fontFamily: '"Plus Jakarta Sans", sans-serif',
               }}
             >
               {user.initials}
             </Avatar>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <Typography
+                sx={{
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: C.fg,
+                  lineHeight: 1,
+                  fontFamily: '"Plus Jakarta Sans", sans-serif',
+                  letterSpacing: "-0.01em",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user.name}
+              </Typography>
+            </Box>
+            <KeyboardArrowDownIcon sx={{ fontSize: 13, color: C.muted2, ml: -0.25 }} />
           </Box>
 
           <Popover
@@ -471,33 +483,35 @@ const SimpleNavbar: React.FC<NavbarProps> = ({
             PaperProps={{
               sx: {
                 mt: 1,
-                width: 200,
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                border: "1px solid #e2e8f0",
+                width: 210,
+                borderRadius: "12px",
+                boxShadow: "0 16px 48px -12px rgba(16,24,40,0.18), 0 0 0 1px rgba(216,224,234,0.6)",
+                border: "1px solid rgba(216,224,234,0.7)",
+                overflow: "hidden",
+                background: "rgba(255,255,255,0.98)",
+                backdropFilter: "blur(12px)",
               },
             }}
           >
+            <Box sx={{ p: 1.5, borderBottom: `1px solid ${C.border}` }}>
+              <Typography sx={{ fontSize: "0.8125rem", fontWeight: 600, color: C.fg, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+                {user.name}
+              </Typography>
+              <Typography sx={{ fontSize: "0.6875rem", color: C.muted }}>
+                {user.role}
+              </Typography>
+            </Box>
             <Box sx={{ p: 1 }}>
-              <MenuItem
-                onClick={handleClose}
-                sx={{ borderRadius: 1, fontSize: "0.875rem" }}
-              >
+              <MenuItem onClick={handleClose} sx={{ borderRadius: "8px", fontSize: "0.875rem", color: C.fg, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                 Profile
               </MenuItem>
-              <MenuItem
-                onClick={handleClose}
-                sx={{ borderRadius: 1, fontSize: "0.875rem" }}
-              >
+              <MenuItem onClick={handleClose} sx={{ borderRadius: "8px", fontSize: "0.875rem", color: C.fg, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                 Settings
               </MenuItem>
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={{ my: 0.75, borderColor: C.border }} />
               <MenuItem
-                onClick={() => {
-                  handleClose();
-                  logout();
-                }}
-                sx={{ borderRadius: 1, fontSize: "0.875rem", color: "#ef4444" }}
+                onClick={() => { handleClose(); logout(); }}
+                sx={{ borderRadius: "8px", fontSize: "0.875rem", color: "#E55555", fontFamily: '"Plus Jakarta Sans", sans-serif' }}
               >
                 Logout
               </MenuItem>

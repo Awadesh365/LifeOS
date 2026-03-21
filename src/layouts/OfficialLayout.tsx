@@ -76,7 +76,10 @@ export const OfficialLayout: React.FC = () => {
         display: "flex",
         width: "100%",
         height: "100vh",
-        bgcolor: "#f1f5f9",
+        bgcolor: "hsl(0 0% 99%)",
+        backgroundImage:
+          "radial-gradient(circle at top left, rgba(30,37,48,0.06), transparent 20%), linear-gradient(180deg, #fcfcfd, #f4f6f9)",
+        backgroundAttachment: "fixed",
       }}
     >
       <Navbar
@@ -92,13 +95,13 @@ export const OfficialLayout: React.FC = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          mt: "64px", // Matches Navbar height
-          p: 3,
+          mt: "64px",
+          p: { xs: 2, md: 3 },
           ml: 0,
-          paddingLeft: isOpen ? "272px" : "72px",
+          paddingLeft: isOpen ? "264px" : "72px",
           minWidth: 0,
           height: "calc(100vh - 64px)",
-          transition: "padding-left 0.2s ease",
+          transition: "padding-left 0.22s cubic-bezier(0.4,0,0.2,1)",
           overflow: "auto",
         }}
       >

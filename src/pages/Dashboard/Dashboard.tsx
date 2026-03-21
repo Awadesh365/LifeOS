@@ -4,212 +4,485 @@ import {
   Grid,
   Typography,
   Card,
+  CardContent,
   Stack,
-  alpha,
   LinearProgress,
+  Divider,
 } from "@mui/material";
 import {
-  TrendingUp,
+  People,
   Warning,
   CheckCircle,
-  People,
+  TrendingUp,
   LocalHospital,
   LocalPolice,
   School,
   FireTruck,
+  WaterDrop,
+  ElectricBolt,
+  ArrowUpward,
+  ArrowDownward,
 } from "@mui/icons-material";
 
+// ---- Design tokens (mirrors CSS variables) ------------------
+const C = {
+  fg: "#111827",
+  muted: "#667085",
+  muted2: "#98A2B3",
+  border: "rgba(216,224,234,0.88)",
+  surface: "#FFFFFF",
+  surfaceAlt: "#F4F6F9",
+  navy: "#1E2530",
+  primary: "#E55555",
+  blue: "#156BBA",
+  green: "#027900",
+  yellow: "#C17400",
+  purple: "#7215BA",
+  teal: "#239CE8",
+  red: "#E55555",
+};
+
+const cardSx = {
+  border: `1px solid ${C.border}`,
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px -8px rgba(16,24,40,0.07)",
+  background: `linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.94) 100%)`,
+  backgroundImage: "none",
+  transition: "box-shadow 0.18s ease",
+  "&:hover": {
+    boxShadow: "0 8px 28px -8px rgba(16,24,40,0.11)",
+  },
+};
+
+// ---- Stat card data -----------------------------------------
+const stats = [
+  {
+    label: "Total Residents",
+    value: "1.24M",
+    delta: "+3.2%",
+    deltaUp: true,
+    sublabel: "vs last month",
+    icon: <People sx={{ fontSize: 22 }} />,
+    tone: { bg: "rgba(30,37,48,0.08)", fg: C.navy },
+  },
+  {
+    label: "Active Incidents",
+    value: "24",
+    delta: "-8",
+    deltaUp: false,
+    sublabel: "since yesterday",
+    icon: <Warning sx={{ fontSize: 22 }} />,
+    tone: { bg: "rgba(229,85,85,0.1)", fg: C.red },
+  },
+  {
+    label: "Resolved Today",
+    value: "156",
+    delta: "+12",
+    deltaUp: true,
+    sublabel: "above daily avg",
+    icon: <CheckCircle sx={{ fontSize: 22 }} />,
+    tone: { bg: "rgba(2,121,0,0.09)", fg: C.green },
+  },
+  {
+    label: "Safety Index",
+    value: "92%",
+    delta: "+1.4%",
+    deltaUp: true,
+    sublabel: "city-wide score",
+    icon: <TrendingUp sx={{ fontSize: 22 }} />,
+    tone: { bg: "rgba(21,107,186,0.1)", fg: C.blue },
+  },
+];
+
+// ---- Department performance data ---------------------------
+const departments = [
+  { name: "Hospitals",       count: 42,  color: C.red,    icon: <LocalHospital sx={{ fontSize: 18 }} />,  badge: "Critical" },
+  { name: "Police Stations", count: 67,  color: C.blue,   icon: <LocalPolice   sx={{ fontSize: 18 }} />,  badge: "Normal" },
+  { name: "Schools",         count: 81,  color: C.yellow,  icon: <School        sx={{ fontSize: 18 }} />,  badge: "Normal" },
+  { name: "Fire Stations",   count: 28,  color: C.teal,   icon: <FireTruck     sx={{ fontSize: 18 }} />,  badge: "Low" },
+  { name: "Water Supply",    count: 55,  color: C.purple,  icon: <WaterDrop     sx={{ fontSize: 18 }} />,  badge: "Normal" },
+  { name: "Power Grid",      count: 73,  color: C.green,  icon: <ElectricBolt  sx={{ fontSize: 18 }} />,  badge: "Normal" },
+];
+
+// ---- Live alerts data ---------------------------------------
+const alerts = [
+  { text: "Water pipeline repair scheduled in Sector 4", time: "Just now",   severity: C.yellow },
+  { text: "New safety guidelines issued for all schools",  time: "1 hr ago",  severity: C.blue },
+  { text: "Traffic diversion active on NH-48",             time: "2 hrs ago", severity: C.red },
+  { text: "Vaccination drive launching tomorrow at 9 AM",  time: "3 hrs ago", severity: C.green },
+  { text: "Power outage resolved in Ward 12",              time: "4 hrs ago", severity: C.teal },
+];
+
+// ---- Quick-stat mini cards ----------------------------------
+const quickStats = [
+  { label: "Complaints Filed",   value: "1,842", color: C.navy },
+  { label: "Pending Approvals",  value: "318",   color: C.yellow },
+  { label: "Schemes Active",     value: "47",    color: C.blue },
+  { label: "Budget Utilised",    value: "68%",   color: C.green },
+];
+
+// ---- Helper: badge colour mapping ---------------------------
+const badgeColors: Record<string, { bg: string; color: string }> = {
+  Critical: { bg: "rgba(229,85,85,0.1)",   color: C.red },
+  Normal:   { bg: "rgba(2,121,0,0.09)",     color: C.green },
+  Low:      { bg: "rgba(21,107,186,0.1)",   color: C.blue },
+};
+
 const Dashboard: React.FC = () => {
-  const stats = [
-    {
-      label: "Total Residents",
-      value: "1.2M",
-      icon: <People />,
-      color: "#3b82f6",
-    },
-    {
-      label: "Active Incidents",
-      value: "24",
-      icon: <Warning />,
-      color: "#ef4444",
-    },
-    {
-      label: "Resolved Today",
-      value: "156",
-      icon: <CheckCircle />,
-      color: "#10b981",
-    },
-    {
-      label: "Safety Index",
-      value: "92%",
-      icon: <TrendingUp />,
-      color: "#6366f1",
-    },
-  ];
-
-  const resources = [
-    { name: "Hospitals", count: 42, color: "#ef4444", icon: <LocalHospital /> },
-    {
-      name: "Police Stations",
-      count: 28,
-      color: "#3b82f6",
-      icon: <LocalPolice />,
-    },
-    { name: "Schools", count: 124, color: "#f59e0b", icon: <School /> },
-    { name: "Fire Stations", count: 15, color: "#f97316", icon: <FireTruck /> },
-  ];
-
   return (
-    <Box sx={{ p: 4 }}>
-      <Box sx={{ mb: 4 }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 3 },
+        fontFamily: '"Plus Jakarta Sans","DM Sans",system-ui,sans-serif',
+      }}
+    >
+      {/* ---- Page header --------------------------------------- */}
+      <Box sx={{ mb: 3 }}>
         <Typography
-          variant="h4"
-          sx={{ fontWeight: 800, color: "#0f172a", mb: 1 }}
+          sx={{
+            fontWeight: 700,
+            fontSize: "clamp(1.35rem, 1rem + 1vw, 1.75rem)",
+            color: C.fg,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.2,
+            fontFamily: '"Plus Jakarta Sans",sans-serif',
+          }}
         >
-          City Overview Dashboard
+          City Overview
         </Typography>
-        <Typography variant="body1" sx={{ color: "#64748b" }}>
-          Real-time metrics, safety index, and active emergency summaries across
-          all departments.
+        <Typography sx={{ color: C.muted, fontSize: "0.875rem", mt: 0.5, fontWeight: 400 }}>
+          Real-time metrics and active summaries across all departments.
         </Typography>
       </Box>
 
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, index) => (
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
-            <Card
-              sx={{
-                p: 3,
-                borderRadius: 4,
-                boxShadow: "0 4px 20px -5px rgba(0,0,0,0.05)",
-                border: "1px solid #f1f5f9",
-              }}
-            >
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 3,
-                    bgcolor: alpha(stat.color, 0.1),
-                    color: stat.color,
-                  }}
-                >
-                  {stat.icon}
-                </Box>
-                <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "#64748b", fontWeight: 600 }}
+      {/* ---- Stat cards --------------------------------------- */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {stats.map((s, i) => (
+          <Grid size={{ xs: 12, sm: 6, xl: 3 }} key={i}>
+            <Card sx={cardSx}>
+              <CardContent sx={{ p: "20px !important" }}>
+                <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        color: C.muted,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        mb: 0.75,
+                        fontFamily: '"Plus Jakarta Sans",sans-serif',
+                      }}
+                    >
+                      {s.label}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "clamp(1.4rem, 1rem + 0.8vw, 1.8rem)",
+                        fontWeight: 700,
+                        color: C.fg,
+                        letterSpacing: "-0.04em",
+                        lineHeight: 1.1,
+                        fontFamily: '"Plus Jakarta Sans",sans-serif',
+                      }}
+                    >
+                      {s.value}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: s.tone.bg,
+                      color: s.tone.fg,
+                      flexShrink: 0,
+                    }}
                   >
-                    {stat.label}
-                  </Typography>
+                    {s.icon}
+                  </Box>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 1.5 }}>
+                  {s.deltaUp
+                    ? <ArrowUpward sx={{ fontSize: 13, color: C.green }} />
+                    : <ArrowDownward sx={{ fontSize: 13, color: C.red }} />}
                   <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 700, color: "#1e293b" }}
+                    sx={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: s.deltaUp ? C.green : C.red,
+                    }}
                   >
-                    {stat.value}
+                    {s.delta}
                   </Typography>
-                </Box>
-              </Stack>
+                  <Typography sx={{ fontSize: "0.75rem", color: C.muted2 }}>
+                    {s.sublabel}
+                  </Typography>
+                </Stack>
+              </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <Card
-            sx={{
-              p: 3,
-              borderRadius: 4,
-              boxShadow: "0 4px 20px -5px rgba(0,0,0,0.05)",
-              border: "1px solid #f1f5f9",
-              minHeight: 400,
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
-              Departmental Performance
-            </Typography>
-            <Stack spacing={4}>
-              {resources.map((res, index) => (
-                <Box key={index}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    sx={{ mb: 1 }}
-                  >
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Box sx={{ color: res.color, display: "flex" }}>
-                        {res.icon}
-                      </Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        {res.name}
-                      </Typography>
-                    </Stack>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {res.count}% Load
-                    </Typography>
-                  </Stack>
-                  <LinearProgress
-                    variant="determinate"
-                    value={res.count}
+      {/* ---- Quick mini-stats bar ------------------------------ */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {quickStats.map((q, i) => (
+          <Grid size={{ xs: 6, md: 3 }} key={i}>
+            <Box
+              sx={{
+                p: "14px 18px",
+                borderRadius: "12px",
+                border: `1px solid ${C.border}`,
+                background: "rgba(255,255,255,0.9)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography sx={{ fontSize: "0.8125rem", color: C.muted, fontWeight: 500, fontFamily: '"Plus Jakarta Sans",sans-serif' }}>
+                {q.label}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  color: q.color,
+                  letterSpacing: "-0.02em",
+                  fontFamily: '"Plus Jakarta Sans",sans-serif',
+                }}
+              >
+                {q.value}
+              </Typography>
+            </Box>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* ---- Main content row --------------------------------- */}
+      <Grid container spacing={2.5}>
+        {/* Departmental Performance */}
+        <Grid size={{ xs: 12, lg: 7 }}>
+          <Card sx={{ ...cardSx, height: "100%" }}>
+            <CardContent sx={{ p: "20px !important" }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2.5 }}>
+                <Box>
+                  <Typography
                     sx={{
-                      height: 8,
-                      borderRadius: 4,
-                      bgcolor: alpha(res.color, 0.1),
-                      "& .MuiLinearProgress-bar": {
-                        bgcolor: res.color,
-                        borderRadius: 4,
-                      },
+                      fontWeight: 700,
+                      fontSize: "0.9375rem",
+                      color: C.fg,
+                      letterSpacing: "-0.02em",
+                      fontFamily: '"Plus Jakarta Sans",sans-serif',
                     }}
-                  />
+                  >
+                    Departmental Load
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.8125rem", color: C.muted, mt: 0.25 }}>
+                    Current operational capacity utilisation
+                  </Typography>
                 </Box>
-              ))}
-            </Stack>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.75,
+                    px: 1.5,
+                    py: 0.75,
+                    borderRadius: "8px",
+                    border: `1px solid ${C.border}`,
+                    bgcolor: C.surfaceAlt,
+                  }}
+                >
+                  <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: C.green, flexShrink: 0 }} />
+                  <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: C.muted }}>
+                    Live
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Stack spacing={2.5}>
+                {departments.map((dep, i) => {
+                  const bc = badgeColors[dep.badge] || badgeColors["Normal"];
+                  return (
+                    <Box key={i}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Box
+                            sx={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: `${dep.color}18`,
+                              color: dep.color,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {dep.icon}
+                          </Box>
+                          <Typography
+                            sx={{
+                              fontSize: "0.875rem",
+                              fontWeight: 600,
+                              color: C.fg,
+                              fontFamily: '"Plus Jakarta Sans",sans-serif',
+                            }}
+                          >
+                            {dep.name}
+                          </Typography>
+                        </Stack>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Box
+                            sx={{
+                              px: 1,
+                              py: 0.25,
+                              borderRadius: "6px",
+                              bgcolor: bc.bg,
+                              color: bc.color,
+                              fontSize: "0.6875rem",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {dep.badge}
+                          </Box>
+                          <Typography sx={{ fontSize: "0.8125rem", fontWeight: 700, color: C.fg, minWidth: 36, textAlign: "right" }}>
+                            {dep.count}%
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      <LinearProgress
+                        variant="determinate"
+                        value={dep.count}
+                        sx={{
+                          height: 6,
+                          borderRadius: "9999px",
+                          bgcolor: `${dep.color}15`,
+                          "& .MuiLinearProgress-bar": {
+                            bgcolor: dep.color,
+                            borderRadius: "9999px",
+                          },
+                        }}
+                      />
+                    </Box>
+                  );
+                })}
+              </Stack>
+            </CardContent>
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <Card
-            sx={{
-              p: 3,
-              borderRadius: 4,
-              boxShadow: "0 4px 20px -5px rgba(0,0,0,0.05)",
-              border: "1px solid #f1f5f9",
-              height: "100%",
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
-              Live Alerts
-            </Typography>
-            <Stack spacing={2}>
-              {[
-                "Water pipeline repair in Sector 4",
-                "New safety guidelines issued for schools",
-                "Traffic diversion on Main Highway",
-                "Vaccination drive starting tomorrow",
-              ].map((alert, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    p: 2,
-                    borderRadius: 3,
-                    bgcolor: "#f8fafc",
-                    border: "1px solid #f1f5f9",
-                  }}
-                >
+        {/* Right column — Live Alerts */}
+        <Grid size={{ xs: 12, lg: 5 }}>
+          <Card sx={{ ...cardSx, height: "100%" }}>
+            <CardContent sx={{ p: "20px !important" }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+                <Box>
                   <Typography
-                    variant="body2"
-                    sx={{ color: "#1e293b", fontWeight: 500 }}
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.9375rem",
+                      color: C.fg,
+                      letterSpacing: "-0.02em",
+                      fontFamily: '"Plus Jakarta Sans",sans-serif',
+                    }}
                   >
-                    {alert}
+                    Live Alerts
                   </Typography>
-                  <Typography variant="caption" sx={{ color: "#94a3b8" }}>
-                    {index + 1} hour ago
+                  <Typography sx={{ fontSize: "0.8125rem", color: C.muted, mt: 0.25 }}>
+                    Active city-wide notifications
                   </Typography>
                 </Box>
-              ))}
-            </Stack>
+                <Box
+                  sx={{
+                    px: 1.25,
+                    py: 0.4,
+                    borderRadius: "9999px",
+                    bgcolor: "rgba(229,85,85,0.1)",
+                    border: "1px solid rgba(229,85,85,0.2)",
+                    color: C.red,
+                    fontSize: "0.6875rem",
+                    fontWeight: 700,
+                  }}
+                >
+                  {alerts.length} Active
+                </Box>
+              </Stack>
+
+              <Stack
+                divider={<Divider sx={{ borderColor: `${C.border}` }} />}
+                spacing={0}
+              >
+                {alerts.map((alert, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      py: 1.5,
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 1.5,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        bgcolor: alert.severity,
+                        mt: "6px",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: "0.8125rem",
+                          fontWeight: 500,
+                          color: C.fg,
+                          lineHeight: 1.45,
+                          fontFamily: '"Plus Jakarta Sans",sans-serif',
+                        }}
+                      >
+                        {alert.text}
+                      </Typography>
+                      <Typography sx={{ fontSize: "0.6875rem", color: C.muted2, mt: 0.25 }}>
+                        {alert.time}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+
+              {/* Footer link */}
+              <Box
+                sx={{
+                  mt: 2,
+                  pt: 1.5,
+                  borderTop: `1px solid ${C.border}`,
+                  textAlign: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 600,
+                    color: C.navy,
+                    cursor: "pointer",
+                    "&:hover": { color: C.primary },
+                    transition: "color 0.15s ease",
+                    fontFamily: '"Plus Jakarta Sans",sans-serif',
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  View all alerts →
+                </Typography>
+              </Box>
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
