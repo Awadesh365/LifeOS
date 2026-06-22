@@ -16,7 +16,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LanguageIcon from "@mui/icons-material/Language";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckIcon from "@mui/icons-material/Check";
-import { useTranslation } from "react-i18next";
 import {
   INDIAN_LANGUAGES,
   LanguageOption,
@@ -56,7 +55,6 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({
   variant = "button",
   showNativeName = true,
 }) => {
-  useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const currentLang = getCurrentLanguage();
