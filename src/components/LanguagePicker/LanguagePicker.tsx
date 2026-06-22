@@ -56,7 +56,7 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({
   variant = "button",
   showNativeName = true,
 }) => {
-  const { t } = useTranslation();
+  useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const currentLang = getCurrentLanguage();
