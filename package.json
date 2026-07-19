@@ -1,7 +1,7 @@
 {
-  "name": "cityos-frontend",
+  "name": "lifeos-frontend",
   "version": "1.0.0",
-  "description": "CityOS Frontend - Enterprise React Application",
+  "description": "LifeOS frontend for personal, societal, city, state, country, and world operating scopes",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

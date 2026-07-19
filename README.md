@@ -1,230 +1,128 @@
-# CityOS Frontend
+# LifeOS Frontend
 
-Modern, scalable React application for CityOS built with **enterprise-grade architecture**.
+LifeOS is a React frontend for operating across multiple scopes of life and governance:
 
-## 🎯 Architecture Highlights
+- Personal
+- Societal
+- City
+- State
+- Country
+- World
 
-- **Framework**: React 18 + TypeScript + Vite
-- **Structure**: Feature-based + Atomic Design
-- **State**: Zustand (global) + React Query (server) + React Hook Form (forms)
-- **Styling**: CSS Modules with design tokens
-- **Testing**: Vitest + React Testing Library + Playwright
+This repository is the canonical frontend for the merged project. It keeps the original CityOS frontend Git history and adds the Life Tracker frontend as the LifeOS Personal scope.
 
-## 📁 Project Structure
+## Current Scope Status
 
-```
+| Scope | Route | Status | Source |
+| --- | --- | --- | --- |
+| Personal | `/personal` | Live | Migrated from `life-tracker/frontend` |
+| Societal | `/societal` | Foundation | New LifeOS scope |
+| City | `/city` | Live | Existing CityOS frontend |
+| State | `/state` | Foundation | New LifeOS scope |
+| Country | `/country` | Foundation | New LifeOS scope |
+| World | `/world` | Foundation | New LifeOS scope |
+
+## Architecture
+
+The app is built with React 18, TypeScript, Vite, Material UI, Redux Toolkit, React Router, and React Query.
+
+Key folders:
+
+```text
 src/
-├── components/     # Reusable UI (Atomic Design)
-├── features/       # Domain modules (auth, users, billing)
-├── pages/          # Route pages
-├── layouts/        # Page layouts
-├── hooks/          # Custom hooks
-├── store/          # Global state (Zustand)
-├── services/       # API layer
-├── utils/          # Helper functions
-├── types/          # TypeScript types
-└── config/         # Configuration
+  app/                 LifeOS scope model and shared scope UI
+  scopes/personal/     Migrated Life Tracker frontend
+  pages/               LifeOS home and existing CityOS pages
+  layouts/             City scope layout shells
+  routes/              Application routing
+  services/            API clients
+  redux/               Global state
+  styles/              Shared design system styles
 ```
 
-See [STRUCTURE.md](./STRUCTURE.md) for complete folder organization.
+The Personal scope keeps its own layout, theme, pages, and CSS under `src/scopes/personal`. Its CSS is scoped under `.lifeos-personal-scope` so it does not override the City scope.
 
-## 🚀 Getting Started
+## Routes
 
-### Prerequisites
+Core LifeOS routes:
+
+```text
+/                         LifeOS scope dashboard
+/personal                 Personal dashboard
+/personal/habits          Personal habits
+/personal/routine         Personal routine
+/personal/learning        Personal learning
+/personal/jobs            Personal jobs
+/personal/goals           Personal goals
+/personal/projects        Personal projects
+/personal/philosophy      Personal philosophy
+/personal/articles        Personal articles
+/personal/health          Personal health
+/personal/wealth          Personal wealth
+/personal/debts           Personal debts
+/personal/funds           Personal emergency funds
+/personal/networking      Personal networking
+/personal/career          Personal career
+/personal/future-plans    Personal future plans
+/personal/diet            Personal diet
+/societal                 Societal scope foundation
+/city                     City scope dashboard
+/state                    State scope foundation
+/country                  Country scope foundation
+/world                    World scope foundation
+```
+
+Legacy CityOS routes such as `/dashboard`, `/district/*`, `/services/*`, `/emergency/*`, and `/analytics/*` are still preserved during migration.
+
+## Local Development
+
+Prerequisites:
+
 - Node.js 18+
-- npm or pnpm
+- npm
 
-### Installation
+Install dependencies:
 
 ```bash
-# Install dependencies
 npm install
+```
 
-# Start development server
+Start the frontend:
+
+```bash
 npm run dev
+```
 
-# Build for production
+Build for production:
+
+```bash
 npm run build
+```
 
-# Run tests
+Run tests:
+
+```bash
 npm test
-
-# Run E2E tests
 npm run test:e2e
 ```
 
-## 🛠 Available Scripts
+## Environment Variables
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server (http://localhost:5173) |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm test` | Run unit tests |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:e2e` | Run E2E tests (Playwright) |
-| `npm run lint` | Lint code |
-| `npm run format` | Format code with Prettier |
-| `npm run storybook` | Start Storybook |
-
-## 📚 Documentation
-
-- [**Codebase Structure**](../standards/frontend/CODEBASE_STRUCTURE.md) - Complete folder organization
-- [**Component Architecture**](../standards/frontend/COMPONENT_ARCHITECTURE.md) - How to build components
-- [**State Management**](../standards/frontend/STATE_MANAGEMENT.md) - When to use which state solution
-- [**Frontend Standards**](../standards/frontend/README.md) - Development standards
-
-## 🏗️ Architecture Decisions
-
-### Why Feature-Based?
-
-Features are self-contained modules:
-```
-features/auth/
-├── components/   # LoginForm, RegisterForm
-├── hooks/        # useLogin, useAuth
-├── services/     # auth.api.ts
-├── store/        # authSlice.ts
-└── index.ts      # Public API
-```
-
-**Benefits**:
-- Easy to find related code
-- Can assign entire features to teams
-- Can extract to separate packages
-- Clear boundaries
-
-### Why CSS Modules?
-
-- **Scoped styles** - No global conflicts
-- **Type-safe** - TypeScript support
-- **Performance** - Only load what's needed
-- **Flexible** - Easy to override
-
-### Why React Query?
-
-- **Automatic caching** - Fetch once, use everywhere
-- **Background updates** - Data stays fresh
-- **Built-in loading/error** - Less boilerplate
-- **Optimistic updates** - Better UX
-
-## 🎨 Component Library
-
-### Atoms (Basic)
-- Button, Input, Icon, Badge, Avatar, Spinner
-
-### Molecules (Composite)
-- FormField, Card, SearchBar, Modal, Dropdown
-
-### Organisms (Complex)
-- Header, Sidebar, DataTable, UserProfile
-
-## 🔧 Path Aliases
-
-Import with clean paths:
-
-```typescript
-import { Button } from '@components/atoms/Button';
-import { useAuth } from '@hooks/useAuth';
-import { User } from '@types/models/User';
-import { formatDate } from '@utils/formatters/date';
-```
-
-Configured in `tsconfig.json`.
-
-## 🧪 Testing Strategy
-
-### Unit Tests (Vitest)
-```bash
-npm test
-```
-
-Test component logic, hooks, utilities.
-
-### E2E Tests (Playwright)
-```bash
-npm run test:e2e
-```
-
-Test critical user flows.
-
-### Coverage Target
-- **Minimum**: 80%
-- **Critical paths**: 100%
-
-## 📦 Build Output
-
-```bash
-npm run build
-```
-
-Output in `dist/`:
-- Minified JavaScript
-- Optimized CSS
-- Compressed images
-- Source maps (optional)
-
-## 🚢 Deployment
-
-### Vercel/Netlify
-```bash
-# Automatically detected by Vite
-npm run build
-```
-
-### Docker
-```bash
-docker build -t cityos-frontend .
-docker run -p 80:80 cityos-frontend
-```
-
-## 🔐 Environment Variables
-
-Create `.env.local`:
+Create `.env.local` when local API URLs differ from defaults:
 
 ```env
 VITE_API_URL=http://localhost:3000
 VITE_WS_URL=ws://localhost:3000
-VITE_ANALYTICS_ID=your-analytics-id
+VITE_PERSONAL_API_URL=http://localhost:3001/api
 ```
 
-Access in code:
-```typescript
-const API_URL = import.meta.env.VITE_API_URL;
-```
+`VITE_PERSONAL_API_URL` is used by the migrated Personal scope. If it is not set, the frontend falls back to `http://localhost:3001/api`, matching the original Life Tracker frontend.
 
-## 🤝 Contributing
+## Migration Tracking
 
-1. Follow the [Frontend Standards](../standards/frontend/README.md)
-2. Write tests for new features
-3. Run linter before committing
-4. Create Storybook stories for components
-5. Update documentation
+The migration checklist is maintained at:
 
-## 📈 Performance
+[docs/LIFEOS_MIGRATION_CHECKLIST.md](docs/LIFEOS_MIGRATION_CHECKLIST.md)
 
-### Targets
-- **FCP**: < 1.8s
-- **TTI**: < 3.8s
-- **Lighthouse**: > 90
+Do not mark migration items complete until the implementation has been verified.
 
-### Optimization Techniques
-- Code splitting (React.lazy)
-- Image optimization (WebP)
-- Bundle analysis
-- Memoization (React.memo, useMemo)
-
-## 🌐 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## 📝 License
-
-See [LICENSE](../LICENSE)
-
----
-
-**Built with ❤️ for CityOS**

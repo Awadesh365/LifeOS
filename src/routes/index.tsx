@@ -4,12 +4,18 @@ import Loadable from "../components/ui/Loadable";
 import { OfficialLayout as AppLayout } from "../layouts";
 import ProtectedRoute from "./ProtectedRoute";
 import { PlaceholderPage } from "../components/ui/PlaceholderPage";
+import { LifeOSScopePlaceholder } from "../app/LifeOSScopePlaceholder";
 
 // Lazy imports for pages
+const LifeOSHome = Loadable(lazy(() => import("../pages/LifeOSHome/LifeOSHome")));
+
 const LandingPage = Loadable(
   lazy(() => import("../pages/Landing/LandingPage")),
 );
 const LoginPage = Loadable(lazy(() => import("../pages/Auth/LoginPage")));
+const PersonalScope = Loadable(
+  lazy(() => import("../scopes/personal/PersonalScope")),
+);
 
 const DistrictMagistrateOffice = Loadable(
   lazy(() => import("../pages/District/DistrictMagistrateOffice")),
@@ -41,6 +47,30 @@ export default function Router() {
     // Public Routes
     {
       path: "/",
+      element: <LifeOSHome />,
+    },
+    {
+      path: "/personal/*",
+      element: <PersonalScope />,
+    },
+    {
+      path: "/societal",
+      element: <LifeOSScopePlaceholder scopeId="societal" />,
+    },
+    {
+      path: "/state",
+      element: <LifeOSScopePlaceholder scopeId="state" />,
+    },
+    {
+      path: "/country",
+      element: <LifeOSScopePlaceholder scopeId="country" />,
+    },
+    {
+      path: "/world",
+      element: <LifeOSScopePlaceholder scopeId="world" />,
+    },
+    {
+      path: "/city/landing",
       element: <LandingPage />,
     },
     {
@@ -56,6 +86,8 @@ export default function Router() {
           path: "/",
           element: <AppLayout />,
           children: [
+            { path: "city", element: <DashboardPage /> },
+            { path: "city/dashboard", element: <DashboardPage /> },
             { path: "dashboard", element: <DashboardPage /> },
 
             // District Admin Routes (Detailed)
