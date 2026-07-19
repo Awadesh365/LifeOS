@@ -1,21 +1,63 @@
 import { test, expect } from "@playwright/test";
 
+const seedAuthenticatedUser = async (page: import("@playwright/test").Page) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("token", "mock-jwt-token");
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        _id: "user-1",
+        id: "user-1",
+        email: "tester@lifeos.local",
+        name: "LifeOS Tester",
+        role: "admin",
+        token: "mock-jwt-token",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }),
+    );
+  });
+};
+
 test.describe("LifeOS Frontend - Page Loading Tests", () => {
   test("Landing page loads correctly", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/LifeOS/);
-    // Check for main content
-    await expect(page.locator("body")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "LifeOS" })).toBeVisible();
+  });
+
+  test("Scope dashboard exposes the LifeOS scopes", async ({ page }) => {
+    await page.goto("/");
+
+    for (const scope of ["Personal", "Societal", "City", "State", "Country", "World"]) {
+      await expect(page.getByRole("link", { name: new RegExp(scope) }).first()).toBeVisible();
+    }
+  });
+
+  test("Personal scope loads the migrated Life Tracker dashboard", async ({ page }) => {
+    await page.goto("/personal");
+    await expect(page.getByText("LifeOS Personal").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  });
+
+  for (const scope of ["societal", "state", "country", "world"]) {
+    test(`${scope} scope foundation page loads`, async ({ page }) => {
+      await page.goto(`/${scope}`);
+      await expect(page.getByRole("heading", { name: new RegExp(scope, "i") })).toBeVisible();
+    });
+  }
+
+  test("City scope opens the existing CityOS dashboard for authenticated users", async ({ page }) => {
+    await seedAuthenticatedUser(page);
+    await page.goto("/city");
+    await expect(page.getByText("LifeOS").first()).toBeVisible();
+    await expect(page.getByText("City Overview").first()).toBeVisible();
   });
 
   test("Login page loads correctly", async ({ page }) => {
     await page.goto("/login");
-    // Check that page loads (title may be generic)
     await expect(page.locator("body")).toBeVisible();
-    // Check for login form elements if they exist
-    const emailInput = page.locator(
-      'input[type="email"], input[name*="email"]',
-    );
+    const emailInput = page.getByPlaceholder("name@lifeos.local");
     const passwordInput = page.locator('input[type="password"]');
     const submitButton = page.locator('button[type="submit"]');
 

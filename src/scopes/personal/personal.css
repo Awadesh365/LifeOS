@@ -2783,7 +2783,7 @@
   background: var(--bg-header);
   backdrop-filter: blur(20px);
   position: sticky;
-  top: 0;
+  top: var(--lifeos-scopebar-height, 0px);
   z-index: 50;
 }
 
@@ -2835,7 +2835,10 @@
   .lifeos-personal-scope .sidebar-overlay {
     display: block;
     position: fixed;
-    inset: 0;
+    top: var(--lifeos-scopebar-height, 0px);
+    right: 0;
+    bottom: 0;
+    left: 0;
     background: rgba(0, 0, 0, 0.6);
     z-index: 150;
     animation: lifeosPersonalFadeIn 0.2s ease;
@@ -2843,9 +2846,10 @@
 
   .lifeos-personal-scope .sidebar.sidebar-mobile {
     position: fixed;
-    top: 0;
+    top: var(--lifeos-scopebar-height, 0px);
     left: 0;
     bottom: 0;
+    height: calc(100vh - var(--lifeos-scopebar-height, 0px));
     width: 280px;
     z-index: 160;
     transform: translateX(-100%);

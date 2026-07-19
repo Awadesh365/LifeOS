@@ -1,6 +1,6 @@
-# LifeOS Frontend
+# LifeOS Monorepo
 
-LifeOS is a React frontend for operating across multiple scopes of life and governance:
+LifeOS is a single repository for the frontend and backend services that operate across multiple scopes of life and governance:
 
 - Personal
 - Societal
@@ -9,22 +9,22 @@ LifeOS is a React frontend for operating across multiple scopes of life and gove
 - Country
 - World
 
-This repository is the canonical frontend for the merged project. It keeps the original CityOS frontend Git history and adds the Life Tracker frontend as the LifeOS Personal scope.
+This repository is the canonical LifeOS repository. It keeps the original CityOS frontend Git history, adds the Life Tracker frontend as the LifeOS Personal scope, and now contains both backend services under `backend/`.
 
 ## Current Scope Status
 
-| Scope | Route | Status | Source |
-| --- | --- | --- | --- |
-| Personal | `/personal` | Live | Migrated from `life-tracker/frontend` |
-| Societal | `/societal` | Foundation | New LifeOS scope |
-| City | `/city` | Live | Existing CityOS frontend |
-| State | `/state` | Foundation | New LifeOS scope |
-| Country | `/country` | Foundation | New LifeOS scope |
-| World | `/world` | Foundation | New LifeOS scope |
+| Scope | Frontend Route | Backend | Status | Source |
+| --- | --- | --- | --- | --- |
+| Personal | `/personal` | `backend/personal` | Live | Migrated from `life-tracker/frontend` and `life-tracker/server` |
+| Societal | `/societal` | Not defined yet | Foundation | New LifeOS scope |
+| City | `/city` | `backend/city` | Live | Existing CityOS frontend and CityOS backend |
+| State | `/state` | Not defined yet | Foundation | New LifeOS scope |
+| Country | `/country` | Not defined yet | Foundation | New LifeOS scope |
+| World | `/world` | Not defined yet | Foundation | New LifeOS scope |
 
 ## Architecture
 
-The app is built with React 18, TypeScript, Vite, Material UI, Redux Toolkit, React Router, and React Query.
+The frontend is built with React 18, TypeScript, Vite, Material UI, Redux Toolkit, React Router, and React Query. The backend services are Express, TypeScript, PostgreSQL, and Sequelize services kept as separate packages inside this repo.
 
 Key folders:
 
@@ -38,9 +38,28 @@ src/
   services/            API clients
   redux/               Global state
   styles/              Shared design system styles
+backend/
+  city/                Migrated CityOS backend service
+  personal/            Migrated Life Tracker backend service
 ```
 
 The Personal scope keeps its own layout, theme, pages, and CSS under `src/scopes/personal`. Its CSS is scoped under `.lifeos-personal-scope` so it does not override the City scope.
+
+## Backend Services
+
+| Package | Path | Purpose |
+| --- | --- | --- |
+| `@lifeos/backend-city` | `backend/city` | City-level civic and administration backend migrated from `CItyos-Project/backend` |
+| `@lifeos/backend-personal` | `backend/personal` | Personal Life Tracker backend migrated from `life-tracker/server` |
+
+Secrets and generated folders were not copied. Use each backend service's `.env.example` as the starting point for local configuration.
+
+Current backend migration status:
+
+- `backend/personal` source is present; the original Life Tracker backend build passed before migration.
+- `backend/city` source is present; the original CityOS backend build already had TypeScript blockers before migration.
+- Root workspace dependency installation still needs to complete so `package-lock.json` can include the backend workspaces.
+- Copied backend builds should be re-run after workspace dependencies are installed.
 
 ## Routes
 
@@ -78,7 +97,7 @@ Legacy CityOS routes such as `/dashboard`, `/district/*`, `/services/*`, `/emerg
 
 Prerequisites:
 
-- Node.js 18+
+- Node.js 24 recommended. This repo includes `.nvmrc`.
 - npm
 
 Install dependencies:
@@ -93,11 +112,33 @@ Start the frontend:
 npm run dev
 ```
 
-Build for production:
+Start backend services:
+
+```bash
+npm run dev:backend:city
+npm run dev:backend:personal
+```
+
+Build the frontend:
 
 ```bash
 npm run build
 ```
+
+Build backend services:
+
+```bash
+npm run build:backend:city
+npm run build:backend:personal
+```
+
+Build the full repo:
+
+```bash
+npm run build:all
+```
+
+At the moment, `npm run build` is the verified frontend build. `npm run build:all` also includes backend builds and should be treated as a migration target until backend workspace installation and inherited City backend TypeScript fixes are complete.
 
 Run tests:
 
@@ -118,6 +159,11 @@ VITE_PERSONAL_API_URL=http://localhost:3001/api
 
 `VITE_PERSONAL_API_URL` is used by the migrated Personal scope. If it is not set, the frontend falls back to `http://localhost:3001/api`, matching the original Life Tracker frontend.
 
+Backend environment examples:
+
+- `backend/city/.env.example`
+- `backend/personal/.env.example`
+
 ## Migration Tracking
 
 The migration checklist is maintained at:
@@ -125,4 +171,3 @@ The migration checklist is maintained at:
 [docs/LIFEOS_MIGRATION_CHECKLIST.md](docs/LIFEOS_MIGRATION_CHECKLIST.md)
 
 Do not mark migration items complete until the implementation has been verified.
-

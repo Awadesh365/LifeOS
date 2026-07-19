@@ -2,9 +2,9 @@
 
 ## Purpose
 
-LifeOS is the merged long-term project that combines the existing CityOS frontend and the Life Tracker personal system into one larger operating layer for human life and governance.
+LifeOS is the merged long-term project that combines CityOS and Life Tracker into one operating system for personal life and public governance.
 
-The project should scale through these views:
+The project scales through these views:
 
 - Personal
 - Societal
@@ -13,303 +13,311 @@ The project should scale through these views:
 - Country
 - World
 
-This migration uses `CItyos-Project/CityOS-Frontend` as the canonical repository so the older CityOS Git history remains the main project history. The existing Life Tracker experience must be moved into this repo as the `Personal` view without reducing its current functionality.
+`CItyos-Project/CityOS-Frontend` remains the canonical repository so the oldest CityOS frontend Git history continues as the main LifeOS project history. Life Tracker is migrated into this repo as the `Personal` scope. CityOS remains the `City` scope. Both backend services now belong inside this repository under `backend/`.
 
-## Current Repositories
+## Canonical Repository
 
-- `CItyos-Project/CityOS-Frontend`
-  - Role after migration: canonical LifeOS frontend repository.
-  - Current identity: CityOS frontend.
-  - Existing value: oldest frontend repository and existing city-level governance UI.
+| Item | Status |
+| --- | --- |
+| Canonical repo | `CItyos-Project/CityOS-Frontend` |
+| Current branch | `main` |
+| Product name | LifeOS |
+| Frontend location | Repository root and `src/` |
+| City backend location | `backend/city` |
+| Personal backend location | `backend/personal` |
 
-- `life-tracker/frontend`
-  - Role after migration: source for the LifeOS Personal view.
-  - Current identity: personal life tracker UI.
-  - Existing value: completed personal management workflows.
+## Source Repositories
 
-- `life-tracker/server`
-  - Role after migration: backend/API reference for Personal data, if needed.
-  - Existing value: Life Tracker backend models, routes, and server structure.
-
-- `CItyos-Project/backend`
-  - Role after migration: backend/API reference for CityOS data, if needed.
-  - Existing value: existing backend history and services.
+| Source | Migration Role | Current Status |
+| --- | --- | --- |
+| `CItyos-Project/CityOS-Frontend` | Canonical LifeOS repo and City frontend source | In progress |
+| `life-tracker/frontend` | Source for the Personal frontend scope | Migrated into `src/scopes/personal` |
+| `life-tracker/server` | Source for the Personal backend service | Migrated into `backend/personal` |
+| `CItyos-Project/backend` | Source for the City backend service | Migrated into `backend/city` |
 
 ## Product Model
 
 LifeOS is not two separate apps placed next to each other. It is one platform with multiple operating scopes.
 
-| Scope | Meaning | Migration Source | Initial Status |
-| --- | --- | --- | --- |
-| Personal | Self-management: habits, routine, health, wealth, diet, goals, work, learning, articles, plans | `life-tracker/frontend` | Must be migrated fully |
-| Societal | Family, groups, local communities, institutions, nearby network | New LifeOS scope | Placeholder until defined |
-| City | Civic services, departments, resources, complaints, operations, dashboards | Existing CityOS frontend | Preserve and rename under LifeOS |
-| State | State-level governance and administration | New LifeOS scope | Placeholder until defined |
-| Country | National-level governance, policy, dashboards | New LifeOS scope | Placeholder until defined |
-| World | Global systems, civilization-level indicators and collaboration | New LifeOS scope | Placeholder until defined |
+| Scope | Meaning | Frontend Route | Backend | Initial Source |
+| --- | --- | --- | --- | --- |
+| Personal | Self-management: habits, routine, health, wealth, diet, goals, work, learning, articles, plans | `/personal` | `backend/personal` | Life Tracker |
+| Societal | Family, groups, local communities, institutions, nearby network | `/societal` | Not defined yet | New LifeOS scope |
+| City | Civic services, departments, resources, complaints, operations, dashboards | `/city` | `backend/city` | CityOS |
+| State | State-level governance and administration | `/state` | Not defined yet | New LifeOS scope |
+| Country | National-level governance, policy, dashboards | `/country` | Not defined yet | New LifeOS scope |
+| World | Global systems, civilization-level indicators and collaboration | `/world` | Not defined yet | New LifeOS scope |
 
 ## Non-Negotiable Migration Rules
 
-- [ ] Do not replace the old CityOS repository with a new repository.
-- [ ] Do not flatten the Life Tracker app into random CityOS pages.
-- [ ] Do not ship Life Tracker through an iframe, copied `dist` folder, or external localhost dependency.
-- [ ] Do not remove working Life Tracker pages or flows during migration.
-- [ ] Do not let Life Tracker routes collide with existing CityOS routes.
-- [ ] Do not mark checklist items done until implementation and verification are complete.
-- [ ] Keep changes in clear phases so regressions are easier to find.
-- [ ] Preserve existing CityOS behavior while introducing LifeOS.
+- [x] Keep the old CityOS frontend repository as the canonical LifeOS repository.
+- [x] Keep Life Tracker inside a dedicated Personal scope instead of flattening it into City pages.
+- [x] Do not ship Life Tracker through an iframe, copied `dist` folder, or external localhost frontend dependency.
+- [x] Keep Personal routes under `/personal/*` so they do not collide with CityOS routes.
+- [x] Preserve CityOS as the city scope/module identity.
+- [x] Keep backend source code in this repo, not only in external repositories.
+- [x] Keep `.env`, `node_modules`, and generated backend `dist` output out of version control.
+- [ ] Do not mark the full migration complete until frontend and backend verification are both clean.
 
 ## Target Route Structure
 
-The route structure should make LifeOS scopes explicit.
+| Route | Purpose | Status |
+| --- | --- | --- |
+| `/` | LifeOS scope dashboard | Implemented |
+| `/personal` | Personal dashboard from Life Tracker | Implemented |
+| `/personal/habits` | Life Tracker habits | Implemented |
+| `/personal/routine` | Life Tracker routine | Implemented |
+| `/personal/learning` | Life Tracker learning | Implemented |
+| `/personal/jobs` | Life Tracker jobs | Implemented |
+| `/personal/goals` | Life Tracker goals | Implemented |
+| `/personal/projects` | Life Tracker projects | Implemented |
+| `/personal/philosophy` | Life Tracker philosophy | Implemented |
+| `/personal/articles` | Life Tracker articles | Implemented |
+| `/personal/health` | Life Tracker health | Implemented |
+| `/personal/wealth` | Life Tracker wealth | Implemented |
+| `/personal/debts` | Life Tracker debts | Implemented |
+| `/personal/funds` | Life Tracker funds | Implemented |
+| `/personal/networking` | Life Tracker networking | Implemented |
+| `/personal/career` | Life Tracker career | Implemented |
+| `/personal/future-plans` | Life Tracker future plans | Implemented |
+| `/personal/diet` | Life Tracker diet | Implemented |
+| `/societal` | Societal scope placeholder/dashboard | Implemented |
+| `/city` | CityOS dashboard/scope root | Implemented |
+| `/state` | State scope placeholder/dashboard | Implemented |
+| `/country` | Country scope placeholder/dashboard | Implemented |
+| `/world` | World scope placeholder/dashboard | Implemented |
 
-| Route | Purpose |
-| --- | --- |
-| `/` | LifeOS landing or scope dashboard |
-| `/personal` | Personal dashboard from Life Tracker |
-| `/personal/habits` | Life Tracker habits |
-| `/personal/routine` | Life Tracker routine |
-| `/personal/learning` | Life Tracker learning |
-| `/personal/jobs` | Life Tracker jobs |
-| `/personal/goals` | Life Tracker goals |
-| `/personal/projects` | Life Tracker projects |
-| `/personal/philosophy` | Life Tracker philosophy |
-| `/personal/articles` | Life Tracker articles |
-| `/personal/health` | Life Tracker health |
-| `/personal/wealth` | Life Tracker wealth |
-| `/personal/debts` | Life Tracker debts |
-| `/personal/funds` | Life Tracker funds |
-| `/personal/networking` | Life Tracker networking |
-| `/personal/career` | Life Tracker career |
-| `/personal/future-plans` | Life Tracker future plans |
-| `/personal/diet` | Life Tracker diet |
-| `/societal` | Societal scope placeholder/dashboard |
-| `/city` | CityOS dashboard/scope root |
-| `/state` | State scope placeholder/dashboard |
-| `/country` | Country scope placeholder/dashboard |
-| `/world` | World scope placeholder/dashboard |
+Legacy CityOS routes such as `/dashboard`, `/district/*`, `/services/*`, `/emergency/*`, and `/analytics/*` remain available during this migration phase.
 
-Existing CityOS internal routes may remain where they are during the first migration phase, but the long-term structure should make `/city/*` the home for city-level functionality.
-
-## Target Frontend Architecture
-
-The canonical frontend should evolve toward this structure:
+## Target Repository Architecture
 
 ```text
 src/
-  app/
-    LifeOSAppShell.tsx
-    scopeNavigation.ts
+  app/                  LifeOS scope model and shared scope UI
   scopes/
-    personal/
-      components/
-      pages/
-      routes.tsx
-      styles/
-    societal/
-      pages/
-      routes.tsx
-    city/
-      pages/
-      routes.tsx
-    state/
-      pages/
-      routes.tsx
-    country/
-      pages/
-      routes.tsx
-    world/
-      pages/
-      routes.tsx
-  components/
-  layouts/
-  routes/
-  services/
-  styles/
+    personal/           Migrated Life Tracker frontend
+    societal/           Future societal scope
+    city/               Future city module extraction target
+    state/              Future state scope
+    country/            Future country scope
+    world/              Future world scope
+  pages/                LifeOS home and existing CityOS pages
+  layouts/              Existing CityOS layout shells
+  routes/               Application route tree
+  services/             Shared and city API clients
+backend/
+  city/                 Migrated CityOS backend service
+  personal/             Migrated Life Tracker backend service
+docs/
+  LIFEOS_MIGRATION_CHECKLIST.md
 ```
 
-This structure can be introduced gradually. Existing folders do not need to be renamed in one risky step if that would create avoidable breakage.
+This structure is intentionally incremental. Existing CityOS folders remain where they are until a safer city-scope extraction is worth doing.
 
 ## Phase 0: Baseline And Safety
 
-- [ ] Record current Git branch and status for `CItyos-Project/CityOS-Frontend`.
-- [ ] Record current Git branch and status for `life-tracker`.
-- [ ] Confirm both projects build before migration, or document existing build failures.
-- [ ] Confirm the current Life Tracker route list.
-- [ ] Confirm the current CityOS route list.
-- [ ] Identify environment variables used by both apps.
-- [ ] Identify API base URL expectations used by both apps.
-- [ ] Identify CSS/global style conflicts before copying code.
-- [ ] Identify dependency differences between both frontends.
-- [ ] Create a migration branch in `CityOS-Frontend`.
+- [x] Record current Git branch and status for `CItyos-Project/CityOS-Frontend`.
+- [x] Record current Git branch and status for `life-tracker`.
+- [x] Record current Git branch and status for `CItyos-Project/backend`.
+- [x] Confirm original Life Tracker backend build status.
+- [x] Confirm original CityOS backend build status and document inherited blockers.
+- [x] Confirm the current Life Tracker route list.
+- [x] Confirm the current CityOS route list.
+- [x] Identify Personal API base URL expectations.
+- [x] Identify City API base URL expectations.
+- [x] Identify CSS/global style conflicts before copying code.
+- [x] Identify frontend dependency differences enough to complete the Vite build.
+- [ ] Create a migration branch if this work should not stay directly on `main`.
+- [ ] Complete root workspace dependency installation and lockfile update.
 
 ## Phase 1: LifeOS Identity And Project Metadata
 
-- [ ] Rename visible product identity from CityOS-only to LifeOS where appropriate.
-- [ ] Keep CityOS as the name of the city scope/module.
-- [ ] Update `package.json` name and description to LifeOS.
-- [ ] Update README title and project description.
-- [ ] Add a short architecture note explaining that LifeOS contains Personal, Societal, City, State, Country, and World scopes.
-- [ ] Update browser title and app metadata.
-- [ ] Review logos, favicons, and app icons for LifeOS naming.
-- [ ] Avoid changing unrelated implementation details during the rename.
+- [x] Rename visible product identity from CityOS-only to LifeOS where appropriate.
+- [x] Keep CityOS as the name of the city scope/module.
+- [x] Update `package.json` name and description to LifeOS.
+- [x] Update README title and project description.
+- [x] Add an architecture note explaining Personal, Societal, City, State, Country, and World scopes.
+- [x] Update browser title and app metadata.
+- [x] Review logos, favicons, and app icons for LifeOS naming.
+- [x] Avoid unrelated implementation changes during the rename.
 
 ## Phase 2: Scope Navigation Foundation
 
-- [ ] Add a LifeOS scope model for `personal`, `societal`, `city`, `state`, `country`, and `world`.
-- [ ] Add a top-level scope switcher or navigation surface.
-- [ ] Make the active scope visible in the app shell.
-- [ ] Ensure route changes update the active scope correctly.
-- [ ] Add placeholder pages for undefined scopes.
-- [ ] Keep placeholders minimal and clearly separated from completed modules.
-- [ ] Ensure navigation works on desktop.
-- [ ] Ensure navigation works on mobile.
-- [ ] Add route constants so future scope routes do not become stringly typed across the app.
+- [x] Add a LifeOS scope model for `personal`, `societal`, `city`, `state`, `country`, and `world`.
+- [x] Add a top-level scope switcher/navigation surface.
+- [x] Make the active scope visible in the app shell.
+- [x] Ensure route changes update the active scope correctly.
+- [x] Add placeholder pages for undefined scopes.
+- [x] Keep placeholders minimal and clearly separated from completed modules.
+- [x] Ensure navigation works on desktop route smoke tests.
+- [ ] Manually verify navigation on mobile.
+- [x] Add route constants/model data so future scope routes do not become stringly typed everywhere.
 
-## Phase 3: Personal Scope Migration
+## Phase 3: Personal Frontend Migration
 
-- [ ] Copy Life Tracker frontend source into a dedicated `personal` scope folder.
-- [ ] Convert Life Tracker imports to work inside the CityOS/ LifeOS TypeScript Vite setup.
-- [ ] Preserve Life Tracker visual layout unless a compatibility change is required.
-- [ ] Preserve Life Tracker dashboard behavior.
-- [ ] Preserve Habits page behavior.
-- [ ] Preserve Routine page behavior.
-- [ ] Preserve Learning page behavior.
-- [ ] Preserve Jobs page behavior.
-- [ ] Preserve Goals page behavior.
-- [ ] Preserve Projects page behavior.
-- [ ] Preserve Philosophy page behavior.
-- [ ] Preserve Articles page behavior.
-- [ ] Preserve Health page behavior.
-- [ ] Preserve Wealth page behavior.
-- [ ] Preserve Debts page behavior.
-- [ ] Preserve Funds page behavior.
-- [ ] Preserve Networking page behavior.
-- [ ] Preserve Career page behavior.
-- [ ] Preserve Future Plans page behavior.
-- [ ] Preserve Diet page behavior.
-- [ ] Move Personal routes under `/personal/*`.
-- [ ] Keep `/personal` as the Personal dashboard.
-- [ ] Remove or replace Life Tracker root route assumptions.
-- [ ] Verify Life Tracker local storage keys still work.
-- [ ] Verify Life Tracker API calls still work or document backend integration needs.
-- [ ] Verify Life Tracker responsive layout still works.
-- [ ] Verify Life Tracker assets are included in the LifeOS build.
+- [x] Copy Life Tracker frontend source into `src/scopes/personal`.
+- [x] Convert Life Tracker imports to work inside the LifeOS TypeScript/Vite setup.
+- [x] Preserve Life Tracker visual layout unless compatibility changes were required.
+- [x] Move Personal routes under `/personal/*`.
+- [x] Keep `/personal` as the Personal dashboard.
+- [x] Remove or replace Life Tracker root route assumptions.
+- [x] Keep migrated API base configurable through `VITE_PERSONAL_API_URL`.
+- [x] Verify Life Tracker assets are included in the LifeOS build.
+- [x] Add smoke coverage for `/personal`.
+- [x] Add smoke coverage for at least one Personal detail page.
+- [ ] Manually verify every Personal workflow end to end: dashboard, habits, routine, learning, jobs, goals, projects, philosophy, articles, health, wealth, debts, funds, networking, career, future plans, and diet.
+- [ ] Verify Life Tracker local storage keys still work after migration.
+- [ ] Verify Personal backend data calls against `backend/personal` once workspace dependencies are installed.
+- [ ] Manually verify Personal responsive layout on mobile.
 
-## Phase 4: City Scope Preservation
+## Phase 4: City Frontend Preservation
 
-- [ ] Keep current CityOS pages functional after LifeOS shell changes.
-- [ ] Decide whether existing CityOS dashboard becomes `/city` immediately or via redirects.
-- [ ] Add redirects from old city routes only when they do not break current usage.
-- [ ] Keep district admin routes functional.
-- [ ] Keep emergency/command center routes functional.
-- [ ] Keep operations routes functional.
-- [ ] Keep grievance routes functional.
-- [ ] Keep state admin routes functional until state scope is separated.
-- [ ] Keep citizen services routes functional.
-- [ ] Keep development schemes routes functional.
-- [ ] Keep revenue and land routes functional.
-- [ ] Keep health services routes functional.
-- [ ] Keep education routes functional.
-- [ ] Keep police and security routes functional.
-- [ ] Keep environment and sanitation routes functional.
-- [ ] Keep analytics and reports routes functional.
-- [ ] Keep system administration routes functional.
-- [ ] Verify legacy routes still resolve or redirect intentionally.
+- [x] Keep current CityOS pages functional after LifeOS shell changes at route-smoke level.
+- [x] Make `/city` resolve to the City dashboard/scope root.
+- [x] Preserve legacy CityOS routes during the migration.
+- [x] Keep district admin routes resolving.
+- [x] Keep emergency/command center routes resolving.
+- [x] Keep operations routes resolving.
+- [x] Keep grievance routes resolving.
+- [x] Keep state admin routes resolving until state scope is separated.
+- [x] Keep citizen services routes resolving.
+- [x] Keep development schemes routes resolving.
+- [x] Keep revenue and land routes resolving.
+- [x] Keep health services routes resolving.
+- [x] Keep education routes resolving.
+- [x] Keep police and security routes resolving.
+- [x] Keep environment and sanitation routes resolving.
+- [x] Keep analytics and reports routes resolving.
+- [x] Keep system administration routes resolving.
+- [ ] Do a deeper CityOS workflow pass beyond route visibility.
 
 ## Phase 5: Shared Design System And Layout
 
-- [ ] Decide which existing shell owns global navigation: CityOS shell, Life Tracker shell, or new LifeOS shell.
-- [ ] Avoid nested app shells that waste space or create confusing navigation.
-- [ ] Keep Personal-specific navigation inside the Personal scope.
-- [ ] Keep City-specific navigation inside the City scope.
-- [ ] Create shared LifeOS tokens only where both apps truly share design needs.
-- [ ] Prevent global CSS from Life Tracker from breaking CityOS pages.
-- [ ] Prevent CityOS theme styles from breaking Personal pages.
-- [ ] Review mobile navigation for all scopes.
-- [ ] Review desktop navigation for all scopes.
-- [ ] Confirm text does not overlap or overflow in scope navigation.
-- [ ] Confirm LifeOS branding appears without erasing CityOS module identity.
+- [x] Use a LifeOS scope shell at the platform level.
+- [x] Avoid nested app shells that waste space or create confusing navigation.
+- [x] Keep Personal-specific navigation inside the Personal scope.
+- [x] Keep City-specific navigation inside the City scope.
+- [x] Prevent global CSS from Life Tracker from breaking CityOS pages.
+- [x] Prevent CityOS theme styles from breaking Personal pages at build/smoke level.
+- [x] Confirm LifeOS branding appears without erasing CityOS module identity.
+- [ ] Review mobile navigation visually in browser.
+- [ ] Review desktop navigation visually in browser beyond automated smoke tests.
+- [ ] Confirm text does not overlap or overflow in scope navigation across target viewports.
 
-## Phase 6: Data And Backend Integration
+## Phase 6: Backend Monorepo Consolidation
 
-- [ ] Inventory Life Tracker API endpoints used by the frontend.
-- [ ] Inventory CityOS API endpoints used by the frontend.
-- [ ] Decide whether LifeOS frontend talks to one backend or multiple backends during transition.
-- [ ] Add API client separation by scope if needed.
-- [ ] Avoid hardcoding localhost values in migrated code.
-- [ ] Add environment variables for Personal API base URL if needed.
-- [ ] Add environment variables for City API base URL if needed.
-- [ ] Document required local backend startup steps.
-- [ ] Confirm Personal article/data endpoints work.
-- [ ] Confirm City service/data endpoints work.
+- [x] Create `backend/` inside the canonical LifeOS repo.
+- [x] Copy CityOS backend source into `backend/city`.
+- [x] Copy Life Tracker backend source into `backend/personal`.
+- [x] Exclude source `.env`, `.git`, `node_modules`, and existing generated `dist` folders during copy.
+- [x] Add backend service package names: `@lifeos/backend-city` and `@lifeos/backend-personal`.
+- [x] Add root scripts for city and personal backend development/builds.
+- [x] Add `backend/README.md`.
+- [x] Keep the two backend services separate during migration to avoid risky cross-service rewrites.
+- [x] Update `.gitignore` to keep backend secrets, dependency folders, and generated output untracked.
+- [ ] Complete root `npm install` successfully so the lockfile includes backend workspaces.
+- [ ] Remove or intentionally regenerate ignored local `backend/*/dist` outputs after backend builds are stable.
+- [ ] Decide the long-term backend shape: separate services, shared gateway, or merged API.
+
+## Phase 7: Data And API Integration
+
+- [x] Inventory Personal API base URL usage in the migrated frontend.
+- [x] Inventory City API base URL usage at the frontend environment level.
+- [x] Decide that LifeOS can talk to multiple backend services during transition.
+- [x] Add Personal API environment variable documentation.
+- [x] Add City API environment variable documentation.
+- [x] Document required local backend startup commands.
+- [ ] Add explicit API client separation by scope if future shared clients start overlapping.
+- [ ] Confirm Personal article/data endpoints work from migrated frontend against `backend/personal`.
+- [ ] Confirm City service/data endpoints work from migrated frontend against `backend/city`.
 - [ ] Add graceful empty/loading/error states where backend data is unavailable.
 
-## Phase 7: TypeScript And Code Quality
+## Phase 8: TypeScript And Code Quality
 
+- [x] Add JS module declarations needed for migrated Personal JSX files.
+- [x] Remove dead imports created during migration.
+- [x] Keep frontend lint rules passing.
+- [x] Keep frontend Vite build passing.
+- [x] Keep module boundaries clear between LifeOS app shell and Personal scope.
 - [ ] Convert migrated Life Tracker files to TypeScript only where it improves maintainability.
-- [ ] Avoid risky mass conversion if route-level migration is not stable yet.
-- [ ] Add types for Personal page props and shared models.
-- [ ] Remove dead imports created during migration.
-- [ ] Keep lint rules passing or document pre-existing lint blockers.
-- [ ] Keep the Vite build passing.
-- [ ] Remove duplicate utilities only after behavior is verified.
-- [ ] Avoid unrelated refactors while moving functionality.
-- [ ] Keep module boundaries clear between scopes.
+- [ ] Remove duplicate frontend utilities only after behavior is verified.
+- [ ] Fix copied backend TypeScript build issues after workspace dependencies are installed.
+- [ ] Avoid unrelated refactors while backend services stabilize.
 
-## Phase 8: Testing And Verification
+## Phase 9: Testing And Verification
 
-- [ ] Add smoke tests for top-level LifeOS routes.
-- [ ] Add smoke test for `/personal`.
-- [ ] Add smoke test for at least one Personal detail/workflow page.
-- [ ] Add smoke test for `/city` or existing CityOS dashboard.
-- [ ] Add smoke tests for undefined scope placeholders.
-- [ ] Run `npm run build`.
-- [ ] Run `npm run lint` if lint configuration is stable.
+- [x] Add smoke tests for top-level LifeOS routes.
+- [x] Add smoke test for `/personal`.
+- [x] Add smoke test for at least one Personal detail/workflow page.
+- [x] Add smoke test for `/city` or existing CityOS dashboard.
+- [x] Add smoke tests for undefined scope placeholders.
+- [x] Run `npm run build`.
+- [x] Run `npm run lint`.
 - [ ] Run unit tests if available.
-- [ ] Run Playwright tests if available and practical.
+- [x] Run Playwright Chromium tests with Node 24.
 - [ ] Manually verify desktop viewport.
 - [ ] Manually verify mobile viewport.
 - [ ] Verify browser console has no migration-related runtime errors.
+- [x] Run original Life Tracker backend build before copy.
+- [x] Run original CityOS backend build before copy and record inherited failure.
+- [ ] Run copied Personal backend build after workspace dependencies install.
+- [ ] Run copied City backend build after inherited TypeScript blockers are fixed.
 
-## Phase 9: Documentation
+## Phase 10: Documentation
 
-- [ ] Update README with LifeOS setup instructions.
-- [ ] Document the scope model.
-- [ ] Document local development commands.
-- [ ] Document backend startup expectations.
-- [ ] Document environment variables.
-- [ ] Document route map.
-- [ ] Document migration decisions made during implementation.
-- [ ] Keep this checklist updated as items are completed.
+- [x] Update README with LifeOS setup instructions.
+- [x] Document the scope model.
+- [x] Document local development commands.
+- [x] Document backend startup expectations.
+- [x] Document environment variables.
+- [x] Document route map.
+- [x] Document backend migration status.
+- [x] Keep this checklist updated as items are completed.
+- [ ] Add an architecture decision record for the long-term backend unification model.
 
-## Phase 10: Cleanup And Repository Hygiene
+## Phase 11: Cleanup And Repository Hygiene
 
 - [ ] Remove unused template assets if they are no longer referenced.
 - [ ] Remove duplicate dependencies after build and runtime verification.
 - [ ] Keep lockfile changes intentional.
-- [ ] Ensure no generated build output is accidentally committed unless already tracked by the project policy.
-- [ ] Ensure no secrets or local `.env` files are added.
-- [ ] Review `git diff` before finalizing.
+- [x] Ensure no secrets or local `.env` files are staged.
+- [x] Ensure generated backend output is ignored by Git.
+- [ ] Review final `git diff` before finalizing.
 - [ ] Commit in meaningful phases if commits are requested.
+
+## Known Backend Build Status
+
+- [x] Original `life-tracker/server` build passed before migration.
+- [x] Original `CItyos-Project/backend` build was already failing before migration.
+- [ ] Copied `backend/personal` build is not yet verified in this repo because workspace dependency installation timed out before the root lockfile could be updated.
+- [ ] Copied `backend/city` build inherits CityOS backend TypeScript blockers, including the `ms` type definition issue and the private `DbPool` export issue.
 
 ## Completion Criteria
 
 The migration is complete when:
 
-- [ ] `CItyos-Project/CityOS-Frontend` presents itself as LifeOS.
-- [ ] Personal, Societal, City, State, Country, and World scopes are visible in the product.
-- [ ] Existing Life Tracker functionality works under `/personal/*`.
-- [ ] Existing CityOS functionality still works.
-- [ ] Build succeeds from the canonical frontend repo.
-- [ ] Critical navigation works on desktop and mobile.
-- [ ] README and migration notes match the implemented system.
-- [ ] The old CityOS frontend repo remains the Git history owner of the merged project.
+- [x] `CItyos-Project/CityOS-Frontend` presents itself as LifeOS.
+- [x] Personal, Societal, City, State, Country, and World scopes are visible in the product.
+- [x] Existing Life Tracker frontend routes work under `/personal/*` at smoke-test level.
+- [x] Existing CityOS frontend routes still work at smoke-test level.
+- [x] Frontend build succeeds from the canonical repo.
+- [x] README and migration notes match the implemented system.
+- [x] The old CityOS frontend repo remains the Git history owner of the merged project.
+- [x] Both backend source trees are present inside the canonical repo.
+- [ ] Personal backend builds and runs from `backend/personal` in the canonical repo.
+- [ ] City backend builds and runs from `backend/city` in the canonical repo.
+- [ ] Critical navigation works on desktop and mobile after visual verification.
+- [ ] Personal and City workflows are manually verified beyond route smoke tests.
 
 ## Migration Log
-
-Use this section to record completed work as implementation progresses.
 
 | Date | Change | Verification | Status |
 | --- | --- | --- | --- |
 | 2026-07-19 | Created LifeOS migration checklist. | Document added under `docs/`. | Done |
+| 2026-07-19 | Renamed the canonical frontend to LifeOS and added scope navigation for Personal, Societal, City, State, Country, and World. | `npm run lint`, `npm run build`, Playwright Chromium route smoke tests. | Done |
+| 2026-07-19 | Migrated Life Tracker frontend into `src/scopes/personal` and mounted it under `/personal/*`. | Personal route smoke tests and frontend build. | Done |
+| 2026-07-19 | Preserved CityOS frontend routes and added `/city` as the City scope root. | City route smoke tests and frontend build. | Done |
+| 2026-07-19 | Copied CityOS backend into `backend/city` and Life Tracker backend into `backend/personal`. | Source copied without `.env`, `.git`, `node_modules`, or tracked `dist` output. | Done |
+| 2026-07-19 | Added root backend scripts and backend documentation. | `package.json`, `README.md`, and `backend/README.md` updated. | Done |
+| 2026-07-19 | Attempted root workspace dependency installation. | `npm install` and lockfile-only install timed out during dependency resolution; no lockfile update completed. | Blocked |
+| 2026-07-19 | Recorded backend build state. | Original Personal backend build passed; original City backend build has inherited TypeScript blockers. | Open |
