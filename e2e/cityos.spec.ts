@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("CityOS Frontend - Page Loading Tests", () => {
+test.describe("LifeOS Frontend - Page Loading Tests", () => {
   test("Landing page loads correctly", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/CityOS/);
+    await expect(page).toHaveTitle(/LifeOS/);
     // Check for main content
     await expect(page.locator("body")).toBeVisible();
   });
@@ -19,8 +19,9 @@ test.describe("CityOS Frontend - Page Loading Tests", () => {
     const passwordInput = page.locator('input[type="password"]');
     const submitButton = page.locator('button[type="submit"]');
 
-    // Just check that page doesn't crash
-    await expect(page.locator("body")).toBeVisible();
+    await expect(emailInput).toBeVisible();
+    await expect(passwordInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
   });
 
   test("Protected routes handle unauthenticated access", async ({ page }) => {

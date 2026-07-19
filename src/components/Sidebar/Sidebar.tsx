@@ -239,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
                   lineHeight: 1,
                 }}
               >
-                C
+                L
               </Typography>
             </Box>
             <Box>
@@ -253,7 +253,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
                   letterSpacing: "-0.02em",
                 }}
               >
-                CityOS
+                LifeOS
               </Typography>
               <Typography
                 sx={{
@@ -263,7 +263,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, items }) => {
                   lineHeight: 1,
                 }}
               >
-                Smart City Platform
+                City Scope
               </Typography>
             </Box>
           </Box>

@@ -1,5 +1,5 @@
 /**
- * i18n Configuration for CityOS
+ * i18n Configuration for LifeOS
  * Supports all 22 scheduled languages of India + English
  */
 
@@ -240,7 +240,7 @@ i18n
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
-      lookupLocalStorage: "cityos_language",
+      lookupLocalStorage: "lifeos_language",
     },
 
     interpolation: {
@@ -269,7 +269,7 @@ export const getCurrentLanguage = (): LanguageOption => {
 export const changeLanguage = (code: string): Promise<void> => {
   return i18n.changeLanguage(code).then(() => {
     // Store in localStorage
-    localStorage.setItem("cityos_language", code);
+    localStorage.setItem("lifeos_language", code);
     // Update HTML dir attribute for RTL languages
     document.documentElement.dir = ["ur", "ks", "sd"].includes(code)
       ? "rtl"

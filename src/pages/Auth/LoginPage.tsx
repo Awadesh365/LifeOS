@@ -32,6 +32,7 @@ const LoginPage: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const portal = location.state?.portal || "official";
+  const from = location.state?.from || "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +46,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       await login({ email, password });
-      navigate("/dashboard");
+      navigate(from);
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
@@ -116,7 +117,7 @@ const LoginPage: React.FC = () => {
                   <Typography
                     sx={{ color: "#fff", fontWeight: 900, fontSize: "1.5rem" }}
                   >
-                    C
+                    L
                   </Typography>
                 </Box>
                 <Typography
@@ -125,10 +126,10 @@ const LoginPage: React.FC = () => {
                     fontFamily: "'Outfit', sans-serif",
                     fontWeight: 800,
                     color: "#fff",
-                    letterSpacing: "-0.02em",
+                    letterSpacing: 0,
                   }}
                 >
-                  CityOS
+                  LifeOS
                 </Typography>
               </Stack>
             </Box>
@@ -169,15 +170,15 @@ const LoginPage: React.FC = () => {
               >
                 The Future of <br />
                 <Box component="span" sx={{ color: "#38bdf8" }}>
-                  Urban Authority.
+                  Personal and Civic Systems.
                 </Box>
               </Typography>
               <Typography
                 variant="h6"
                 sx={{ color: alpha("#fff", 0.6), fontWeight: 400, mb: 4 }}
               >
-                Unified administration, citizen services, and real-time security
-                nodes. Log in to access the central nervous system of your city.
+                Personal discipline, civic administration, and wider public
+                systems in one operating model. Log in to access protected scopes.
               </Typography>
             </Box>
           </Grid>
@@ -284,7 +285,7 @@ const LoginPage: React.FC = () => {
                   </Typography>
                   <TextField
                     fullWidth
-                    placeholder="name@cityos.gov.in"
+                    placeholder="name@lifeos.local"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     variant="standard"

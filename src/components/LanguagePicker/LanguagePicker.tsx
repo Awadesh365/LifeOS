@@ -457,7 +457,7 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({
           }}
         >
           <Typography sx={{ fontSize: "0.6875rem", color: C.muted2, fontWeight: 500 }}>
-            CityOS · Bharat Language Suite
+            LifeOS · Bharat Language Suite
           </Typography>
           <Box
             sx={{

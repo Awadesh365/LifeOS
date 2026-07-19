@@ -8,6 +8,7 @@ import {
   TOP_NAV_ITEMS,
   getSidebarItems,
 } from "../lib/constants/top_navigation_complete";
+import { LifeOSScopeBar } from "../app/LifeOSScopeBar";
 import {
   selectFeatureTree,
   setFeatureTree,
@@ -105,6 +106,7 @@ export const OfficialLayout: React.FC = () => {
           overflow: "auto",
         }}
       >
+        <LifeOSScopeBar activeScope="city" compact />
         <Outlet />
       </Box>
     </Box>

@@ -110,7 +110,6 @@ const InView = ({
   style,
 }: {
   children: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variants?: any;
   style?: React.CSSProperties;
 }) => (
@@ -132,7 +131,6 @@ const StaggerIn = ({
   style,
 }: {
   children: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variants?: any;
   style?: React.CSSProperties;
 }) => (

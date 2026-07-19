@@ -1,0 +1,3539 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+.lifeos-personal-scope {
+  --bg-primary: #06060b;
+  --bg-secondary: #0d0d15;
+  --bg-card: #111119;
+  --bg-card-hover: #16161f;
+  --bg-sidebar: #0a0a12;
+  --border: #1a1a2e;
+  --border-light: #252540;
+
+  --text-primary: #e8e8f0;
+  --text-secondary: #8888a8;
+  --text-muted: #555570;
+  --text-heading: #ffffff;
+
+  --accent: #6c5ce7;
+  --accent-glow: rgba(108, 92, 231, 0.3);
+  --accent-light: #a29bfe;
+  --success: #00e676;
+  --success-glow: rgba(0, 230, 118, 0.2);
+  --warning: #ffc107;
+  --warning-glow: rgba(255, 193, 7, 0.2);
+  --danger: #ff5252;
+  --danger-glow: rgba(255, 82, 82, 0.2);
+  --info: #00d2ff;
+  --info-glow: rgba(0, 210, 255, 0.2);
+
+  --gradient-1: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  --gradient-2: linear-gradient(135deg, #00d2ff, #6c5ce7);
+  --gradient-3: linear-gradient(135deg, #00e676, #00d2ff);
+  --gradient-fire: linear-gradient(135deg, #ff5252, #ffc107);
+  --gradient-card: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(0, 210, 255, 0.03));
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px var(--accent-glow);
+
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --sidebar-width: 260px;
+  --header-height: 70px;
+  --bg-header: rgba(6, 6, 11, 0.8);
+}
+
+.lifeos-personal-scope[data-personal-theme="light"] {
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fa;
+  --bg-sidebar: #ffffff;
+  --border: #cbd5e1;
+  --border-light: #94a3b8;
+  --bg-header: rgba(255, 255, 255, 0.8);
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-heading: #000000;
+
+  --accent-glow: rgba(108, 92, 231, 0.15);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+}
+
+.lifeos-personal-scope *, .lifeos-personal-scope *::before, .lifeos-personal-scope *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.lifeos-personal-scope {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+.lifeos-personal-scope {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lifeos-personal-scope {
+  min-height: 100vh;
+}
+
+.lifeos-personal-scope a {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.lifeos-personal-scope a:hover {
+  color: var(--info);
+  text-decoration: underline;
+}
+
+/* ================================================
+   LAYOUT
+   ================================================ */
+.lifeos-personal-scope .app-layout {
+  display: flex;
+  min-height: calc(100vh - var(--lifeos-scopebar-height, 0px));
+}
+
+.lifeos-personal-scope .app-layout.sidebar-collapsed {
+  --sidebar-width: 80px;
+}
+
+.lifeos-personal-scope .main-area {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--lifeos-scopebar-height, 0px));
+  transition: margin-left var(--transition);
+}
+
+.lifeos-personal-scope .page-content {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ================================================
+   SIDEBAR
+   ================================================ */
+.lifeos-personal-scope .sidebar {
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--lifeos-scopebar-height, 0px));
+  position: fixed;
+  left: 0;
+  top: var(--lifeos-scopebar-height, 0px);
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow-y: auto;
+  transition: width var(--transition);
+}
+
+.lifeos-personal-scope .sidebar-logo {
+  padding: 8px 0;
+}
+
+.lifeos-personal-scope .sidebar-logo h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  background: var(--gradient-2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.lifeos-personal-scope .sidebar-logo p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.lifeos-personal-scope .sidebar-nav {
+  padding: 16px 12px;
+  flex: 1;
+}
+
+.lifeos-personal-scope .nav-section-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  padding: 16px 12px 8px;
+  font-weight: 600;
+}
+
+.lifeos-personal-scope .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.lifeos-personal-scope .nav-link:hover {
+  background: rgba(108, 92, 231, 0.08);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.lifeos-personal-scope .nav-link.active {
+  background: rgba(108, 92, 231, 0.12);
+  color: var(--accent-light);
+  font-weight: 600;
+}
+
+.lifeos-personal-scope .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.lifeos-personal-scope .nav-icon {
+  font-size: 1.15rem;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.lifeos-personal-scope .app-layout.sidebar-collapsed .nav-link {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.lifeos-personal-scope .app-layout.sidebar-collapsed .nav-icon {
+  margin: 0;
+}
+
+.lifeos-personal-scope .sidebar-quote {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.lifeos-personal-scope .sidebar-quote p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ================================================
+   HEADER
+   ================================================ */
+.lifeos-personal-scope .header {
+  height: var(--header-height);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-header);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.lifeos-personal-scope .header-left h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .header-left p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.lifeos-personal-scope .header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lifeos-personal-scope .header-date {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+}
+
+.lifeos-personal-scope .header-streak {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 193, 7, 0.1));
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* ================================================
+   CARDS
+   ================================================ */
+.lifeos-personal-scope .card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .card:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lifeos-personal-scope .card-badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lifeos-personal-scope .badge-success {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.lifeos-personal-scope .badge-warning {
+  background: var(--warning-glow);
+  color: var(--warning);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.lifeos-personal-scope .badge-danger {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+.lifeos-personal-scope .badge-info {
+  background: var(--info-glow);
+  color: var(--info);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+/* ================================================
+   STAT CARDS
+   ================================================ */
+.lifeos-personal-scope .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.lifeos-personal-scope .stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.lifeos-personal-scope .stat-card.accent::before { background: var(--gradient-1); }
+.lifeos-personal-scope .stat-card.success::before { background: var(--success); }
+.lifeos-personal-scope .stat-card.warning::before { background: var(--warning); }
+.lifeos-personal-scope .stat-card.info::before { background: var(--gradient-2); }
+.lifeos-personal-scope .stat-card.fire::before { background: var(--gradient-fire); }
+
+.lifeos-personal-scope .stat-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.lifeos-personal-scope .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.lifeos-personal-scope .stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  line-height: 1;
+}
+
+.lifeos-personal-scope .stat-sub {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ================================================
+   HABIT TRACKER
+   ================================================ */
+.lifeos-personal-scope .habits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.lifeos-personal-scope .habit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+  color: inherit;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+}
+
+.lifeos-personal-scope .habit-item:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .habit-item:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.lifeos-personal-scope .habit-item.done {
+  border-color: rgba(0, 230, 118, 0.3);
+  background: rgba(0, 230, 118, 0.04);
+}
+
+.lifeos-personal-scope .habit-checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  font-size: 0.8rem;
+}
+
+.lifeos-personal-scope .habit-item.done .habit-checkbox {
+  background: var(--success);
+  border-color: var(--success);
+  color: #000;
+}
+
+.lifeos-personal-scope .habit-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.lifeos-personal-scope .habit-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.lifeos-personal-scope .habit-info {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lifeos-personal-scope .habit-category {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.lifeos-personal-scope .habit-item.done .habit-name {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .habit-streak {
+  font-size: 0.72rem;
+  color: var(--warning);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .today-task-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.lifeos-personal-scope .task-progress-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 18px;
+  align-items: center;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.lifeos-personal-scope .task-panel-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lifeos-personal-scope .task-panel-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .task-progress-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .task-progress-bar {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.lifeos-personal-scope .task-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gradient-3);
+  transition: width 0.35s ease;
+}
+
+.lifeos-personal-scope .task-progress-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .sync-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lifeos-personal-scope .sync-pill.server {
+  color: var(--success);
+  border-color: rgba(0, 230, 118, 0.25);
+  background: var(--success-glow);
+}
+
+.lifeos-personal-scope .sync-pill.saving,
+.lifeos-personal-scope .sync-pill.loading {
+  color: var(--warning);
+  border-color: rgba(255, 193, 7, 0.25);
+  background: var(--warning-glow);
+}
+
+.lifeos-personal-scope .sync-pill.local {
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 160px;
+}
+
+.lifeos-personal-scope .task-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lifeos-personal-scope .task-filters {
+  margin-bottom: 0;
+  max-width: 100%;
+}
+
+.lifeos-personal-scope .filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.68rem;
+}
+
+.lifeos-personal-scope .tab.active .filter-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lifeos-personal-scope .dashboard-focus-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .dashboard-task-card {
+  padding-bottom: 20px;
+}
+
+.lifeos-personal-scope .dashboard-task-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.lifeos-personal-scope .dashboard-task-progress {
+  margin-bottom: 14px;
+}
+
+.lifeos-personal-scope .dashboard-task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.lifeos-personal-scope .dashboard-task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .dashboard-task-item:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .dashboard-task-item.done {
+  color: var(--text-secondary);
+  border-color: rgba(0, 230, 118, 0.22);
+  background: rgba(0, 230, 118, 0.04);
+}
+
+.lifeos-personal-scope .dashboard-task-item:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.lifeos-personal-scope .dashboard-task-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ================================================
+   WEEKLY HEATMAP
+   ================================================ */
+.lifeos-personal-scope .week-heatmap {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.lifeos-personal-scope .heat-day {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .heat-day .day-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .heat-day.empty {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .heat-day.low {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--success);
+}
+
+.lifeos-personal-scope .heat-day.mid {
+  background: rgba(0, 230, 118, 0.2);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  color: var(--success);
+}
+
+.lifeos-personal-scope .heat-day.high {
+  background: rgba(0, 230, 118, 0.35);
+  border: 1px solid rgba(0, 230, 118, 0.5);
+  color: #fff;
+}
+
+.lifeos-personal-scope .heat-day.today {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ================================================
+   ROUTINE
+   ================================================ */
+.lifeos-personal-scope .routine-timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.lifeos-personal-scope .routine-timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.lifeos-personal-scope .routine-item {
+  position: relative;
+  padding: 14px 20px;
+  margin-bottom: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-left: 12px;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .routine-item:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+  transform: translateX(4px);
+}
+
+.lifeos-personal-scope .routine-item::before {
+  content: '';
+  position: absolute;
+  left: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-primary);
+}
+
+.lifeos-personal-scope .routine-item.current::before {
+  background: var(--success);
+  box-shadow: 0 0 10px var(--success-glow);
+  animation: lifeosPersonalPulse 2s infinite;
+}
+
+@keyframes lifeosPersonalPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+}
+
+.lifeos-personal-scope .routine-time {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 4px;
+}
+
+.lifeos-personal-scope .routine-task {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lifeos-personal-scope .routine-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.lifeos-personal-scope .routine-duration {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: rgba(108, 92, 231, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.lifeos-personal-scope .routine-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.lifeos-personal-scope .routine-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .routine-summary-card {
+  display: flex;
+  min-height: 124px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.lifeos-personal-scope .routine-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .routine-summary-meta {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .routine-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lifeos-personal-scope .routine-summary-row strong {
+  font-size: 1.35rem;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .routine-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lifeos-personal-scope .routine-timeline.editing {
+  padding-left: 0;
+}
+
+.lifeos-personal-scope .routine-timeline.editing::before {
+  display: none;
+}
+
+.lifeos-personal-scope .routine-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lifeos-personal-scope .routine-editor-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.lifeos-personal-scope .routine-editor-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .routine-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) 72px minmax(180px, 1.4fr) minmax(100px, 0.7fr) minmax(180px, 1.4fr);
+  gap: 10px;
+}
+
+.lifeos-personal-scope .routine-editor-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.lifeos-personal-scope .routine-editor-grid input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.86rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .routine-editor-grid input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.lifeos-personal-scope .routine-editor-grid input::placeholder {
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .routine-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lifeos-personal-scope .icon-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .icon-action-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .icon-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.lifeos-personal-scope .icon-action-btn.danger {
+  color: var(--danger);
+  border-color: rgba(255, 82, 82, 0.25);
+}
+
+.lifeos-personal-scope .icon-action-btn.danger:hover {
+  background: var(--danger-glow);
+}
+
+.lifeos-personal-scope .routine-add-btn {
+  align-self: flex-start;
+}
+
+.lifeos-personal-scope .inline-alert {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 193, 7, 0.28);
+  border-radius: var(--radius);
+  background: var(--warning-glow);
+  color: var(--warning);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ================================================
+   LEARNING PATH
+   ================================================ */
+.lifeos-personal-scope .learning-section {
+  margin-bottom: 28px;
+}
+
+.lifeos-personal-scope .learning-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lifeos-personal-scope .learning-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .learning-item:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .learning-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lifeos-personal-scope .learning-status-dot.not_started { background: var(--text-muted); }
+.lifeos-personal-scope .learning-status-dot.in_progress { background: var(--warning); box-shadow: 0 0 8px var(--warning-glow); }
+.lifeos-personal-scope .learning-status-dot.completed { background: var(--success); box-shadow: 0 0 8px var(--success-glow); }
+
+.lifeos-personal-scope .learning-info {
+  flex: 1;
+}
+
+.lifeos-personal-scope .learning-topic {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.lifeos-personal-scope .learning-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.lifeos-personal-scope .learning-link {
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  background: rgba(108, 92, 231, 0.1);
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  border-radius: var(--radius-full);
+  color: var(--accent-light);
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-link:hover {
+  background: rgba(108, 92, 231, 0.2);
+  text-decoration: none;
+}
+
+.lifeos-personal-scope .learning-status-btn {
+  font-size: 0.7rem;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-status-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .learning-status-btn.in_progress {
+  border-color: rgba(255, 193, 7, 0.3);
+  color: var(--warning);
+  background: var(--warning-glow);
+}
+
+.lifeos-personal-scope .learning-status-btn.completed {
+  border-color: rgba(0, 230, 118, 0.3);
+  color: var(--success);
+  background: var(--success-glow);
+}
+
+.lifeos-personal-scope .learning-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.lifeos-personal-scope .learning-savebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 193, 7, 0.28);
+  border-radius: var(--radius-lg);
+  background: var(--warning-glow);
+  color: var(--warning);
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .learning-savebar-actions,
+.lifeos-personal-scope .learning-focus-actions,
+.lifeos-personal-scope .learning-editor-actions,
+.lifeos-personal-scope .learning-section-actions,
+.lifeos-personal-scope .learning-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lifeos-personal-scope .learning-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 16px;
+}
+
+.lifeos-personal-scope .learning-progress-panel,
+.lifeos-personal-scope .learning-focus-panel {
+  min-height: 180px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .learning-panel-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lifeos-personal-scope .learning-panel-top h3,
+.lifeos-personal-scope .learning-focus-panel h3 {
+  margin: 4px 0 0;
+  color: var(--text-heading);
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.lifeos-personal-scope .learning-panel-top strong {
+  color: var(--accent-light);
+  font-size: 1.7rem;
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .learning-eyebrow {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lifeos-personal-scope .learning-progress-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .learning-progress-track.small {
+  width: 120px;
+  height: 7px;
+}
+
+.lifeos-personal-scope .learning-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gradient-3);
+  transition: width 0.35s ease;
+}
+
+.lifeos-personal-scope .learning-stat-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.lifeos-personal-scope .learning-stat-strip span {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .learning-focus-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-personal-scope .learning-focus-panel p {
+  margin: 8px 0 18px;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.lifeos-personal-scope .learning-focus-actions {
+  margin-top: auto;
+}
+
+.lifeos-personal-scope .learning-controls {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, auto) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .learning-search {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.lifeos-personal-scope .learning-search span,
+.lifeos-personal-scope .learning-field {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.lifeos-personal-scope .learning-search input,
+.lifeos-personal-scope .learning-section-form input,
+.lifeos-personal-scope .learning-editor input,
+.lifeos-personal-scope .learning-editor select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .learning-search input:focus,
+.lifeos-personal-scope .learning-section-form input:focus,
+.lifeos-personal-scope .learning-editor input:focus,
+.lifeos-personal-scope .learning-editor select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.lifeos-personal-scope .learning-filter-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lifeos-personal-scope .learning-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .learning-filter span {
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.lifeos-personal-scope .learning-filter.active {
+  border-color: rgba(108, 92, 231, 0.45);
+  background: rgba(108, 92, 231, 0.14);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .learning-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-btn.primary {
+  background: var(--gradient-1);
+  color: #fff;
+}
+
+.lifeos-personal-scope .learning-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.lifeos-personal-scope .learning-btn.secondary {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .learning-btn.secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .learning-btn.danger {
+  border-color: rgba(255, 82, 82, 0.28);
+  background: transparent;
+  color: var(--danger);
+}
+
+.lifeos-personal-scope .learning-btn.danger:hover {
+  background: var(--danger-glow);
+}
+
+.lifeos-personal-scope .learning-btn.compact {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 0.76rem;
+}
+
+.lifeos-personal-scope .learning-section-form,
+.lifeos-personal-scope .learning-editor {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .learning-section-form {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.lifeos-personal-scope .learning-section-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.lifeos-personal-scope .learning-roadmap-section {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .learning-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .learning-section-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lifeos-personal-scope .learning-section-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .learning-section-header h3 {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .learning-section-header p {
+  margin: 3px 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lifeos-personal-scope .learning-section-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .learning-roadmap-list {
+  display: grid;
+}
+
+.lifeos-personal-scope .learning-roadmap-row {
+  display: grid;
+  grid-template-columns: 22px 34px 40px minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 78px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .learning-roadmap-row:last-child {
+  border-bottom: none;
+}
+
+.lifeos-personal-scope .learning-roadmap-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .learning-roadmap-row.in_progress {
+  background: rgba(255, 193, 7, 0.04);
+}
+
+.lifeos-personal-scope .learning-roadmap-row.completed .learning-item-body h4 {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.lifeos-personal-scope .learning-roadmap-row.drop-target {
+  box-shadow: inset 0 0 0 2px rgba(108, 92, 231, 0.35);
+}
+
+.lifeos-personal-scope .learning-roadmap-row.dragging {
+  opacity: 0.45;
+}
+
+.lifeos-personal-scope .learning-drag-handle,
+.lifeos-personal-scope .learning-item-number {
+  color: var(--text-muted);
+  font-weight: 900;
+  user-select: none;
+}
+
+.lifeos-personal-scope .learning-drag-handle {
+  cursor: grab;
+}
+
+.lifeos-personal-scope .learning-status-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 900;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .learning-status-toggle:hover {
+  transform: scale(1.04);
+}
+
+.lifeos-personal-scope .learning-status-toggle.in_progress {
+  border-color: var(--warning);
+  color: var(--warning);
+  box-shadow: 0 0 12px var(--warning-glow);
+}
+
+.lifeos-personal-scope .learning-status-toggle.completed {
+  border-color: var(--success);
+  color: var(--success);
+  box-shadow: 0 0 12px var(--success-glow);
+}
+
+.lifeos-personal-scope .learning-item-body {
+  min-width: 0;
+}
+
+.lifeos-personal-scope .learning-item-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.lifeos-personal-scope .learning-item-line h4 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-heading);
+  font-size: 0.92rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-item-body p {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-date-chip,
+.lifeos-personal-scope .learning-status-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .learning-date-chip {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .learning-status-pill {
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lifeos-personal-scope .learning-status-pill.in_progress {
+  border-color: rgba(255, 193, 7, 0.25);
+  background: var(--warning-glow);
+  color: var(--warning);
+}
+
+.lifeos-personal-scope .learning-status-pill.completed {
+  border-color: rgba(0, 230, 118, 0.25);
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.lifeos-personal-scope .learning-editor-title {
+  color: var(--text-heading);
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .learning-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(130px, 0.5fr) minmax(130px, 0.5fr);
+  gap: 12px;
+}
+
+.lifeos-personal-scope .learning-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lifeos-personal-scope .learning-field.wide {
+  grid-column: span 2;
+}
+
+.lifeos-personal-scope .learning-row-editor {
+  border-bottom: 1px solid var(--border);
+  background: rgba(108, 92, 231, 0.04);
+}
+
+.lifeos-personal-scope .learning-empty {
+  padding: 36px 18px;
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .learning-empty h3 {
+  margin: 0 0 6px;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .learning-empty p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* ================================================
+   GOALS
+   ================================================ */
+.lifeos-personal-scope .goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+.lifeos-personal-scope .goal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .goal-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.lifeos-personal-scope .goal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lifeos-personal-scope .goal-icon {
+  font-size: 1.8rem;
+}
+
+.lifeos-personal-scope .goal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .goal-category {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lifeos-personal-scope .goal-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.lifeos-personal-scope .goal-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gradient-2);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.lifeos-personal-scope .goal-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(4px);
+}
+
+.lifeos-personal-scope .goal-percentage {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+}
+
+.lifeos-personal-scope .goal-milestones {
+  list-style: none;
+}
+
+.lifeos-personal-scope .goal-milestone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .goal-milestone:hover {
+  color: var(--text-primary);
+}
+
+.lifeos-personal-scope .goal-milestone.done {
+  color: var(--success);
+}
+
+.lifeos-personal-scope .milestone-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .goal-milestone.done .milestone-check {
+  background: var(--success);
+  border-color: var(--success);
+  color: #000;
+}
+
+/* ================================================
+   JOB TRACKER
+   ================================================ */
+.lifeos-personal-scope .job-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .job-form input,
+.lifeos-personal-scope .job-form select {
+  padding: 10px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .job-form input:focus,
+.lifeos-personal-scope .job-form select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.lifeos-personal-scope .job-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .btn {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
+.lifeos-personal-scope .btn-primary {
+  background: var(--gradient-1);
+  color: #fff;
+}
+
+.lifeos-personal-scope .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.lifeos-personal-scope .btn-small {
+  padding: 6px 14px;
+  font-size: 0.75rem;
+}
+
+.lifeos-personal-scope .btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .btn-danger {
+  background: transparent;
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  color: var(--danger);
+}
+
+.lifeos-personal-scope .btn-danger:hover {
+  background: var(--danger-glow);
+}
+
+.lifeos-personal-scope .job-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lifeos-personal-scope .job-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.lifeos-personal-scope .job-table td {
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.lifeos-personal-scope .job-table tr:hover td {
+  background: rgba(108, 92, 231, 0.03);
+}
+
+.lifeos-personal-scope .status-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lifeos-personal-scope .status-applied {
+  background: var(--info-glow);
+  color: var(--info);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+.lifeos-personal-scope .status-interview {
+  background: var(--warning-glow);
+  color: var(--warning);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.lifeos-personal-scope .status-offered {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.lifeos-personal-scope .status-rejected {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+}
+
+/* ================================================
+   DREAMS
+   ================================================ */
+.lifeos-personal-scope .dreams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.lifeos-personal-scope .dream-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.lifeos-personal-scope .dream-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-card);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .dream-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.lifeos-personal-scope .dream-card:hover::before {
+  opacity: 1;
+}
+
+.lifeos-personal-scope .dream-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.lifeos-personal-scope .dream-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  position: relative;
+}
+
+.lifeos-personal-scope .dream-priority {
+  margin-top: 10px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  position: relative;
+}
+
+.lifeos-personal-scope .dream-priority.now { color: var(--success); }
+.lifeos-personal-scope .dream-priority.mid { color: var(--warning); }
+.lifeos-personal-scope .dream-priority.long { color: var(--text-muted); }
+
+/* ================================================
+   SECTION HEADERS
+   ================================================ */
+.lifeos-personal-scope .section-header {
+  margin-bottom: 24px;
+}
+
+.lifeos-personal-scope .section-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+
+.lifeos-personal-scope .section-header p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ================================================
+   TABS 
+   ================================================ */
+.lifeos-personal-scope .tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: fit-content;
+}
+
+.lifeos-personal-scope .tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+}
+
+.lifeos-personal-scope .tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.lifeos-personal-scope .tab:hover:not(.active) {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ================================================
+   EMPTY STATES
+   ================================================ */
+.lifeos-personal-scope .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.lifeos-personal-scope .empty-state p {
+  font-size: 0.9rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* ================================================
+   MANAGEMENT PAGES
+   ================================================ */
+.lifeos-personal-scope .page-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  color: var(--text-primary);
+}
+
+.lifeos-personal-scope .page-container > h1,
+.lifeos-personal-scope .page-header h1 {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.lifeos-personal-scope .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.lifeos-personal-scope .page-container > h1 {
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .date-selector,
+.lifeos-personal-scope .month-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.lifeos-personal-scope .page-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .page-toolbar input,
+.lifeos-personal-scope .page-toolbar select {
+  max-width: 220px;
+}
+
+.lifeos-personal-scope .page-container input:not([type="range"]),
+.lifeos-personal-scope .page-container select,
+.lifeos-personal-scope .page-container textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .page-container input:not([type="range"]):focus,
+.lifeos-personal-scope .page-container select:focus,
+.lifeos-personal-scope .page-container textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.lifeos-personal-scope .page-container input::placeholder,
+.lifeos-personal-scope .page-container textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.lifeos-personal-scope .page-container input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.lifeos-personal-scope .page-container label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.lifeos-personal-scope .form-section,
+.lifeos-personal-scope .week-chart,
+.lifeos-personal-scope .entries-list,
+.lifeos-personal-scope .investments-list,
+.lifeos-personal-scope .meal-list,
+.lifeos-personal-scope .supplements-list,
+.lifeos-personal-scope .debts-list,
+.lifeos-personal-scope .funds-list,
+.lifeos-personal-scope .career-list,
+.lifeos-personal-scope .contact-group,
+.lifeos-personal-scope .plan-group {
+  margin-bottom: 22px;
+}
+
+.lifeos-personal-scope .form-section,
+.lifeos-personal-scope .week-chart,
+.lifeos-personal-scope .contact-group,
+.lifeos-personal-scope .plan-group {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .meal-list:empty,
+.lifeos-personal-scope .supplements-list:empty,
+.lifeos-personal-scope .debts-list:empty,
+.lifeos-personal-scope .funds-list:empty,
+.lifeos-personal-scope .career-list:empty,
+.lifeos-personal-scope .entries-list:empty,
+.lifeos-personal-scope .investments-list:empty {
+  display: block;
+  padding: 28px 18px;
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.lifeos-personal-scope .meal-list:empty::before,
+.lifeos-personal-scope .supplements-list:empty::before,
+.lifeos-personal-scope .debts-list:empty::before,
+.lifeos-personal-scope .funds-list:empty::before,
+.lifeos-personal-scope .career-list:empty::before,
+.lifeos-personal-scope .entries-list:empty::before,
+.lifeos-personal-scope .investments-list:empty::before {
+  content: 'No records yet';
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .form-section h3,
+.lifeos-personal-scope .week-chart h3,
+.lifeos-personal-scope .entries-list h3,
+.lifeos-personal-scope .contact-group h3,
+.lifeos-personal-scope .plan-group h3 {
+  margin: 0 0 14px;
+  color: var(--text-heading);
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.lifeos-personal-scope .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .btn-primary,
+.lifeos-personal-scope .btn-small,
+.lifeos-personal-scope .btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .btn-primary {
+  padding: 10px 18px;
+  background: var(--gradient-1);
+  color: #fff;
+}
+
+.lifeos-personal-scope .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.lifeos-personal-scope .btn-small {
+  padding: 8px 13px;
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope .btn-small:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.lifeos-personal-scope .btn-delete {
+  padding: 8px 12px;
+  border-color: rgba(255, 82, 82, 0.28);
+  background: transparent;
+  color: var(--danger);
+}
+
+.lifeos-personal-scope .btn-delete:hover {
+  background: var(--danger-glow);
+}
+
+.lifeos-personal-scope .health-grid,
+.lifeos-personal-scope .diet-summary,
+.lifeos-personal-scope .wealth-summary,
+.lifeos-personal-scope .debt-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.lifeos-personal-scope .health-card,
+.lifeos-personal-scope .summary-card {
+  min-height: 132px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .health-card:hover,
+.lifeos-personal-scope .summary-card:hover,
+.lifeos-personal-scope .debt-item:hover,
+.lifeos-personal-scope .fund-item:hover,
+.lifeos-personal-scope .career-item:hover,
+.lifeos-personal-scope .contact-item:hover,
+.lifeos-personal-scope .plan-item:hover,
+.lifeos-personal-scope .entry-item:hover,
+.lifeos-personal-scope .investment-item:hover,
+.lifeos-personal-scope .meal-item:hover,
+.lifeos-personal-scope .supplement-item:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+}
+
+.lifeos-personal-scope .health-card h3,
+.lifeos-personal-scope .summary-card h3 {
+  margin: 0 0 10px;
+  color: var(--text-heading);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .metric-value,
+.lifeos-personal-scope .amount,
+.lifeos-personal-scope .fund-amount {
+  color: var(--text-heading);
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.lifeos-personal-scope .week-avg {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.lifeos-personal-scope .summary-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.lifeos-personal-scope .summary-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--accent);
+}
+
+.lifeos-personal-scope .summary-card.income,
+.lifeos-personal-scope .summary-card.paid,
+.lifeos-personal-scope .summary-card.savings {
+  border-color: rgba(0, 230, 118, 0.2);
+}
+
+.lifeos-personal-scope .summary-card.income::before,
+.lifeos-personal-scope .summary-card.paid::before,
+.lifeos-personal-scope .summary-card.savings::before {
+  background: var(--success);
+}
+
+.lifeos-personal-scope .summary-card.expense,
+.lifeos-personal-scope .summary-card.remaining {
+  border-color: rgba(255, 82, 82, 0.2);
+}
+
+.lifeos-personal-scope .summary-card.expense::before,
+.lifeos-personal-scope .summary-card.remaining::before {
+  background: var(--danger);
+}
+
+.lifeos-personal-scope .summary-card.investment,
+.lifeos-personal-scope .summary-card.progress {
+  border-color: rgba(0, 210, 255, 0.2);
+}
+
+.lifeos-personal-scope .summary-card.investment::before,
+.lifeos-personal-scope .summary-card.progress::before {
+  background: var(--info);
+}
+
+.lifeos-personal-scope .entry-item,
+.lifeos-personal-scope .investment-item,
+.lifeos-personal-scope .meal-item,
+.lifeos-personal-scope .supplement-item,
+.lifeos-personal-scope .debt-item,
+.lifeos-personal-scope .fund-item,
+.lifeos-personal-scope .career-item,
+.lifeos-personal-scope .contact-item,
+.lifeos-personal-scope .plan-item {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .entry-item,
+.lifeos-personal-scope .investment-item,
+.lifeos-personal-scope .meal-item,
+.lifeos-personal-scope .supplement-item {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) auto;
+}
+
+.lifeos-personal-scope .entry-type,
+.lifeos-personal-scope .meal-type,
+.lifeos-personal-scope .fund-type,
+.lifeos-personal-scope .inv-type,
+.lifeos-personal-scope .priority-badge,
+.lifeos-personal-scope .status-badge,
+.lifeos-personal-scope .debt-status {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 9px;
+  border-radius: var(--radius-full);
+  background: var(--info-glow);
+  color: var(--info);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.lifeos-personal-scope .entry-item.income .entry-type,
+.lifeos-personal-scope .status-badge.completed,
+.lifeos-personal-scope .priority-badge.low,
+.lifeos-personal-scope .debt-status.paid {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
+.lifeos-personal-scope .entry-item.expense .entry-type,
+.lifeos-personal-scope .priority-badge.high {
+  background: var(--danger-glow);
+  color: var(--danger);
+}
+
+.lifeos-personal-scope .entry-item.investment .entry-type,
+.lifeos-personal-scope .status-badge.planned {
+  background: var(--info-glow);
+  color: var(--info);
+}
+
+.lifeos-personal-scope .priority-badge.medium,
+.lifeos-personal-scope .status-badge.in_progress {
+  background: var(--warning-glow);
+  color: var(--warning);
+}
+
+.lifeos-personal-scope .meal-items,
+.lifeos-personal-scope .entry-category,
+.lifeos-personal-scope .inv-name,
+.lifeos-personal-scope .supp-name,
+.lifeos-personal-scope .contact-name,
+.lifeos-personal-scope .career-company,
+.lifeos-personal-scope .plan-title,
+.lifeos-personal-scope .debt-name,
+.lifeos-personal-scope .fund-name {
+  color: var(--text-heading);
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .entry-amount,
+.lifeos-personal-scope .inv-value,
+.lifeos-personal-scope .inv-return,
+.lifeos-personal-scope .meal-protein,
+.lifeos-personal-scope .meal-calories,
+.lifeos-personal-scope .supp-quantity,
+.lifeos-personal-scope .supp-days,
+.lifeos-personal-scope .career-pay {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.lifeos-personal-scope .fund-overview {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope .fund-progress-circle {
+  position: relative;
+  width: 150px;
+  aspect-ratio: 1;
+}
+
+.lifeos-personal-scope .fund-progress-circle svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lifeos-personal-scope .fund-progress-circle svg circle:first-child {
+  stroke: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lifeos-personal-scope .progress-percent {
+  color: var(--text-heading);
+  font-size: 1.55rem;
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .fund-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.lifeos-personal-scope .fund-stats .stat {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .fund-stats label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.lifeos-personal-scope .fund-stats span {
+  color: var(--text-heading);
+  font-weight: 900;
+}
+
+.lifeos-personal-scope .debt-header,
+.lifeos-personal-scope .fund-header,
+.lifeos-personal-scope .career-header,
+.lifeos-personal-scope .contact-header,
+.lifeos-personal-scope .plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lifeos-personal-scope .debt-details,
+.lifeos-personal-scope .plan-details,
+.lifeos-personal-scope .contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.lifeos-personal-scope .debt-progress,
+.lifeos-personal-scope .fund-progress {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--gradient-3);
+}
+
+.lifeos-personal-scope .debt-actions,
+.lifeos-personal-scope .fund-actions,
+.lifeos-personal-scope .contact-actions,
+.lifeos-personal-scope .career-plan,
+.lifeos-personal-scope .plan-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lifeos-personal-scope .debt-actions input,
+.lifeos-personal-scope .fund-actions input {
+  max-width: 180px;
+}
+
+.lifeos-personal-scope .career-scores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.lifeos-personal-scope .score-item {
+  display: grid;
+  grid-template-columns: 1fr minmax(120px, 220px) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope .career-role,
+.lifeos-personal-scope .quality-score {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.lifeos-personal-scope .chart-bars {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  min-height: 160px;
+  padding-top: 12px;
+}
+
+.lifeos-personal-scope .chart-bar {
+  display: flex;
+  flex: 1;
+  min-width: 42px;
+  height: 140px;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+}
+
+.lifeos-personal-scope .bar-fill {
+  width: 100%;
+  min-height: 4px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--gradient-3);
+}
+
+.lifeos-personal-scope .chart-bar span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+/* Mobile header bar */
+.lifeos-personal-scope .mobile-header-bar {
+  display: none;
+  height: 56px;
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-header);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.lifeos-personal-scope .mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .mobile-menu-btn:hover {
+  background: rgba(108, 92, 231, 0.1);
+}
+
+.lifeos-personal-scope .mobile-header-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope .mobile-theme-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .mobile-theme-btn:hover {
+  background: rgba(108, 92, 231, 0.1);
+}
+
+/* Sidebar overlay */
+.lifeos-personal-scope .sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .lifeos-personal-scope .mobile-header-bar {
+    display: flex;
+  }
+
+  .lifeos-personal-scope .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 150;
+    animation: lifeosPersonalFadeIn 0.2s ease;
+  }
+
+  .lifeos-personal-scope .sidebar.sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 160;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid var(--border);
+    background: var(--bg-sidebar);
+  }
+
+  .lifeos-personal-scope .sidebar.sidebar-mobile.open {
+    transform: translateX(0);
+  }
+
+  .lifeos-personal-scope .sidebar.sidebar-mobile .sidebar-nav {
+    padding: 16px 12px;
+  }
+
+  /* Hide desktop sidebar on mobile, but keep mobile drawer visible */
+  .lifeos-personal-scope .sidebar:not(.sidebar-mobile) {
+    display: none;
+  }
+
+  .lifeos-personal-scope .app-layout.sidebar-collapsed {
+    --sidebar-width: 80px;
+  }
+
+  .lifeos-personal-scope .main-area {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .lifeos-personal-scope .page-content {
+    padding: 20px 16px;
+  }
+
+  .lifeos-personal-scope .page-container {
+    padding: 20px 16px;
+  }
+
+  .lifeos-personal-scope .page-header {
+    align-items: flex-start;
+  }
+
+  .lifeos-personal-scope .health-grid,
+  .lifeos-personal-scope .diet-summary,
+  .lifeos-personal-scope .wealth-summary,
+  .lifeos-personal-scope .debt-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lifeos-personal-scope .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .fund-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .fund-progress-circle {
+    width: 132px;
+  }
+
+  .lifeos-personal-scope .fund-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .entry-item,
+  .lifeos-personal-scope .investment-item,
+  .lifeos-personal-scope .meal-item,
+  .lifeos-personal-scope .supplement-item {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .score-item {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .debt-actions input,
+  .lifeos-personal-scope .fund-actions input {
+    max-width: none;
+  }
+
+  .lifeos-personal-scope .chart-bars {
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .lifeos-personal-scope .header {
+    padding: 0 16px;
+    height: auto;
+    min-height: 60px;
+  }
+
+  .lifeos-personal-scope .header-left h2 {
+    font-size: 1.1rem;
+  }
+
+  .lifeos-personal-scope .header-left p {
+    font-size: 0.72rem;
+  }
+
+  .lifeos-personal-scope .header-right {
+    display: none;
+  }
+
+  .lifeos-personal-scope .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lifeos-personal-scope .stat-card {
+    padding: 14px 16px;
+  }
+
+  .lifeos-personal-scope .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .lifeos-personal-scope .stat-label {
+    font-size: 0.68rem;
+  }
+
+  .lifeos-personal-scope .goals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .dreams-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .lifeos-personal-scope .dream-card {
+    padding: 16px;
+  }
+
+  .lifeos-personal-scope .dream-icon {
+    font-size: 2rem;
+  }
+
+  .lifeos-personal-scope .dream-text {
+    font-size: 0.82rem;
+  }
+
+  .lifeos-personal-scope .job-form {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .habits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .today-task-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .task-actions {
+    min-width: 0;
+    flex-direction: row;
+  }
+
+  .lifeos-personal-scope .task-actions .btn {
+    flex: 1;
+  }
+
+  .lifeos-personal-scope .task-toolbar {
+    align-items: stretch;
+  }
+
+  .lifeos-personal-scope .task-filters {
+    width: 100%;
+  }
+
+  .lifeos-personal-scope .dashboard-task-list {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .learning-item {
+    padding: 12px 14px;
+    flex-wrap: wrap;
+  }
+
+  .lifeos-personal-scope .learning-overview,
+  .lifeos-personal-scope .learning-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .learning-filter-tabs {
+    width: 100%;
+  }
+
+  .lifeos-personal-scope .learning-filter {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .lifeos-personal-scope .learning-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .learning-section-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .lifeos-personal-scope .learning-roadmap-row {
+    grid-template-columns: 24px 34px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+
+  .lifeos-personal-scope .learning-status-toggle {
+    grid-column: 2;
+  }
+
+  .lifeos-personal-scope .learning-item-body {
+    grid-column: 3;
+  }
+
+  .lifeos-personal-scope .learning-status-pill {
+    grid-column: 3;
+    justify-self: start;
+  }
+
+  .lifeos-personal-scope .learning-row-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .lifeos-personal-scope .learning-editor-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lifeos-personal-scope .learning-section-form {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .learning-info {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .lifeos-personal-scope .learning-link {
+    margin-left: auto;
+  }
+
+  .lifeos-personal-scope .section-header h3 {
+    font-size: 1rem;
+  }
+
+  .lifeos-personal-scope .tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .lifeos-personal-scope .tab {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .lifeos-personal-scope .routine-timeline {
+    padding-left: 20px;
+  }
+
+  .lifeos-personal-scope .routine-item {
+    padding: 12px 14px;
+    margin-left: 8px;
+  }
+
+  .lifeos-personal-scope .routine-task {
+    font-size: 0.88rem;
+  }
+
+  .lifeos-personal-scope .routine-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .lifeos-personal-scope .routine-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .routine-card-actions {
+    justify-content: flex-start;
+  }
+
+  .lifeos-personal-scope .routine-editor-item {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .lifeos-personal-scope .routine-editor-grid {
+    grid-template-columns: 1fr 72px;
+  }
+
+  .lifeos-personal-scope .routine-task-field,
+  .lifeos-personal-scope .routine-note-field {
+    grid-column: 1 / -1;
+  }
+
+  .lifeos-personal-scope .routine-editor-actions {
+    grid-column: 2;
+    justify-content: flex-end;
+  }
+
+  .lifeos-personal-scope .article-content {
+    padding: 20px 16px;
+  }
+
+  .lifeos-personal-scope .article-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .lifeos-personal-scope .article-content h2 {
+    font-size: 1.25rem;
+  }
+
+  .lifeos-personal-scope .article-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .lifeos-personal-scope .article-content p,
+  .lifeos-personal-scope .article-content li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 480px) {
+  .lifeos-personal-scope .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .dreams-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .page-content {
+    padding: 16px 12px;
+  }
+
+  .lifeos-personal-scope .page-container {
+    padding: 16px 12px;
+  }
+
+  .lifeos-personal-scope .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lifeos-personal-scope .page-container > h1,
+  .lifeos-personal-scope .page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .lifeos-personal-scope .health-grid,
+  .lifeos-personal-scope .diet-summary,
+  .lifeos-personal-scope .wealth-summary,
+  .lifeos-personal-scope .debt-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .fund-overview,
+  .lifeos-personal-scope .form-section,
+  .lifeos-personal-scope .week-chart,
+  .lifeos-personal-scope .form-group {
+    padding: 16px;
+  }
+
+  .lifeos-personal-scope .btn-primary,
+  .lifeos-personal-scope .btn-small,
+  .lifeos-personal-scope .btn-delete {
+    width: 100%;
+  }
+
+  .lifeos-personal-scope .debt-actions,
+  .lifeos-personal-scope .fund-actions,
+  .lifeos-personal-scope .contact-actions,
+  .lifeos-personal-scope .career-plan,
+  .lifeos-personal-scope .plan-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .card {
+    padding: 16px;
+  }
+
+  .lifeos-personal-scope .card-header {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .lifeos-personal-scope .card-title {
+    font-size: 0.92rem;
+  }
+
+  .lifeos-personal-scope .task-progress-card {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .task-progress-value {
+    font-size: 1.5rem;
+  }
+
+  .lifeos-personal-scope .task-actions {
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .learning-progress-panel,
+  .lifeos-personal-scope .learning-focus-panel {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .lifeos-personal-scope .learning-panel-top {
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .learning-filter {
+    flex-basis: calc(50% - 4px);
+  }
+
+  .lifeos-personal-scope .learning-section-actions,
+  .lifeos-personal-scope .learning-row-actions,
+  .lifeos-personal-scope .learning-editor-actions,
+  .lifeos-personal-scope .learning-savebar,
+  .lifeos-personal-scope .learning-savebar-actions,
+  .lifeos-personal-scope .learning-focus-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .learning-section-actions .learning-btn,
+  .lifeos-personal-scope .learning-row-actions .learning-btn,
+  .lifeos-personal-scope .learning-editor-actions .learning-btn,
+  .lifeos-personal-scope .learning-savebar-actions .learning-btn,
+  .lifeos-personal-scope .learning-focus-actions .learning-btn {
+    width: 100%;
+  }
+
+  .lifeos-personal-scope .learning-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .learning-field.wide {
+    grid-column: 1;
+  }
+
+  .lifeos-personal-scope .learning-item-line {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lifeos-personal-scope .learning-item-line h4,
+  .lifeos-personal-scope .learning-item-body p {
+    white-space: normal;
+  }
+
+  .lifeos-personal-scope .routine-editor-item {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .routine-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .routine-editor-actions {
+    grid-column: 1;
+    justify-content: flex-start;
+  }
+}
+
+/* ================================================
+   SCROLLBAR
+   ================================================ */
+.lifeos-personal-scope ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lifeos-personal-scope ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.lifeos-personal-scope ::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: var(--radius-full);
+}
+
+.lifeos-personal-scope ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ================================================
+   ANIMATIONS
+   ================================================ */
+@keyframes lifeosPersonalFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lifeos-personal-scope .page-content > * {
+  animation: lifeosPersonalFadeIn 0.3s ease-out forwards;
+}
+
+/* ================================================
+   PROGRESS RING
+   ================================================ */
+.lifeos-personal-scope .progress-ring-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.lifeos-personal-scope .progress-ring-text {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+/* ================================================
+   ARTICLES PAGE
+   ================================================ */
+.lifeos-personal-scope .articles-layout {
+  display: flex;
+  height: calc(100vh - var(--header-height));
+  overflow: hidden;
+}
+
+.lifeos-personal-scope .articles-sidebar {
+  width: 320px;
+  min-width: 320px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-personal-scope .articles-sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lifeos-personal-scope .articles-search {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.lifeos-personal-scope .articles-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.lifeos-personal-scope .articles-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.lifeos-personal-scope .article-reader {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+.lifeos-personal-scope .article-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  min-height: 100%;
+}
+
+.lifeos-personal-scope .article-content h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  line-height: 1.2;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.lifeos-personal-scope .article-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.lifeos-personal-scope .article-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.lifeos-personal-scope .article-content p {
+  margin-bottom: 16px;
+  line-height: 1.8;
+}
+
+.lifeos-personal-scope .article-content ul,
+.lifeos-personal-scope .article-content ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.lifeos-personal-scope .article-content li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.lifeos-personal-scope .article-content blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 16px;
+  margin: 24px 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.lifeos-personal-scope .article-content code {
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.lifeos-personal-scope .article-content pre {
+  background: var(--bg-card);
+  padding: 16px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.lifeos-personal-scope .article-content a {
+  color: var(--accent-light);
+  text-decoration: underline;
+}
+
+.lifeos-personal-scope .article-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+/* ================================================
+   LEARNING ROW DRAG & DROP
+   ================================================ */
+.lifeos-personal-scope .learning-row {
+  transition: background 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
+}
+
+.lifeos-personal-scope .learning-row:active {
+  cursor: grabbing;
+}
+
+.lifeos-personal-scope .learning-row[draggable="true"]:hover {
+  background: rgba(108, 92, 231, 0.04);
+}
+
+@media (max-width: 768px) {
+  .lifeos-personal-scope .articles-layout {
+    flex-direction: column;
+  }
+  
+  .lifeos-personal-scope .articles-sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .lifeos-personal-scope .article-content {
+    padding: 20px 16px;
+  }
+}

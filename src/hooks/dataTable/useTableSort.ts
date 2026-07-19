@@ -28,9 +28,13 @@ export function useTableSort<T>(
   const isControlled = sortBy !== undefined && onSortChange !== undefined;
 
   // Current sort state
-  const currentSort: SortState = isControlled
-    ? { columnId: sortBy, order: sortOrder || 'asc' }
-    : internalSort;
+  const currentSort: SortState = useMemo(
+    () =>
+      isControlled
+        ? { columnId: sortBy, order: sortOrder || 'asc' }
+        : internalSort,
+    [internalSort, isControlled, sortBy, sortOrder]
+  );
 
   // Handle sort change
   const handleSort = useCallback(
