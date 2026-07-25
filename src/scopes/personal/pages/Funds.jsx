@@ -62,13 +62,13 @@ export default function Funds() {
       <div className="fund-overview">
         <div className="fund-progress-circle">
           <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#333" strokeWidth="8" />
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#EDF0F5" strokeWidth="8" />
             <circle
               cx="50"
               cy="50"
               r="45"
               fill="none"
-              stroke="#4ade80"
+              stroke="#E55555"
               strokeWidth="8"
               strokeDasharray={`${summary.progress * 2.83} 283`}
               transform="rotate(-90 50 50)"

@@ -39,8 +39,6 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar({
-  theme,
-  toggleTheme,
   isCollapsed,
   toggleSidebar,
   isMobile,
@@ -122,32 +120,6 @@ export default function Sidebar({
             ))}
           </nav>
 
-          <div style={{ padding: '0 20px 10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Theme</span>
-            <button 
-              onClick={toggleTheme} 
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              style={{ 
-                background: 'var(--bg-secondary)', 
-                border: '1px solid var(--border)', 
-                borderRadius: 'var(--radius)', 
-                padding: '6px 12px', 
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                fontSize: '0.85rem',
-                fontWeight: 500,
-                transition: 'var(--transition)'
-              }}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-              {theme === 'dark' ? 'Light' : 'Dark'}
-            </button>
-          </div>
-
           <div className="sidebar-quote">
             <p>"{quote}"</p>
           </div>
@@ -207,32 +179,6 @@ export default function Sidebar({
           </div>
         ))}
       </nav>
-
-      <div style={{ padding: isCollapsed ? '0 0 10px 0' : '0 20px 10px 20px', display: 'flex', flexDirection: isCollapsed ? 'column' : 'row', alignItems: 'center', justifyContent: isCollapsed ? 'center' : 'space-between', color: 'var(--text-secondary)' }}>
-        {!isCollapsed && <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Theme</span>}
-        <button 
-          onClick={toggleTheme} 
-          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          style={{ 
-            background: 'var(--bg-secondary)', 
-            border: '1px solid var(--border)', 
-            borderRadius: 'var(--radius)', 
-            padding: isCollapsed ? '8px' : '6px 12px', 
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            fontSize: '0.85rem',
-            fontWeight: 500,
-            transition: 'var(--transition)'
-          }}
-        >
-          {theme === 'dark' ? '☀️' : '🌙'}
-          {!isCollapsed && (theme === 'dark' ? 'Light' : 'Dark')}
-        </button>
-      </div>
 
       {!isCollapsed && (
         <div className="sidebar-quote">

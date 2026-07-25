@@ -13,14 +13,14 @@ export const LifeOSScopePlaceholder = ({ scopeId }: LifeOSScopePlaceholderProps)
   const Icon = scope.Icon;
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f7f8fb" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <LifeOSScopeBar activeScope={scope.id} />
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
         <Box
           sx={{
             border: "1px solid rgba(216,224,234,0.96)",
             borderRadius: "8px",
-            bgcolor: "#fff",
+            bgcolor: "background.paper",
             p: { xs: 2.5, md: 4 },
           }}
         >
@@ -30,8 +30,8 @@ export const LifeOSScopePlaceholder = ({ scopeId }: LifeOSScopePlaceholderProps)
                 width: 48,
                 height: 48,
                 borderRadius: "8px",
-                bgcolor: "#111827",
-                color: "#fff",
+                bgcolor: "secondary.main",
+                color: "secondary.contrastText",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -52,7 +52,7 @@ export const LifeOSScopePlaceholder = ({ scopeId }: LifeOSScopePlaceholderProps)
               >
                 {scope.label}
               </Typography>
-              <Typography sx={{ mt: 1, color: "#475467", fontSize: "1rem", lineHeight: 1.7, maxWidth: 780 }}>
+              <Typography sx={{ mt: 1, color: "text.secondary", fontSize: "1rem", lineHeight: 1.7, maxWidth: 780 }}>
                 {scope.description}
               </Typography>
             </Box>
@@ -69,10 +69,10 @@ export const LifeOSScopePlaceholder = ({ scopeId }: LifeOSScopePlaceholderProps)
                 endIcon={<ArrowForwardIcon />}
                 sx={{
                   borderRadius: "8px",
-                  bgcolor: "#111827",
+                  bgcolor: "primary.main",
                   textTransform: "none",
                   fontWeight: 800,
-                  "&:hover": { bgcolor: "#1f2937" },
+                  "&:hover": { bgcolor: "primary.dark" },
                 }}
               >
                 Open Personal
@@ -83,8 +83,8 @@ export const LifeOSScopePlaceholder = ({ scopeId }: LifeOSScopePlaceholderProps)
                 variant="outlined"
                 sx={{
                   borderRadius: "8px",
-                  borderColor: "rgba(17,24,39,0.22)",
-                  color: "#111827",
+                  borderColor: "primary.main",
+                  color: "primary.main",
                   textTransform: "none",
                   fontWeight: 800,
                 }}

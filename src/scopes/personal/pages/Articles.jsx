@@ -202,7 +202,7 @@ export default function Articles({ isMobile }) {
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(0, 0, 0, 0.6)',
+              background: 'rgba(30, 37, 48, 0.45)',
               zIndex: 150
             }}
           />
@@ -268,7 +268,7 @@ export default function Articles({ isMobile }) {
                 border: '1px solid var(--border)',
                 borderRadius: 'var(--radius)',
                 color: 'var(--text-primary)',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
                 fontSize: '0.88rem',
                 outline: 'none',
                 transition: 'var(--transition)'

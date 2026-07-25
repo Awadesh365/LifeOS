@@ -214,7 +214,7 @@ export default function Projects() {
                               color: 'var(--text-primary)'
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.background = 'rgba(108, 92, 231, 0.06)';
+                              e.currentTarget.style.background = 'rgba(229, 85, 85, 0.06)';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.background = 'transparent';
@@ -291,8 +291,8 @@ export default function Projects() {
                       <span key={j} style={{
                         fontSize: '0.72rem',
                         padding: '3px 10px',
-                        background: 'rgba(108, 92, 231, 0.1)',
-                        border: '1px solid rgba(108, 92, 231, 0.2)',
+                        background: 'rgba(229, 85, 85, 0.1)',
+                        border: '1px solid rgba(229, 85, 85, 0.2)',
                         borderRadius: 'var(--radius-full)',
                         color: 'var(--accent-light)',
                         fontWeight: 500

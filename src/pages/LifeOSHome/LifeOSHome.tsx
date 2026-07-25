@@ -14,20 +14,20 @@ const statusColor = {
   foundation: {
     label: "Foundation",
     bg: "rgba(21,107,186,0.08)",
-    color: "#155fa0",
+    color: "#156BBA",
     border: "rgba(21,107,186,0.16)",
   },
   planned: {
     label: "Planned",
     bg: "rgba(102,112,133,0.08)",
-    color: "#475467",
+    color: "#667085",
     border: "rgba(102,112,133,0.18)",
   },
 } as const;
 
 const LifeOSHome = () => {
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f7f8fb" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <LifeOSScopeBar />
 
       <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
@@ -58,7 +58,7 @@ const LifeOSHome = () => {
               <Typography
                 sx={{
                   mt: 1,
-                  color: "#475467",
+                  color: "text.secondary",
                   fontSize: { xs: "1rem", md: "1.08rem" },
                   maxWidth: 760,
                   lineHeight: 1.65,
@@ -77,12 +77,12 @@ const LifeOSHome = () => {
                 endIcon={<ArrowForwardIcon />}
                 sx={{
                   borderRadius: "8px",
-                  bgcolor: "#111827",
-                  color: "#fff",
+                  bgcolor: "primary.main",
+                  color: "primary.contrastText",
                   textTransform: "none",
                   fontWeight: 800,
                   px: 2,
-                  "&:hover": { bgcolor: "#1f2937" },
+                  "&:hover": { bgcolor: "primary.dark" },
                 }}
               >
                 Open Personal
@@ -93,8 +93,8 @@ const LifeOSHome = () => {
                 variant="outlined"
                 sx={{
                   borderRadius: "8px",
-                  borderColor: "rgba(17,24,39,0.22)",
-                  color: "#111827",
+                  borderColor: "primary.main",
+                  color: "primary.main",
                   textTransform: "none",
                   fontWeight: 800,
                   px: 2,
@@ -124,14 +124,14 @@ const LifeOSHome = () => {
                       p: 2.25,
                       borderRadius: "8px",
                       border: "1px solid rgba(216,224,234,0.96)",
-                      bgcolor: "#fff",
+                      bgcolor: "background.paper",
                       color: "inherit",
                       textDecoration: "none",
-                      boxShadow: "0 8px 24px -18px rgba(16,24,40,0.2)",
+                      boxShadow: "0 8px 24px -18px rgba(16,24,40,0.12)",
                       transition: "border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease",
                       "&:hover": {
-                        borderColor: "rgba(17,24,39,0.28)",
-                        boxShadow: "0 16px 36px -24px rgba(16,24,40,0.32)",
+                        borderColor: "rgba(229,85,85,0.45)",
+                        boxShadow: "0 16px 36px -24px rgba(16,24,40,0.16)",
                         transform: "translateY(-2px)",
                         textDecoration: "none",
                       },
@@ -143,8 +143,8 @@ const LifeOSHome = () => {
                           width: 42,
                           height: 42,
                           borderRadius: "8px",
-                          bgcolor: "#111827",
-                          color: "#fff",
+                          bgcolor: "secondary.main",
+                          color: "secondary.contrastText",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -194,7 +194,7 @@ const LifeOSHome = () => {
                       <Typography sx={{ color: "#98a2b3", fontSize: "0.8125rem", fontWeight: 700 }}>
                         {scope.source}
                       </Typography>
-                      <ArrowForwardIcon sx={{ color: "#111827", fontSize: 18 }} />
+                      <ArrowForwardIcon sx={{ color: "primary.main", fontSize: 18 }} />
                     </Stack>
                   </Box>
                 </Grid>

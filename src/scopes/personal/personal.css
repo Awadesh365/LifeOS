@@ -1,36 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Plus Jakarta Sans is loaded globally in index.html (matches the CityOS premium theme). */
 
+/* ============================================================
+   Personal scope tokens — aligned to the CityOS premium design
+   system (light, crimson + navy, Plus Jakarta Sans). One theme,
+   no dark mode, so the Personal scope matches every other section.
+   ============================================================ */
 .lifeos-personal-scope {
-  --bg-primary: #06060b;
-  --bg-secondary: #0d0d15;
-  --bg-card: #111119;
-  --bg-card-hover: #16161f;
-  --bg-sidebar: #0a0a12;
-  --border: #1a1a2e;
-  --border-light: #252540;
+  /* Surfaces */
+  --bg-primary: #FCFCFD;
+  --bg-secondary: #F4F6F9;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F4F6F9;
+  --bg-sidebar: linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(241, 245, 249, 0.95) 100%);
+  --bg-header: rgba(255, 255, 255, 0.82);
+  --border: #D8E0EA;
+  --border-light: #C4CEDC;
 
-  --text-primary: #e8e8f0;
-  --text-secondary: #8888a8;
-  --text-muted: #555570;
-  --text-heading: #ffffff;
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #667085;
+  --text-muted: #98A2B3;
+  --text-heading: #111827;
 
-  --accent: #6c5ce7;
-  --accent-glow: rgba(108, 92, 231, 0.3);
-  --accent-light: #a29bfe;
-  --success: #00e676;
-  --success-glow: rgba(0, 230, 118, 0.2);
-  --warning: #ffc107;
-  --warning-glow: rgba(255, 193, 7, 0.2);
-  --danger: #ff5252;
-  --danger-glow: rgba(255, 82, 82, 0.2);
-  --info: #00d2ff;
-  --info-glow: rgba(0, 210, 255, 0.2);
+  /* Brand accent — crimson (premium primary) */
+  --accent: #E55555;
+  --accent-glow: rgba(229, 85, 85, 0.22);
+  --accent-light: #C13838;
 
-  --gradient-1: linear-gradient(135deg, #6c5ce7, #a29bfe);
-  --gradient-2: linear-gradient(135deg, #00d2ff, #6c5ce7);
-  --gradient-3: linear-gradient(135deg, #00e676, #00d2ff);
-  --gradient-fire: linear-gradient(135deg, #ff5252, #ffc107);
-  --gradient-card: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(0, 210, 255, 0.03));
+  /* Secondary — navy (premium brand-secondary) */
+  --navy: #1E2530;
+  --navy-elevated: #2D3748;
+  --navy-soft: rgba(30, 37, 48, 0.06);
+
+  /* Semantic — premium palette */
+  --success: #027900;
+  --success-glow: rgba(2, 121, 0, 0.10);
+  --warning: #C17400;
+  --warning-glow: rgba(193, 116, 0, 0.12);
+  --danger: #E55555;
+  --danger-glow: rgba(229, 85, 85, 0.10);
+  --info: #156BBA;
+  --info-glow: rgba(21, 107, 186, 0.10);
+
+  /* Gradients — brand-aligned, no neon */
+  --gradient-1: linear-gradient(135deg, #E55555 0%, #C13838 100%);
+  --gradient-2: linear-gradient(135deg, #1E2530 0%, #2D3748 100%);
+  --gradient-3: linear-gradient(135deg, #E55555 0%, #C13838 100%);
+  --gradient-fire: linear-gradient(135deg, #E55555 0%, #C17400 100%);
+  --gradient-card: linear-gradient(135deg, rgba(229, 85, 85, 0.04), rgba(30, 37, 48, 0.03));
 
   --radius-sm: 8px;
   --radius: 12px;
@@ -38,41 +55,21 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px var(--accent-glow);
+  /* Shadows — premium soft, no colored glow */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow: 0 4px 20px -8px rgba(16, 24, 40, 0.10);
+  --shadow-lg: 0 12px 32px -12px rgba(16, 24, 40, 0.14);
+  --shadow-glow: 0 10px 28px -14px rgba(229, 85, 85, 0.22);
 
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
   --sidebar-width: 260px;
   --header-height: 70px;
-  --bg-header: rgba(6, 6, 11, 0.8);
 }
 
-.lifeos-personal-scope[data-personal-theme="light"] {
-  --bg-primary: #f0f2f5;
-  --bg-secondary: #e2e8f0;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f8f9fa;
-  --bg-sidebar: #ffffff;
-  --border: #cbd5e1;
-  --border-light: #94a3b8;
-  --bg-header: rgba(255, 255, 255, 0.8);
-
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --text-heading: #000000;
-
-  --accent-glow: rgba(108, 92, 231, 0.15);
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 0 20px var(--accent-glow);
-}
+/* Dark mode retired for UI consistency — the [data-personal-theme]
+   attribute now resolves to the single premium light theme above. */
 
 .lifeos-personal-scope *, .lifeos-personal-scope *::before, .lifeos-personal-scope *::after {
   margin: 0;
@@ -86,7 +83,7 @@
 }
 
 .lifeos-personal-scope {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
@@ -208,13 +205,13 @@
 }
 
 .lifeos-personal-scope .nav-link:hover {
-  background: rgba(108, 92, 231, 0.08);
+  background: rgba(229, 85, 85, 0.08);
   color: var(--text-primary);
   text-decoration: none;
 }
 
 .lifeos-personal-scope .nav-link.active {
-  background: rgba(108, 92, 231, 0.12);
+  background: rgba(229, 85, 85, 0.12);
   color: var(--accent-light);
   font-weight: 600;
 }
@@ -309,8 +306,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: linear-gradient(135deg, rgba(255, 82, 82, 0.1), rgba(255, 193, 7, 0.1));
-  border: 1px solid rgba(255, 193, 7, 0.2);
+  background: linear-gradient(135deg, rgba(229, 85, 85, 0.1), rgba(193, 116, 0, 0.1));
+  border: 1px solid rgba(193, 116, 0, 0.2);
   border-radius: var(--radius-full);
   font-size: 0.82rem;
   font-weight: 600;
@@ -361,25 +358,25 @@
 .lifeos-personal-scope .badge-success {
   background: var(--success-glow);
   color: var(--success);
-  border: 1px solid rgba(0, 230, 118, 0.3);
+  border: 1px solid rgba(2, 121, 0, 0.3);
 }
 
 .lifeos-personal-scope .badge-warning {
   background: var(--warning-glow);
   color: var(--warning);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  border: 1px solid rgba(193, 116, 0, 0.3);
 }
 
 .lifeos-personal-scope .badge-danger {
   background: var(--danger-glow);
   color: var(--danger);
-  border: 1px solid rgba(255, 82, 82, 0.3);
+  border: 1px solid rgba(229, 85, 85, 0.3);
 }
 
 .lifeos-personal-scope .badge-info {
   background: var(--info-glow);
   color: var(--info);
-  border: 1px solid rgba(0, 210, 255, 0.3);
+  border: 1px solid rgba(21, 107, 186, 0.3);
 }
 
 /* ================================================
@@ -468,7 +465,7 @@
   transition: var(--transition);
   user-select: none;
   color: inherit;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   text-align: left;
 }
 
@@ -483,8 +480,8 @@
 }
 
 .lifeos-personal-scope .habit-item.done {
-  border-color: rgba(0, 230, 118, 0.3);
-  background: rgba(0, 230, 118, 0.04);
+  border-color: rgba(2, 121, 0, 0.3);
+  background: rgba(2, 121, 0, 0.04);
 }
 
 .lifeos-personal-scope .habit-checkbox {
@@ -503,7 +500,7 @@
 .lifeos-personal-scope .habit-item.done .habit-checkbox {
   background: var(--success);
   border-color: var(--success);
-  color: #000;
+  color: #fff;
 }
 
 .lifeos-personal-scope .habit-icon {
@@ -628,14 +625,14 @@
 
 .lifeos-personal-scope .sync-pill.server {
   color: var(--success);
-  border-color: rgba(0, 230, 118, 0.25);
+  border-color: rgba(2, 121, 0, 0.25);
   background: var(--success-glow);
 }
 
 .lifeos-personal-scope .sync-pill.saving,
 .lifeos-personal-scope .sync-pill.loading {
   color: var(--warning);
-  border-color: rgba(255, 193, 7, 0.25);
+  border-color: rgba(193, 116, 0, 0.25);
   background: var(--warning-glow);
 }
 
@@ -672,7 +669,7 @@
   margin-left: 8px;
   padding: 0 6px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(16, 24, 40, 0.05);
   font-size: 0.68rem;
 }
 
@@ -720,7 +717,7 @@
   background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   text-align: left;
   transition: var(--transition);
 }
@@ -732,8 +729,8 @@
 
 .lifeos-personal-scope .dashboard-task-item.done {
   color: var(--text-secondary);
-  border-color: rgba(0, 230, 118, 0.22);
-  background: rgba(0, 230, 118, 0.04);
+  border-color: rgba(2, 121, 0, 0.22);
+  background: rgba(2, 121, 0, 0.04);
 }
 
 .lifeos-personal-scope .dashboard-task-item:disabled {
@@ -784,21 +781,21 @@
 }
 
 .lifeos-personal-scope .heat-day.low {
-  background: rgba(0, 230, 118, 0.1);
-  border: 1px solid rgba(0, 230, 118, 0.2);
+  background: rgba(2, 121, 0, 0.1);
+  border: 1px solid rgba(2, 121, 0, 0.2);
   color: var(--success);
 }
 
 .lifeos-personal-scope .heat-day.mid {
-  background: rgba(0, 230, 118, 0.2);
-  border: 1px solid rgba(0, 230, 118, 0.3);
+  background: rgba(2, 121, 0, 0.2);
+  border: 1px solid rgba(2, 121, 0, 0.3);
   color: var(--success);
 }
 
 .lifeos-personal-scope .heat-day.high {
-  background: rgba(0, 230, 118, 0.35);
-  border: 1px solid rgba(0, 230, 118, 0.5);
-  color: #fff;
+  background: rgba(2, 121, 0, 0.35);
+  border: 1px solid rgba(2, 121, 0, 0.5);
+  color: var(--text-heading);
 }
 
 .lifeos-personal-scope .heat-day.today {
@@ -860,8 +857,8 @@
 }
 
 @keyframes lifeosPersonalPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(2, 121, 0, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(2, 121, 0, 0); }
 }
 
 .lifeos-personal-scope .routine-time {
@@ -890,7 +887,7 @@
   font-size: 0.72rem;
   color: var(--text-muted);
   padding: 2px 8px;
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(229, 85, 85, 0.1);
   border-radius: var(--radius-full);
 }
 
@@ -1018,7 +1015,7 @@
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.86rem;
   outline: none;
   transition: var(--transition);
@@ -1067,7 +1064,7 @@
 
 .lifeos-personal-scope .icon-action-btn.danger {
   color: var(--danger);
-  border-color: rgba(255, 82, 82, 0.25);
+  border-color: rgba(229, 85, 85, 0.25);
 }
 
 .lifeos-personal-scope .icon-action-btn.danger:hover {
@@ -1081,7 +1078,7 @@
 .lifeos-personal-scope .inline-alert {
   margin-bottom: 16px;
   padding: 12px 14px;
-  border: 1px solid rgba(255, 193, 7, 0.28);
+  border: 1px solid rgba(193, 116, 0, 0.28);
   border-radius: var(--radius);
   background: var(--warning-glow);
   color: var(--warning);
@@ -1152,8 +1149,8 @@
 .lifeos-personal-scope .learning-link {
   font-size: 0.78rem;
   padding: 5px 12px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  background: rgba(229, 85, 85, 0.1);
+  border: 1px solid rgba(229, 85, 85, 0.2);
   border-radius: var(--radius-full);
   color: var(--accent-light);
   cursor: pointer;
@@ -1163,7 +1160,7 @@
 }
 
 .lifeos-personal-scope .learning-link:hover {
-  background: rgba(108, 92, 231, 0.2);
+  background: rgba(229, 85, 85, 0.2);
   text-decoration: none;
 }
 
@@ -1188,13 +1185,13 @@
 }
 
 .lifeos-personal-scope .learning-status-btn.in_progress {
-  border-color: rgba(255, 193, 7, 0.3);
+  border-color: rgba(193, 116, 0, 0.3);
   color: var(--warning);
   background: var(--warning-glow);
 }
 
 .lifeos-personal-scope .learning-status-btn.completed {
-  border-color: rgba(0, 230, 118, 0.3);
+  border-color: rgba(2, 121, 0, 0.3);
   color: var(--success);
   background: var(--success-glow);
 }
@@ -1211,7 +1208,7 @@
   justify-content: space-between;
   gap: 14px;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 193, 7, 0.28);
+  border: 1px solid rgba(193, 116, 0, 0.28);
   border-radius: var(--radius-lg);
   background: var(--warning-glow);
   color: var(--warning);
@@ -1363,7 +1360,7 @@
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
   outline: none;
   transition: var(--transition);
@@ -1394,7 +1391,7 @@
   background: var(--bg-secondary);
   color: var(--text-secondary);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 800;
   transition: var(--transition);
@@ -1404,13 +1401,13 @@
   min-width: 22px;
   padding: 2px 6px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(16, 24, 40, 0.05);
   text-align: center;
 }
 
 .lifeos-personal-scope .learning-filter.active {
-  border-color: rgba(108, 92, 231, 0.45);
-  background: rgba(108, 92, 231, 0.14);
+  border-color: rgba(229, 85, 85, 0.45);
+  background: rgba(229, 85, 85, 0.14);
   color: var(--accent-light);
 }
 
@@ -1423,7 +1420,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 800;
   text-decoration: none;
@@ -1453,7 +1450,7 @@
 }
 
 .lifeos-personal-scope .learning-btn.danger {
-  border-color: rgba(255, 82, 82, 0.28);
+  border-color: rgba(229, 85, 85, 0.28);
   background: transparent;
   color: var(--danger);
 }
@@ -1574,7 +1571,7 @@
 }
 
 .lifeos-personal-scope .learning-roadmap-row.in_progress {
-  background: rgba(255, 193, 7, 0.04);
+  background: rgba(193, 116, 0, 0.04);
 }
 
 .lifeos-personal-scope .learning-roadmap-row.completed .learning-item-body h4 {
@@ -1583,7 +1580,7 @@
 }
 
 .lifeos-personal-scope .learning-roadmap-row.drop-target {
-  box-shadow: inset 0 0 0 2px rgba(108, 92, 231, 0.35);
+  box-shadow: inset 0 0 0 2px rgba(229, 85, 85, 0.35);
 }
 
 .lifeos-personal-scope .learning-roadmap-row.dragging {
@@ -1612,7 +1609,7 @@
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.78rem;
   font-weight: 900;
   transition: var(--transition);
@@ -1678,7 +1675,7 @@
 }
 
 .lifeos-personal-scope .learning-date-chip {
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(229, 85, 85, 0.1);
   color: var(--accent-light);
 }
 
@@ -1691,13 +1688,13 @@
 }
 
 .lifeos-personal-scope .learning-status-pill.in_progress {
-  border-color: rgba(255, 193, 7, 0.25);
+  border-color: rgba(193, 116, 0, 0.25);
   background: var(--warning-glow);
   color: var(--warning);
 }
 
 .lifeos-personal-scope .learning-status-pill.completed {
-  border-color: rgba(0, 230, 118, 0.25);
+  border-color: rgba(2, 121, 0, 0.25);
   background: var(--success-glow);
   color: var(--success);
 }
@@ -1726,7 +1723,7 @@
 
 .lifeos-personal-scope .learning-row-editor {
   border-bottom: 1px solid var(--border);
-  background: rgba(108, 92, 231, 0.04);
+  background: rgba(229, 85, 85, 0.04);
 }
 
 .lifeos-personal-scope .learning-empty {
@@ -1868,7 +1865,7 @@
 .lifeos-personal-scope .goal-milestone.done .milestone-check {
   background: var(--success);
   border-color: var(--success);
-  color: #000;
+  color: #fff;
 }
 
 /* ================================================
@@ -1888,7 +1885,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
   transition: var(--transition);
 }
@@ -1908,7 +1905,7 @@
   padding: 10px 20px;
   border-radius: var(--radius);
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -1951,7 +1948,7 @@
 
 .lifeos-personal-scope .btn-danger {
   background: transparent;
-  border: 1px solid rgba(255, 82, 82, 0.3);
+  border: 1px solid rgba(229, 85, 85, 0.3);
   color: var(--danger);
 }
 
@@ -1983,7 +1980,7 @@
 }
 
 .lifeos-personal-scope .job-table tr:hover td {
-  background: rgba(108, 92, 231, 0.03);
+  background: rgba(229, 85, 85, 0.03);
 }
 
 .lifeos-personal-scope .status-tag {
@@ -1999,25 +1996,25 @@
 .lifeos-personal-scope .status-applied {
   background: var(--info-glow);
   color: var(--info);
-  border: 1px solid rgba(0, 210, 255, 0.3);
+  border: 1px solid rgba(21, 107, 186, 0.3);
 }
 
 .lifeos-personal-scope .status-interview {
   background: var(--warning-glow);
   color: var(--warning);
-  border: 1px solid rgba(255, 193, 7, 0.3);
+  border: 1px solid rgba(193, 116, 0, 0.3);
 }
 
 .lifeos-personal-scope .status-offered {
   background: var(--success-glow);
   color: var(--success);
-  border: 1px solid rgba(0, 230, 118, 0.3);
+  border: 1px solid rgba(2, 121, 0, 0.3);
 }
 
 .lifeos-personal-scope .status-rejected {
   background: var(--danger-glow);
   color: var(--danger);
-  border: 1px solid rgba(255, 82, 82, 0.3);
+  border: 1px solid rgba(229, 85, 85, 0.3);
 }
 
 /* ================================================
@@ -2128,7 +2125,7 @@
   transition: var(--transition);
   border: none;
   background: transparent;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .lifeos-personal-scope .tab.active {
@@ -2138,7 +2135,7 @@
 
 .lifeos-personal-scope .tab:hover:not(.active) {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(16, 24, 40, 0.04);
 }
 
 /* ================================================
@@ -2230,7 +2227,7 @@
   border-radius: var(--radius-sm);
   background: var(--bg-secondary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
   outline: none;
   transition: var(--transition);
@@ -2347,7 +2344,7 @@
   min-height: 38px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
@@ -2380,7 +2377,7 @@
 
 .lifeos-personal-scope .btn-delete {
   padding: 8px 12px;
-  border-color: rgba(255, 82, 82, 0.28);
+  border-color: rgba(229, 85, 85, 0.28);
   background: transparent;
   color: var(--danger);
 }
@@ -2465,7 +2462,7 @@
 .lifeos-personal-scope .summary-card.income,
 .lifeos-personal-scope .summary-card.paid,
 .lifeos-personal-scope .summary-card.savings {
-  border-color: rgba(0, 230, 118, 0.2);
+  border-color: rgba(2, 121, 0, 0.2);
 }
 
 .lifeos-personal-scope .summary-card.income::before,
@@ -2476,7 +2473,7 @@
 
 .lifeos-personal-scope .summary-card.expense,
 .lifeos-personal-scope .summary-card.remaining {
-  border-color: rgba(255, 82, 82, 0.2);
+  border-color: rgba(229, 85, 85, 0.2);
 }
 
 .lifeos-personal-scope .summary-card.expense::before,
@@ -2486,7 +2483,7 @@
 
 .lifeos-personal-scope .summary-card.investment,
 .lifeos-personal-scope .summary-card.progress {
-  border-color: rgba(0, 210, 255, 0.2);
+  border-color: rgba(21, 107, 186, 0.2);
 }
 
 .lifeos-personal-scope .summary-card.investment::before,
@@ -2799,7 +2796,7 @@
 }
 
 .lifeos-personal-scope .mobile-menu-btn:hover {
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(229, 85, 85, 0.1);
 }
 
 .lifeos-personal-scope .mobile-header-title {
@@ -2819,7 +2816,7 @@
 }
 
 .lifeos-personal-scope .mobile-theme-btn:hover {
-  background: rgba(108, 92, 231, 0.1);
+  background: rgba(229, 85, 85, 0.1);
 }
 
 /* Sidebar overlay */
@@ -2839,7 +2836,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(30, 37, 48, 0.45);
     z-index: 150;
     animation: lifeosPersonalFadeIn 0.2s ease;
   }
@@ -3404,7 +3401,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
   outline: none;
   transition: var(--transition);
@@ -3521,7 +3518,7 @@
 }
 
 .lifeos-personal-scope .learning-row[draggable="true"]:hover {
-  background: rgba(108, 92, 231, 0.04);
+  background: rgba(229, 85, 85, 0.04);
 }
 
 @media (max-width: 768px) {

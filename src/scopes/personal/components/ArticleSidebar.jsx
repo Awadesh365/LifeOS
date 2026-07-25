@@ -37,7 +37,7 @@ export default function ArticleSidebar({
             cursor: 'pointer',
             borderRadius: 'var(--radius-sm)',
             transition: 'var(--transition)',
-            background: isSelected ? 'rgba(108, 92, 231, 0.12)' : 'transparent',
+            background: isSelected ? 'rgba(229, 85, 85, 0.12)' : 'transparent',
             color: isSelected ? 'var(--accent-light)' : 'var(--text-secondary)',
             fontSize: '0.85rem',
             fontWeight: isSelected ? 600 : 400,
@@ -46,7 +46,7 @@ export default function ArticleSidebar({
           }}
           onMouseEnter={(e) => {
             if (!isSelected) {
-              e.currentTarget.style.background = 'rgba(108, 92, 231, 0.06)';
+              e.currentTarget.style.background = 'rgba(229, 85, 85, 0.06)';
             }
           }}
           onMouseLeave={(e) => {
@@ -87,7 +87,7 @@ export default function ArticleSidebar({
             marginBottom: '2px'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(108, 92, 231, 0.06)';
+            e.currentTarget.style.background = 'rgba(229, 85, 85, 0.06)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';

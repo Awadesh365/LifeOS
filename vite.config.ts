@@ -34,6 +34,20 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    // Only the frontend lives in src/. Ignore the large backend/tooling trees
+    // so the dev file-watcher stays well under the OS inotify limit (ENOSPC).
+    watch: {
+      ignored: [
+        "**/backend/**",
+        "**/docs/**",
+        "**/e2e/**",
+        "**/dist/**",
+        "**/playwright-report/**",
+        "**/test-results/**",
+        "**/node_modules/**",
+        "**/.git/**",
+      ],
+    },
   },
   build: {
     outDir: "dist",

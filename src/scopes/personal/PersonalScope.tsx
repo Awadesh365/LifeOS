@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { LifeOSScopeBar } from "../../app/LifeOSScopeBar";
@@ -64,17 +62,12 @@ const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
 };
 
 const PersonalScope = () => {
-  const [theme, setTheme] = usePersonalLocalStorage("app-theme", "dark");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = usePersonalLocalStorage(
     "sidebar-collapsed",
     false,
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
@@ -85,7 +78,7 @@ const PersonalScope = () => {
       <LifeOSScopeBar activeScope="personal" />
       <div
         className="lifeos-personal-scope"
-        data-personal-theme={theme}
+        data-personal-theme="light"
         style={
           {
             "--lifeos-scopebar-height": `${PERSONAL_SCOPE_BAR_HEIGHT}px`,
@@ -98,8 +91,6 @@ const PersonalScope = () => {
           }`}
         >
           <Sidebar
-            theme={theme}
-            toggleTheme={toggleTheme}
             isCollapsed={isSidebarCollapsed}
             toggleSidebar={toggleSidebar}
             isMobile={isMobile}
@@ -119,20 +110,7 @@ const PersonalScope = () => {
                   <MenuIcon sx={{ fontSize: 20 }} />
                 </button>
                 <span className="mobile-header-title">LifeOS Personal</span>
-                <button
-                  onClick={toggleTheme}
-                  className="mobile-theme-btn"
-                  type="button"
-                  aria-label={
-                    theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-                  }
-                >
-                  {theme === "dark" ? (
-                    <LightModeIcon sx={{ fontSize: 18 }} />
-                  ) : (
-                    <DarkModeIcon sx={{ fontSize: 18 }} />
-                  )}
-                </button>
+                <span style={{ width: 32 }} aria-hidden="true" />
               </div>
             )}
             <Routes>

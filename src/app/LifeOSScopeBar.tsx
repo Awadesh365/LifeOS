@@ -52,8 +52,8 @@ export const LifeOSScopeBar = ({
               width: 30,
               height: 30,
               borderRadius: "8px",
-              bgcolor: "#111827",
-              color: "#fff",
+              bgcolor: "secondary.main",
+              color: "secondary.contrastText",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -108,9 +108,9 @@ export const LifeOSScopeBar = ({
                   px: 1.15,
                   borderRadius: "8px",
                   border: `1px solid ${
-                    isActive ? "rgba(17,24,39,0.35)" : "rgba(216,224,234,0.9)"
+                    isActive ? "#C13838" : "rgba(216,224,234,0.9)"
                   }`,
-                  bgcolor: isActive ? "#111827" : "rgba(255,255,255,0.84)",
+                  bgcolor: isActive ? "#E55555" : "rgba(255,255,255,0.84)",
                   color: isActive ? "#fff" : "#344054",
                   textTransform: "none",
                   fontWeight: 700,
@@ -118,8 +118,8 @@ export const LifeOSScopeBar = ({
                   letterSpacing: 0,
                   fontFamily: '"Plus Jakarta Sans", sans-serif',
                   "&:hover": {
-                    bgcolor: isActive ? "#111827" : "rgba(244,246,249,0.95)",
-                    borderColor: isActive ? "rgba(17,24,39,0.35)" : "rgba(17,24,39,0.22)",
+                    bgcolor: isActive ? "#C13838" : "rgba(244,246,249,0.95)",
+                    borderColor: isActive ? "#C13838" : "rgba(17,24,39,0.22)",
                   },
                   "& .MuiButton-startIcon": {
                     mr: { xs: 0, sm: 0.75 },
@@ -143,7 +143,7 @@ export const LifeOSScopeBar = ({
               display: { xs: "none", md: "inline-flex" },
               borderRadius: "8px",
               bgcolor: "rgba(21,107,186,0.08)",
-              color: "#155fa0",
+              color: "#156BBA",
               fontWeight: 700,
               border: "1px solid rgba(21,107,186,0.16)",
             }}

@@ -246,9 +246,9 @@ export default function Dashboard() {
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {[
-              { label: 'Frontend', items: strongStack.frontend, color: '#6c5ce7' },
-              { label: 'Backend', items: strongStack.backend, color: '#00d2ff' },
-              { label: 'Cloud', items: strongStack.cloud, color: '#00e676' },
+              { label: 'Frontend', items: strongStack.frontend, color: '#7215BA' },
+              { label: 'Backend', items: strongStack.backend, color: '#239CE8' },
+              { label: 'Cloud', items: strongStack.cloud, color: '#027900' },
             ].map((group) =>
               group.items.map((item) => (
                 <span

@@ -181,11 +181,11 @@ export default function Jobs() {
                             background: 'transparent',
                             cursor: 'pointer',
                             border: 'none',
-                            fontFamily: 'Inter, sans-serif',
+                            fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
                           }}
                         >
                           {STATUSES.map((s) => (
-                            <option key={s} value={s} style={{ background: '#111', color: '#eee' }}>
+                            <option key={s} value={s} style={{ background: '#FFFFFF', color: '#111827' }}>
                               {s.charAt(0).toUpperCase() + s.slice(1)}
                             </option>
                           ))}
