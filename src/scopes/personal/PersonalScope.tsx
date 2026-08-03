@@ -1,43 +1,30 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { LifeOSScopeBar } from "../../app/LifeOSScopeBar";
-import Sidebar from "./components/Sidebar.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-import Habits from "./pages/Habits.jsx";
-import Routine from "./pages/Routine.jsx";
-import Learning from "./pages/Learning.jsx";
-import Jobs from "./pages/Jobs.jsx";
-import Goals from "./pages/Goals.jsx";
-import Philosophy from "./pages/Philosophy.jsx";
-import Articles from "./pages/Articles.jsx";
-import Projects from "./pages/Projects.jsx";
-import Health from "./pages/Health.jsx";
-import Wealth from "./pages/Wealth.jsx";
-import Debts from "./pages/Debts.jsx";
-import Funds from "./pages/Funds.jsx";
-import Networking from "./pages/Networking.jsx";
-import Career from "./pages/Career.jsx";
-import FuturePlans from "./pages/FuturePlans.jsx";
-import Diet from "./pages/Diet.jsx";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./pages/Dashboard";
+import Habits from "./pages/Habits";
+import Routine from "./pages/Routine";
+import Learning from "./pages/Learning";
+import Jobs from "./pages/Jobs";
+import Goals from "./pages/Goals";
+import Philosophy from "./pages/Philosophy";
+import Articles from "./pages/Articles";
+import Projects from "./pages/Projects";
+import Health from "./pages/Health";
+import Wealth from "./pages/Wealth";
+import Debts from "./pages/Debts";
+import Funds from "./pages/Funds";
+import Networking from "./pages/Networking";
+import Career from "./pages/Career";
+import FuturePlans from "./pages/FuturePlans";
+import Diet from "./pages/Diet";
 import "./personal.css";
 
 const PERSONAL_SCOPE_BAR_HEIGHT = 52;
-
-const useIsMobile = (breakpoint = 768) => {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window === "undefined" ? false : window.innerWidth < breakpoint,
-  );
-
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < breakpoint);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, [breakpoint]);
-
-  return isMobile;
-};
 
 const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -67,25 +54,26 @@ const PersonalScope = () => {
     false,
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
   return (
-    <div>
+    <Box>
       <LifeOSScopeBar activeScope="personal" />
-      <div
+      <Box
         className="lifeos-personal-scope"
         data-personal-theme="light"
-        style={
+        sx={
           {
             "--lifeos-scopebar-height": `${PERSONAL_SCOPE_BAR_HEIGHT}px`,
           } as CSSProperties
         }
       >
-        <div
+        <Box
           className={`app-layout ${
             isSidebarCollapsed && !isMobile ? "sidebar-collapsed" : ""
           }`}
@@ -98,20 +86,22 @@ const PersonalScope = () => {
             setSidebarOpen={setSidebarOpen}
             basePath="/personal"
           />
-          <div className="main-area">
+          <Box className="main-area">
             {isMobile && (
-              <div className="mobile-header-bar">
-                <button
+              <Box className="mobile-header-bar">
+                <Button
                   onClick={() => setSidebarOpen(true)}
                   className="mobile-menu-btn"
                   type="button"
                   aria-label="Open Personal navigation"
                 >
                   <MenuIcon sx={{ fontSize: 20 }} />
-                </button>
-                <span className="mobile-header-title">LifeOS Personal</span>
-                <span style={{ width: 32 }} aria-hidden="true" />
-              </div>
+                </Button>
+                <Typography className="mobile-header-title" variant="body2">
+                  LifeOS Personal
+                </Typography>
+                <Box sx={{ width: 32 }} aria-hidden="true" />
+              </Box>
             )}
             <Routes>
               <Route index element={<Dashboard isMobile={isMobile} />} />
@@ -142,10 +132,10 @@ const PersonalScope = () => {
               <Route path="diet" element={<Diet isMobile={isMobile} />} />
               <Route path="*" element={<Navigate to="/personal" replace />} />
             </Routes>
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
