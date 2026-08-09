@@ -1,6 +1,6 @@
 /**
  * Navigation Configuration
- * Defines the navigation structure for the CityOS application
+ * Defines the navigation structure for the LifeOS application
  * Adapted for Indian Administrative Context (State & District Levels)
  */
 

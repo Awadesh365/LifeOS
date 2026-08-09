@@ -1,47 +1,43 @@
-import { LoginCredentials, RegisterCredentials, User } from "../types/auth";
+import apiClient from "../lib/axios/client";
+import { LoginCredentials, RegisterCredentials, User, AuthResponse } from "../types/auth";
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<User> => {
-    // Mock login - accept any credentials
-    const mockUser: User = {
-      _id: "user-1",
-      id: "user-1",
+    const response = await apiClient.post<AuthResponse>("/v1/auth/login", {
       email: credentials.email,
-      name: credentials.email.split("@")[0],
-      role: "admin",
-      token: "mock-jwt-token",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+      password: credentials.password,
+    });
 
-    localStorage.setItem("token", mockUser.token || "");
-    localStorage.setItem("user", JSON.stringify(mockUser));
+    const { user, token } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
 
-    return mockUser;
+    return user;
   },
 
   register: async (credentials: RegisterCredentials): Promise<User> => {
-    // Mock register
-    const mockUser: User = {
-      _id: "user-1",
-      id: "user-1",
+    const response = await apiClient.post<AuthResponse>("/v1/auth/register", {
       email: credentials.email,
+      password: credentials.password,
       name: credentials.name,
-      role: "admin",
-      token: "mock-jwt-token",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+      role: credentials.role,
+    });
 
-    localStorage.setItem("token", mockUser.token || "");
-    localStorage.setItem("user", JSON.stringify(mockUser));
+    const { user, token } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
 
-    return mockUser;
+    return user;
   },
 
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+  },
+
+  getProfile: async (): Promise<User> => {
+    const response = await apiClient.get<{ user: User }>("/v1/auth/me");
+    return response.data.user;
   },
 
   getCurrentUser: (): User | null => {

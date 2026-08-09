@@ -52,7 +52,7 @@ export const LIFEOS_SCOPES: LifeOSScope[] = [
     status: "complete",
     description:
       "Civic services, resources, incidents, departments, dashboards, and city-level operations.",
-    source: "Existing CityOS frontend",
+    source: "Existing LifeOS frontend",
     Icon: ApartmentIcon,
   },
   {

@@ -17,7 +17,7 @@ export interface RbacState {
   lastUpdated: number | null;
 }
 
-// User Roles for CityOS
+// User Roles for LifeOS
 export enum UserRole {
   CITIZEN = "CITIZEN",
   OFFICIAL_DM = "OFFICIAL_DM", // District Magistrate

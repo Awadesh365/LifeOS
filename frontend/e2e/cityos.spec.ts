@@ -47,7 +47,7 @@ test.describe("LifeOS Frontend - Page Loading Tests", () => {
     });
   }
 
-  test("City scope opens the existing CityOS dashboard for authenticated users", async ({ page }) => {
+  test("City scope opens the existing LifeOS dashboard for authenticated users", async ({ page }) => {
     await seedAuthenticatedUser(page);
     await page.goto("/city");
     await expect(page.getByText("LifeOS").first()).toBeVisible();

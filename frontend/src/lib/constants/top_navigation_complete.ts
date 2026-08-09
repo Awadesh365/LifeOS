@@ -1,5 +1,5 @@
 /**
- * CityOS Top Navigation Configuration
+ * LifeOS Top Navigation Configuration
  * All 12 modules with their respective sidebar items
  * Uses i18n translation keys instead of hardcoded labels
  * Created: December 17, 2025

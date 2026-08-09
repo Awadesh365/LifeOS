@@ -1,13 +1,11 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
+import authApiController from '../../../controllers/api_controllers/v1/auth/auth.api.controller';
+import authMiddleware from '../../../middleware/v1/auth.middleware';
 
 const router = Router();
 
-router.post('/auth/login', (_req: Request, res: Response) => {
-  res.json({ message: 'Login endpoint' });
-});
-
-router.post('/auth/register', (_req: Request, res: Response) => {
-  res.json({ message: 'Register endpoint' });
-});
+router.post('/auth/register', authApiController.register);
+router.post('/auth/login', authApiController.login);
+router.get('/auth/me', authMiddleware, authApiController.getMe);
 
 export default router;

@@ -98,7 +98,7 @@ const config: Config = {
     host: process.env.REDIS_HOST || '',
     port: Number(process.env.REDIS_PORT || 6379),
     password: process.env.REDIS_PASSWORD || '',
-    keyPrefix: process.env.REDIS_KEY_PREFIX || 'cityos',
+    keyPrefix: process.env.REDIS_KEY_PREFIX || 'lifeos',
     connectTimeoutMs: Number(process.env.REDIS_CONNECT_TIMEOUT_MS || 2000),
     rateLimitDb: Number(process.env.REDIS_RATELIMIT_DB || 0),
     cacheDb: Number(process.env.REDIS_CACHE_DB || 1),

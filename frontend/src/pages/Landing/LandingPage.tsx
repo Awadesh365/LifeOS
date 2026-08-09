@@ -523,7 +523,7 @@ const howItWorks = [
     step: "03",
     icon: <BoltIcon sx={{ fontSize: 28 }} />,
     title: "Act & resolve",
-    desc: "Assign tasks, dispatch resources, approve requests, or escalate incidents — all within CityOS. Every action is logged for full accountability.",
+    desc: "Assign tasks, dispatch resources, approve requests, or escalate incidents — all within LifeOS. Every action is logged for full accountability.",
   },
 ];
 
@@ -640,7 +640,7 @@ const LandingPage: React.FC = () => {
   const heroTextY = useTransform(scrollY, [0, 500], [0, -60]);
 
   const heroSubtitle = useTypewriter(
-    "CityOS connects administrative nodes to real-time city intelligence. Track deployments, resource health, and emergency response from a single mission control view.",
+    "LifeOS connects administrative nodes to real-time city intelligence. Track deployments, resource health, and emergency response from a single mission control view.",
     1100,
     22
   );
@@ -707,7 +707,7 @@ const LandingPage: React.FC = () => {
               >
                 <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "0.85rem", lineHeight: 1 }}>C</Typography>
               </Box>
-              <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: C.fg, letterSpacing: "-0.02em" }}>CityOS</Typography>
+              <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: C.fg, letterSpacing: "-0.02em" }}>LifeOS</Typography>
             </Stack>
           </motion.div>
 
@@ -1056,7 +1056,7 @@ const LandingPage: React.FC = () => {
                         <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "1rem", lineHeight: 1 }}>C</Typography>
                       </Box>
                       <Box>
-                        <Typography sx={{ fontWeight: 800, fontSize: "0.9375rem", color: C.fg, letterSpacing: "-0.02em", lineHeight: 1.1 }}>CityOS</Typography>
+                        <Typography sx={{ fontWeight: 800, fontSize: "0.9375rem", color: C.fg, letterSpacing: "-0.02em", lineHeight: 1.1 }}>LifeOS</Typography>
                         <Typography sx={{ fontSize: "0.6875rem", color: C.muted, fontWeight: 500 }}>Secure Government Platform</Typography>
                       </Box>
                     </Stack>
@@ -1223,7 +1223,7 @@ const LandingPage: React.FC = () => {
                 <Typography
                   sx={{ fontSize: { xs: "1.0625rem", md: "1.25rem" }, color: C.muted, lineHeight: 1.75, maxWidth: 640, mx: "auto", mt: 2.5 }}
                 >
-                  India's government machinery runs across thousands of disconnected systems. CityOS unifies them into one coherent, real-time platform built specifically for Indian governance at every level.
+                  India's government machinery runs across thousands of disconnected systems. LifeOS unifies them into one coherent, real-time platform built specifically for Indian governance at every level.
                 </Typography>
               </motion.div>
             </Box>
@@ -1280,7 +1280,7 @@ const LandingPage: React.FC = () => {
                       <Box sx={{ width: 28, height: 28, borderRadius: "7px", background: "linear-gradient(135deg,#E55555,#C13838)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "0.75rem", lineHeight: 1 }}>C</Typography>
                       </Box>
-                      <Typography sx={{ fontWeight: 700, fontSize: "0.875rem", color: "rgba(255,255,255,0.9)", letterSpacing: "-0.01em" }}>CityOS Dashboard</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.875rem", color: "rgba(255,255,255,0.9)", letterSpacing: "-0.01em" }}>LifeOS Dashboard</Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <PulseDot color={C.green} />
@@ -1590,12 +1590,12 @@ const LandingPage: React.FC = () => {
                         letterSpacing: "-0.05em", color: "#FFFFFF", lineHeight: 1.05,
                       }}
                     >
-                      Every second counts.<br />CityOS makes them count.
+                      Every second counts.<br />LifeOS makes them count.
                     </Typography>
                   </motion.div>
                 </Box>
                 <Typography sx={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.75, mb: 5 }}>
-                  From the moment an incident is reported to ambulance dispatch, fire response, or police deployment — the entire chain runs inside CityOS with sub-60 second response loops.
+                  From the moment an incident is reported to ambulance dispatch, fire response, or police deployment — the entire chain runs inside LifeOS with sub-60 second response loops.
                 </Typography>
                 <StaggerIn variants={V.staggerSlow}>
                   <Stack spacing={2}>
@@ -1657,7 +1657,7 @@ const LandingPage: React.FC = () => {
               <InView variants={V.slideLeft}>
                 <SectionBadge color={C.navy}>Security & Compliance</SectionBadge>
                 <AnimWords text="Government-grade security, by default." />
-                <SectionSub>Every design decision in CityOS starts with security. Built for India's regulatory landscape, including MeITY, NIC, and STQC compliance requirements.</SectionSub>
+                <SectionSub>Every design decision in LifeOS starts with security. Built for India's regulatory landscape, including MeITY, NIC, and STQC compliance requirements.</SectionSub>
                 <StaggerIn variants={V.stagger}>
                   <Box sx={{ mt: 5, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5 }}>
                     {securityPoints.map((p) => (
@@ -1809,7 +1809,7 @@ const LandingPage: React.FC = () => {
               viewport={{ once: true }}
             >
               <Typography sx={{ fontSize: "1.25rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75, maxWidth: 620, mx: "auto", mb: 7 }}>
-                Join 200+ government agencies already running on CityOS. One platform. Every department. Full accountability.
+                Join 200+ government agencies already running on LifeOS. One platform. Every department. Full accountability.
               </Typography>
             </motion.div>
             <motion.div
@@ -1836,7 +1836,7 @@ const LandingPage: React.FC = () => {
                         },
                       }}
                     >
-                      Access CityOS
+                      Access LifeOS
                     </Button>
                   </motion.div>
                 </MagButton>
@@ -1875,7 +1875,7 @@ const LandingPage: React.FC = () => {
                   <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "0.8rem", lineHeight: 1 }}>C</Typography>
                 </Box>
                 <Box>
-                  <Typography sx={{ fontWeight: 800, fontSize: "0.875rem", color: "#F9FAFB" }}>CityOS</Typography>
+                  <Typography sx={{ fontWeight: 800, fontSize: "0.875rem", color: "#F9FAFB" }}>LifeOS</Typography>
                   <Typography sx={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.35)" }}>Smart City Management Platform</Typography>
                 </Box>
               </Stack>
@@ -1893,7 +1893,7 @@ const LandingPage: React.FC = () => {
                 ))}
               </Stack>
               <Typography sx={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.3)" }}>
-                © 2026 CityOS · Government of India Initiative
+                © 2026 LifeOS · Government of India Initiative
               </Typography>
             </Stack>
           </Container>

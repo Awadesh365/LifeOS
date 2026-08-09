@@ -1,5 +1,5 @@
 /**
- * CityOS Navigation Modules
+ * LifeOS Navigation Modules
  * Complete navigation structure for Indian e-Governance
  * Created: December 17, 2025
  */

@@ -39,7 +39,7 @@ const CitizenNavbar = () => {
               <LocationCityIcon fontSize="small" />
             </Box>
             <Typography variant="h6" fontWeight={700}>
-              CityOS
+              LifeOS
             </Typography>
             <Typography
               variant="caption"
