@@ -3,7 +3,6 @@ import type { CSSProperties } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { LifeOSScopeBar } from "../../app/LifeOSScopeBar";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Habits from "./pages/Habits";
@@ -24,8 +23,6 @@ import FuturePlans from "./pages/FuturePlans";
 import Diet from "./pages/Diet";
 import Training from "./pages/Training";
 import "./personal.css";
-
-const PERSONAL_SCOPE_BAR_HEIGHT = 52;
 
 const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -64,13 +61,12 @@ const PersonalScope = () => {
 
   return (
     <Box>
-      <LifeOSScopeBar activeScope="personal" />
       <Box
         className="lifeos-personal-scope"
         data-personal-theme="light"
         sx={
           {
-            "--lifeos-scopebar-height": `${PERSONAL_SCOPE_BAR_HEIGHT}px`,
+            "--lifeos-scopebar-height": "0px",
           } as CSSProperties
         }
       >
@@ -85,7 +81,7 @@ const PersonalScope = () => {
             isMobile={isMobile}
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            basePath="/personal"
+            basePath="/"
           />
           <Box className="main-area">
             {isMobile && (
@@ -132,7 +128,7 @@ const PersonalScope = () => {
               />
               <Route path="diet" element={<Diet isMobile={isMobile} />} />
               <Route path="training" element={<Training isMobile={isMobile} />} />
-              <Route path="*" element={<Navigate to="/personal" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Box>
         </Box>

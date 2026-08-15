@@ -49,7 +49,7 @@ function SidebarBrand() {
       <div className="sidebar-brand-mark">L</div>
       <div className="sidebar-brand-text">
         <span className="sidebar-brand-title">LifeOS</span>
-        <span className="sidebar-brand-sub">Personal Scope</span>
+        <span className="sidebar-brand-sub">Personal Tracker</span>
       </div>
     </div>
   );
@@ -103,10 +103,12 @@ export default function Sidebar({
   isMobile,
   sidebarOpen,
   setSidebarOpen,
-  basePath = '/personal',
+  basePath = '/',
 }) {
   const [quote, setQuote] = useState('');
-  const scopedPath = (path) => (path === '/' ? basePath : `${basePath}${path}`);
+  const scopedPath = (path) => (
+    path === '/' ? basePath : `${basePath.replace(/\/$/, '')}${path}`
+  );
 
   useEffect(() => {
     let isActive = true;

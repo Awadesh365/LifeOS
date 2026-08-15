@@ -73,7 +73,7 @@ function SidebarBrand({ isCollapsed }: { isCollapsed: boolean }) {
       {!isCollapsed && (
         <Box>
           <Typography variant="subtitle2" fontWeight={700}>LifeOS</Typography>
-          <Typography variant="caption" color="text.secondary">Personal Scope</Typography>
+          <Typography variant="caption" color="text.secondary">Personal Tracker</Typography>
         </Box>
       )}
     </Box>
@@ -154,10 +154,11 @@ export default function Sidebar({
   isMobile,
   sidebarOpen,
   setSidebarOpen,
-  basePath = '/personal',
+  basePath = '/',
 }: SidebarProps) {
   const [quote, setQuote] = useState('');
-  const scopedPath = (path: string) => (path === '/' ? basePath : `${basePath}${path}`);
+  const scopedPath = (path: string) =>
+    path === '/' ? basePath : `${basePath.replace(/\/$/, '')}${path}`;
 
   useEffect(() => {
     let isActive = true;
