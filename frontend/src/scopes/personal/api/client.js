@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:5173/api';
+const API_BASE = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:5000/api';
 
 function withQuery(path, params = {}) {
   const query = new URLSearchParams();

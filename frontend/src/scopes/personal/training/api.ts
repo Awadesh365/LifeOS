@@ -1,6 +1,6 @@
 import type { Exercise, ProgressionDecision, TodayTraining, TrainingProfile, TrainingProgram, TrainingReview, WorkoutSession } from './types';
 
-const BASE = `${import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:3001/api'}/training`;
+const BASE = `${import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:5000/api'}/training`;
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${BASE}${path}`, {

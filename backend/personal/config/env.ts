@@ -1,4 +1,15 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'node:path';
+
+// Prefer a Personal-specific environment file. During the Personal-only
+// migration, fall back to the existing backend/.env so local credentials keep
+// working without duplicating secrets. dotenv never overwrites variables that
+// are already present in the process environment.
+[
+  path.resolve(__dirname, '../.env'),
+  path.resolve(__dirname, '../../.env'),
+  path.resolve(__dirname, '../../../.env'),
+].forEach((envPath) => dotenv.config({ path: envPath }));
 
 const parseCorsOrigins = (value: string | undefined) => (
   value
