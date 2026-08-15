@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -40,9 +40,9 @@ const PRIORITY_COLOR: Record<string, 'error' | 'warning' | 'info'> = {
   low: 'info',
 };
 
-export default function Networking({ isMobile }: NetworkingProps) {
+export default function Networking(_props: NetworkingProps) {
   const dispatch = useAppDispatch();
-  const { items: contacts, error } = useAppSelector((s) => s.contacts);
+  const { items: contacts, error } = useAppSelector((s) => s.personal.contacts);
 
   const [form, setForm] = useState({
     name: '',

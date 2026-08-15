@@ -4,7 +4,7 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
+  GridLegacy as Grid,
   TextField,
   Select,
   MenuItem,
@@ -210,31 +210,6 @@ export default function Learning({ isMobile = false }: LearningProps) {
   useEffect(() => {
     dispatch(fetchLearning());
   }, [dispatch]);
-
-  const applyDisplayData = useCallback(
-    (
-      updater:
-        | SectionWithItems[]
-        | ((prev: SectionWithItems[]) => SectionWithItems[]),
-      orderChanged = false
-    ) => {
-      setActionError('');
-      if (pendingOrder) {
-        setPendingOrder((current) => {
-          const next =
-            typeof updater === 'function' ? updater(current || []) : updater;
-          return normalizeLearningData(next);
-        });
-      } else {
-        const current = normalizeLearningData(learningData);
-        const next =
-          typeof updater === 'function' ? updater(current) : updater;
-        setPendingOrder(normalizeLearningData(next));
-      }
-      if (orderChanged) setHasUnsavedOrder(true);
-    },
-    [pendingOrder, learningData]
-  );
 
   const cycleStatus = useCallback(
     async (sectionId: string, itemId: string) => {

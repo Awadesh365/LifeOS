@@ -24,7 +24,7 @@ This implementation converts the Gym & Exercises research report into the first 
 The feature adds a migration and idempotent seed:
 
 ```bash
-cd backend/personal
+cd backend
 npm run db:migrate
 npm run db:seed
 ```

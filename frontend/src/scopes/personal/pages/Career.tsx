@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -33,9 +33,9 @@ interface CareerProps {
 
 const PLAN_OPTIONS = ['stay', 'leave', 'unsure'];
 
-export default function Career({ isMobile }: CareerProps) {
+export default function Career(_props: CareerProps) {
   const dispatch = useAppDispatch();
-  const { items: entries, error } = useAppSelector((s) => s.career);
+  const { items: entries, error } = useAppSelector((s) => s.personal.career);
 
   const [form, setForm] = useState({
     companyName: '',

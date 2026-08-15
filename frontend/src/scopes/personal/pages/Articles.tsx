@@ -7,13 +7,12 @@ import {
   Card,
   CardContent,
   Alert,
-  LinearProgress,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { api } from '../api/client';
 import Header from '../components/Header';
-import ArticleSidebar from '../components/ArticleSidebar';
-import ArticleReader from '../components/ArticleReader';
+import ArticleSidebar from '../components/ArticleSidebar.jsx';
+import ArticleReader from '../components/ArticleReader.jsx';
 
 interface ArticlesProps {
   isMobile?: boolean;

@@ -5,7 +5,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
+  GridLegacy as Grid,
   TextField,
   Select,
   MenuItem,
@@ -13,7 +13,6 @@ import {
   IconButton,
   Alert,
   Skeleton,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +20,6 @@ import {
   TableHead,
   TableRow,
   Chip,
-  InputLabel,
   FormControl,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -35,18 +33,6 @@ interface JobsProps {
 }
 
 const STATUSES = ['applied', 'interview', 'offered', 'rejected'] as const;
-type JobStatus = typeof STATUSES[number];
-
-const statusColor = (status: string): 'default' | 'info' | 'warning' | 'success' | 'error' => {
-  switch (status) {
-    case 'applied': return 'info';
-    case 'interview': return 'warning';
-    case 'offered': return 'success';
-    case 'rejected': return 'error';
-    default: return 'default';
-  }
-};
-
 export default function Jobs({ isMobile = false }: JobsProps) {
   const dispatch = useAppDispatch();
   const { items: jobs, loading, error } = useAppSelector((state) => state.personal.jobs);

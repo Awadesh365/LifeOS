@@ -1,6 +1,7 @@
 import type {
   HabitWithDone,
   Habit,
+  HabitLog,
   RoutineGroup,
   Job,
   GoalWithMilestones,

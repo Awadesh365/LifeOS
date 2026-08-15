@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -51,7 +51,8 @@ function getSlotRange(item: RoutineItem, nextItem?: RoutineItem): { start: numbe
 
   let end = times[1];
   if (end === undefined && nextItem) {
-    end = parseTimeToMinutes(nextItem.time);
+    const nextStart = parseTimeToMinutes(nextItem.time);
+    if (nextStart !== null) end = nextStart;
   }
   if (end === undefined || end === null) {
     end = 24 * 60;
@@ -113,9 +114,9 @@ function normalizeLoadedRoutines(data: any): { weekday: RoutineItem[]; weekend: 
   return loaded;
 }
 
-export default function Routine({ isMobile }: RoutineProps) {
+export default function Routine(_props: RoutineProps) {
   const dispatch = useAppDispatch();
-  const { data: routinesData, loading: reduxLoading, error: reduxError } = useAppSelector((s) => s.routines);
+  const { data: routinesData, error: reduxError } = useAppSelector((s) => s.personal.routines);
 
   const today = new Date();
   const isWeekend = today.getDay() === 0 || today.getDay() === 6;

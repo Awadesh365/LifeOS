@@ -4,7 +4,7 @@ import {
   Card,
   CardContent,
   Chip,
-  Grid,
+  GridLegacy as Grid,
 } from '@mui/material';
 import Header from '../components/Header';
 

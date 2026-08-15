@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -40,9 +40,9 @@ const STATUS_COLOR: Record<string, 'default' | 'primary' | 'success'> = {
   completed: 'success',
 };
 
-export default function FuturePlans({ isMobile }: FuturePlansProps) {
+export default function FuturePlans(_props: FuturePlansProps) {
   const dispatch = useAppDispatch();
-  const { items: plans, error } = useAppSelector((s) => s.futurePlans);
+  const { items: plans, error } = useAppSelector((s) => s.personal.futurePlans);
 
   const [form, setForm] = useState({
     planType: 'home',

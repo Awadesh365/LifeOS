@@ -4,13 +4,12 @@ LifeOS is a personal tracker for daily routines, habits, health, training, diet,
 
 The Personal tracker is the complete application. It opens directly at `/`; there is no scope selector or separate civic/government project.
 
-## Project structure
+## Frontend structure
 
 ```text
-src/scopes/personal/    Personal tracker UI and feature pages
-src/redux/              Personal tracker state
-src/routes/             Personal-only application routing
-backend/personal/       Personal tracker API
+src/scopes/personal/  Personal tracker UI and feature pages
+src/redux/            Application state
+src/routes/           Application routing
 ```
 
 ## Local development
@@ -22,11 +21,11 @@ npm install
 npm run dev
 ```
 
-Start the Personal API from the repository root:
+Start the API from the repository root:
 
 ```bash
-npm --prefix backend/personal install
-npm --prefix backend/personal run dev
+npm --prefix backend install
+npm --prefix backend run dev
 ```
 
 By default, the frontend uses `http://localhost:5000/api`. Override it with:

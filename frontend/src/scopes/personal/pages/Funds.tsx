@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -28,9 +28,9 @@ interface FundsProps {
   isMobile?: boolean;
 }
 
-export default function Funds({ isMobile }: FundsProps) {
+export default function Funds(_props: FundsProps) {
   const dispatch = useAppDispatch();
-  const { items: funds, summary, loading, error } = useAppSelector((s) => s.funds);
+  const { items: funds, summary, loading, error } = useAppSelector((s) => s.personal.funds);
 
   const [form, setForm] = useState({
     bankName: '',

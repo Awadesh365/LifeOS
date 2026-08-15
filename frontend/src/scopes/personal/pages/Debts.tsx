@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
+  GridLegacy as Grid,
   Card,
   CardContent,
   TextField,
@@ -28,9 +28,9 @@ interface DebtsProps {
   isMobile?: boolean;
 }
 
-export default function Debts({ isMobile }: DebtsProps) {
+export default function Debts(_props: DebtsProps) {
   const dispatch = useAppDispatch();
-  const { items: debts, loading, error } = useAppSelector((s) => s.debts);
+  const { items: debts, loading, error } = useAppSelector((s) => s.personal.debts);
 
   const [form, setForm] = useState({
     personName: '',

@@ -3,7 +3,7 @@ import { api } from '../api/client';
 import { useState, useEffect } from 'react';
 import {
   Box, Typography, List, ListItem, ListItemButton, ListItemIcon,
-  ListItemText, Divider, Avatar, IconButton, Drawer, useMediaQuery, useTheme,
+  ListItemText, Divider, Avatar, IconButton, Drawer,
 } from '@mui/material';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
