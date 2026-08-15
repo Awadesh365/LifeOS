@@ -28,6 +28,7 @@ const NAV_ITEMS: NavGroup[] = [
     { path: '/habits', icon: 'task_alt', label: 'Daily Tracker' },
     { path: '/routine', icon: 'schedule', label: 'My Routine' },
     { path: '/health', icon: 'fitness_center', label: 'Health' },
+    { path: '/training', icon: 'exercise', label: 'Gym & Training' },
     { path: '/diet', icon: 'restaurant', label: 'Diet & Nutrition' },
   ]},
   { section: 'Finance', items: [

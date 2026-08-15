@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CSSProperties } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
@@ -22,6 +22,7 @@ import Networking from "./pages/Networking";
 import Career from "./pages/Career";
 import FuturePlans from "./pages/FuturePlans";
 import Diet from "./pages/Diet";
+import Training from "./pages/Training";
 import "./personal.css";
 
 const PERSONAL_SCOPE_BAR_HEIGHT = 52;
@@ -130,6 +131,7 @@ const PersonalScope = () => {
                 element={<FuturePlans isMobile={isMobile} />}
               />
               <Route path="diet" element={<Diet isMobile={isMobile} />} />
+              <Route path="training" element={<Training isMobile={isMobile} />} />
               <Route path="*" element={<Navigate to="/personal" replace />} />
             </Routes>
           </Box>

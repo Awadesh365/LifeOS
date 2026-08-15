@@ -27,6 +27,14 @@ export type LifeTrackerModels = {
   DietLog: LifeTrackerModel;
   Supplement: LifeTrackerModel;
   CareerEntry: LifeTrackerModel;
+  TrainingProfile: LifeTrackerModel;
+  Exercise: LifeTrackerModel;
+  ExerciseAlternative: LifeTrackerModel;
+  TrainingProgram: LifeTrackerModel;
+  ProgramWorkout: LifeTrackerModel;
+  ProgramExercise: LifeTrackerModel;
+  WorkoutSession: LifeTrackerModel;
+  PerformedSet: LifeTrackerModel;
 };
 
 const baseOptions = {
@@ -266,6 +274,120 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     notes: { type: DataTypes.TEXT },
   }, { ...baseOptions, tableName: 'career_entries' });
 
+  const TrainingProfile = sequelize.define('TrainingProfile', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    goal: { type: DataTypes.STRING, allowNull: false, defaultValue: 'general_fitness' },
+    experience: { type: DataTypes.STRING, allowNull: false, defaultValue: 'beginner' },
+    daysPerWeek: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 3, field: 'days_per_week' },
+    minutesPerSession: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 60, field: 'minutes_per_session' },
+    loadUnit: { type: DataTypes.STRING, allowNull: false, defaultValue: 'kg', field: 'load_unit' },
+    smallestIncrement: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 2.5, field: 'smallest_increment' },
+    availableEquipment: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'available_equipment' },
+    limitations: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    excludedExerciseIds: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'excluded_exercise_ids' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'training_profiles' });
+
+  const Exercise = sequelize.define('Exercise', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+    aliases: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    classification: { type: DataTypes.STRING, allowNull: false },
+    movementPattern: { type: DataTypes.STRING, allowNull: false, field: 'movement_pattern' },
+    primaryMuscles: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'primary_muscles' },
+    secondaryMuscles: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'secondary_muscles' },
+    equipment: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    difficulty: { type: DataTypes.STRING, allowNull: false, defaultValue: 'beginner' },
+    setupSteps: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'setup_steps' },
+    executionSteps: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'execution_steps' },
+    coachingCue: { type: DataTypes.TEXT, allowNull: false, field: 'coaching_cue' },
+    commonFaults: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'common_faults' },
+    safetyNotes: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'safety_notes' },
+    evidenceSummary: { type: DataTypes.TEXT, allowNull: false, field: 'evidence_summary' },
+    evidenceConfidence: { type: DataTypes.STRING, allowNull: false, defaultValue: 'moderate', field: 'evidence_confidence' },
+    defaultRestSeconds: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 120, field: 'default_rest_seconds' },
+    loadUnit: { type: DataTypes.STRING, allowNull: false, defaultValue: 'kg', field: 'load_unit' },
+    searchTerms: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'search_terms' },
+  }, { ...baseOptions, tableName: 'exercises' });
+
+  const ExerciseAlternative = sequelize.define('ExerciseAlternative', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    exerciseId: { type: DataTypes.STRING, allowNull: false, field: 'exercise_id' },
+    alternativeExerciseId: { type: DataTypes.STRING, allowNull: false, field: 'alternative_exercise_id' },
+    relationship: { type: DataTypes.STRING, allowNull: false, defaultValue: 'equivalent' },
+    rationale: { type: DataTypes.TEXT, allowNull: false },
+  }, { ...baseOptions, tableName: 'exercise_alternatives' });
+
+  const TrainingProgram = sequelize.define('TrainingProgram', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT },
+    goal: { type: DataTypes.STRING, allowNull: false },
+    experience: { type: DataTypes.STRING, allowNull: false },
+    durationWeeks: { type: DataTypes.INTEGER, allowNull: false, field: 'duration_weeks' },
+    daysPerWeek: { type: DataTypes.INTEGER, allowNull: false, field: 'days_per_week' },
+    isTemplate: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_template' },
+    isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_active' },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+  }, { ...baseOptions, tableName: 'training_programs' });
+
+  const ProgramWorkout = sequelize.define('ProgramWorkout', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    programId: { type: DataTypes.STRING, allowNull: false, field: 'program_id' },
+    name: { type: DataTypes.STRING, allowNull: false },
+    dayIndex: { type: DataTypes.INTEGER, allowNull: false, field: 'day_index' },
+    description: { type: DataTypes.TEXT },
+  }, { ...baseOptions, tableName: 'program_workouts' });
+
+  const ProgramExercise = sequelize.define('ProgramExercise', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    programWorkoutId: { type: DataTypes.STRING, allowNull: false, field: 'program_workout_id' },
+    exerciseId: { type: DataTypes.STRING, allowNull: false, field: 'exercise_id' },
+    orderIndex: { type: DataTypes.INTEGER, allowNull: false, field: 'order_index' },
+    targetSets: { type: DataTypes.INTEGER, allowNull: false, field: 'target_sets' },
+    repMin: { type: DataTypes.INTEGER, allowNull: false, field: 'rep_min' },
+    repMax: { type: DataTypes.INTEGER, allowNull: false, field: 'rep_max' },
+    targetRir: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 2, field: 'target_rir' },
+    restSeconds: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 120, field: 'rest_seconds' },
+    setType: { type: DataTypes.STRING, allowNull: false, defaultValue: 'working', field: 'set_type' },
+    notes: { type: DataTypes.TEXT },
+  }, { ...baseOptions, tableName: 'program_exercises' });
+
+  const WorkoutSession = sequelize.define('WorkoutSession', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    programWorkoutId: { type: DataTypes.STRING, field: 'program_workout_id' },
+    name: { type: DataTypes.STRING, allowNull: false },
+    date: { type: DataTypes.STRING, allowNull: false },
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'in_progress' },
+    startedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'started_at' },
+    completedAt: { type: DataTypes.DATE, field: 'completed_at' },
+    sessionRpe: { type: DataTypes.FLOAT, field: 'session_rpe' },
+    notes: { type: DataTypes.TEXT },
+  }, { ...baseOptions, tableName: 'workout_sessions' });
+
+  const PerformedSet = sequelize.define('PerformedSet', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    workoutSessionId: { type: DataTypes.STRING, allowNull: false, field: 'workout_session_id' },
+    programExerciseId: { type: DataTypes.STRING, field: 'program_exercise_id' },
+    exerciseId: { type: DataTypes.STRING, allowNull: false, field: 'exercise_id' },
+    setNumber: { type: DataTypes.INTEGER, allowNull: false, field: 'set_number' },
+    setType: { type: DataTypes.STRING, allowNull: false, defaultValue: 'working', field: 'set_type' },
+    targetRepsMin: { type: DataTypes.INTEGER, field: 'target_reps_min' },
+    targetRepsMax: { type: DataTypes.INTEGER, field: 'target_reps_max' },
+    actualReps: { type: DataTypes.INTEGER, allowNull: false, field: 'actual_reps' },
+    targetLoad: { type: DataTypes.FLOAT, field: 'target_load' },
+    actualLoad: { type: DataTypes.FLOAT, allowNull: false, field: 'actual_load' },
+    targetRir: { type: DataTypes.INTEGER, field: 'target_rir' },
+    actualRir: { type: DataTypes.INTEGER, field: 'actual_rir' },
+    restSeconds: { type: DataTypes.INTEGER, field: 'rest_seconds' },
+    techniqueQuality: { type: DataTypes.STRING, allowNull: false, defaultValue: 'good', field: 'technique_quality' },
+    painScore: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, field: 'pain_score' },
+    painLocation: { type: DataTypes.STRING, field: 'pain_location' },
+    painNotes: { type: DataTypes.TEXT, field: 'pain_notes' },
+    source: { type: DataTypes.STRING, allowNull: false, defaultValue: 'manual' },
+    completedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'completed_at' },
+  }, { ...baseOptions, tableName: 'performed_sets' });
+
   Habit.hasMany(HabitLog, { foreignKey: 'habitId' });
   HabitLog.belongsTo(Habit, { foreignKey: 'habitId' });
   LearningSection.hasMany(LearningItem, { foreignKey: 'sectionId' });
@@ -274,6 +396,18 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
   Milestone.belongsTo(Goal, { foreignKey: 'goalId' });
   Debt.hasMany(DebtPayment, { foreignKey: 'debtId' });
   DebtPayment.belongsTo(Debt, { foreignKey: 'debtId' });
+  Exercise.hasMany(ExerciseAlternative, { foreignKey: 'exerciseId', as: 'alternatives' });
+  ExerciseAlternative.belongsTo(Exercise, { foreignKey: 'exerciseId', as: 'exercise' });
+  ExerciseAlternative.belongsTo(Exercise, { foreignKey: 'alternativeExerciseId', as: 'alternative' });
+  TrainingProgram.hasMany(ProgramWorkout, { foreignKey: 'programId', as: 'workouts' });
+  ProgramWorkout.belongsTo(TrainingProgram, { foreignKey: 'programId', as: 'program' });
+  ProgramWorkout.hasMany(ProgramExercise, { foreignKey: 'programWorkoutId', as: 'exercises' });
+  ProgramExercise.belongsTo(ProgramWorkout, { foreignKey: 'programWorkoutId', as: 'workout' });
+  ProgramExercise.belongsTo(Exercise, { foreignKey: 'exerciseId', as: 'exercise' });
+  WorkoutSession.belongsTo(ProgramWorkout, { foreignKey: 'programWorkoutId', as: 'programWorkout' });
+  WorkoutSession.hasMany(PerformedSet, { foreignKey: 'workoutSessionId', as: 'sets' });
+  PerformedSet.belongsTo(WorkoutSession, { foreignKey: 'workoutSessionId', as: 'session' });
+  PerformedSet.belongsTo(Exercise, { foreignKey: 'exerciseId', as: 'exercise' });
 
   return {
     Habit,
@@ -299,5 +433,13 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     DietLog,
     Supplement,
     CareerEntry,
+    TrainingProfile,
+    Exercise,
+    ExerciseAlternative,
+    TrainingProgram,
+    ProgramWorkout,
+    ProgramExercise,
+    WorkoutSession,
+    PerformedSet,
   };
 };
