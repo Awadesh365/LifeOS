@@ -24,10 +24,29 @@ utils/                         Shared helpers
 ```bash
 cp .env.example .env
 npm install
-npm run db:migrate
-npm run db:seed
 npm run dev
 ```
+
+`npm run dev` starts the project-local PostgreSQL instance when the configured
+local database is not already available. It also creates any missing tables
+without dropping or altering existing data.
+
+Seed the starter LifeOS data once when setting up a new database:
+
+```bash
+npm run seed:local
+```
+
+Database lifecycle commands:
+
+```bash
+npm run db:start
+npm run db:status
+npm run db:stop
+```
+
+If `DB_HOST` or `DATABASE_URL` points to a remote host, automatic database
+startup is disabled and the configured database must already be available.
 
 The health endpoint is `GET /api/health-check`.
 
