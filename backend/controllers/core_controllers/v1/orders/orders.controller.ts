@@ -4,7 +4,7 @@ import type { Actor } from '../../../../types';
 
 const getActor = (req: Request): Actor => ({
   actorUserId: (req as any).user?.id || null,
-  ipAddress: req.ip,
+  ipAddress: req.ip || '',
   userAgent: req.get('user-agent') || '',
 });
 

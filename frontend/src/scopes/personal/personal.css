@@ -68,6 +68,437 @@
   --header-height: 64px;
 }
 
+/* ============================================================
+   NUTRITION — evidence-aware capture and weekly review
+   ============================================================ */
+.lifeos-personal-scope .nutrition-page {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 36px 48px;
+}
+
+.lifeos-personal-scope .nutrition-page button,
+.lifeos-personal-scope .nutrition-modal button,
+.lifeos-personal-scope .nutrition-page input,
+.lifeos-personal-scope .nutrition-page select,
+.lifeos-personal-scope .nutrition-modal input,
+.lifeos-personal-scope .nutrition-modal select,
+.lifeos-personal-scope .nutrition-modal textarea {
+  font: inherit;
+}
+
+.lifeos-personal-scope .nutrition-topbar,
+.lifeos-personal-scope .nutrition-card-heading,
+.lifeos-personal-scope .nutrition-modal-header,
+.lifeos-personal-scope .nutrition-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lifeos-personal-scope .nutrition-topbar { margin-bottom: 22px; }
+
+.lifeos-personal-scope .nutrition-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #eef1f5;
+}
+
+.lifeos-personal-scope .nutrition-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: .79rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.lifeos-personal-scope .nutrition-tabs button.active {
+  background: #fff;
+  color: var(--text-heading);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, .11);
+}
+
+.lifeos-personal-scope .nutrition-date-control {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.lifeos-personal-scope .nutrition-date-control > button {
+  display: grid;
+  width: 36px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.lifeos-personal-scope .nutrition-date-control > button:hover:not(:disabled) { background: var(--bg-secondary); color: var(--text-heading); }
+.lifeos-personal-scope .nutrition-date-control > button:disabled { opacity: .3; cursor: not-allowed; }
+
+.lifeos-personal-scope .nutrition-date-control label {
+  position: relative;
+  display: flex;
+  min-width: 138px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-inline: 1px solid var(--border);
+  color: var(--text-heading);
+  font-size: .78rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.lifeos-personal-scope .nutrition-date-control input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.lifeos-personal-scope .nutrition-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 22px;
+  align-items: start;
+}
+
+.lifeos-personal-scope .nutrition-main-column,
+.lifeos-personal-scope .nutrition-side-column { display: grid; gap: 18px; }
+
+.lifeos-personal-scope .nutrition-overview-card,
+.lifeos-personal-scope .nutrition-section-card,
+.lifeos-personal-scope .nutrition-side-card,
+.lifeos-personal-scope .nutrition-insight-card {
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--bg-card);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .025);
+}
+
+.lifeos-personal-scope .nutrition-overview-card {
+  padding: 25px 26px 20px;
+  background:
+    radial-gradient(circle at 95% 0, rgba(229, 85, 85, .07), transparent 30%),
+    #fff;
+}
+
+.lifeos-personal-scope .nutrition-section-card { padding: 22px 24px; }
+.lifeos-personal-scope .nutrition-side-card,
+.lifeos-personal-scope .nutrition-insight-card { padding: 21px; }
+
+.lifeos-personal-scope .nutrition-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-muted);
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .085em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .nutrition-card-heading h1,
+.lifeos-personal-scope .weekly-review-hero h1 {
+  color: var(--text-heading);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1.25;
+}
+
+.lifeos-personal-scope .nutrition-card-heading h2,
+.lifeos-personal-scope .nutrition-side-card h2,
+.lifeos-personal-scope .nutrition-insight-card h2,
+.lifeos-personal-scope .review-action-card h2,
+.lifeos-personal-scope .review-empty-state h2 {
+  color: var(--text-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.4;
+}
+
+.lifeos-personal-scope .nutrition-card-heading.compact { align-items: flex-start; margin-bottom: 18px; }
+
+.lifeos-personal-scope .coverage-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  border: 1px solid rgba(21, 107, 186, .18);
+  border-radius: var(--radius-full);
+  background: var(--info-glow);
+  color: var(--info);
+}
+
+.lifeos-personal-scope .coverage-select--complete { border-color: rgba(2, 121, 0, .18); background: var(--success-glow); color: var(--success); }
+.lifeos-personal-scope .coverage-select--partial { border-color: rgba(193, 116, 0, .2); background: var(--warning-glow); color: var(--warning); }
+
+.lifeos-personal-scope .coverage-select select {
+  max-width: 145px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font-size: .69rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.lifeos-personal-scope .nutrition-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 24px 0 20px;
+  border-block: 1px solid #e9edf2;
+}
+
+.lifeos-personal-scope .nutrition-metric { padding: 18px 22px 18px 0; }
+.lifeos-personal-scope .nutrition-metric + .nutrition-metric { padding-left: 22px; border-left: 1px solid #e9edf2; }
+.lifeos-personal-scope .nutrition-metric > span { color: var(--text-secondary); font-size: .71rem; font-weight: 700; }
+.lifeos-personal-scope .nutrition-metric > div:nth-child(2) { display: flex; align-items: baseline; gap: 6px; margin: 5px 0 11px; }
+.lifeos-personal-scope .nutrition-metric strong { color: var(--text-heading); font-size: 1.65rem; font-weight: 800; letter-spacing: -.045em; line-height: 1; }
+.lifeos-personal-scope .nutrition-metric small { color: var(--text-muted); font-size: .7rem; font-weight: 650; }
+
+.lifeos-personal-scope .nutrition-progress { height: 4px; overflow: hidden; border-radius: 10px; background: #e9edf2; }
+.lifeos-personal-scope .nutrition-progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #e55555, #c13838); }
+
+.lifeos-personal-scope .nutrition-data-note,
+.lifeos-personal-scope .nutrition-modal-note,
+.lifeos-personal-scope .review-footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: .72rem;
+  line-height: 1.55;
+}
+.lifeos-personal-scope .nutrition-data-note svg,
+.lifeos-personal-scope .nutrition-modal-note svg,
+.lifeos-personal-scope .review-footnote svg { flex: 0 0 auto; margin-top: 2px; color: var(--info); }
+
+.lifeos-personal-scope .nutrition-primary-button,
+.lifeos-personal-scope .nutrition-secondary-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-size: .75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.lifeos-personal-scope .nutrition-primary-button { border: 1px solid var(--accent); background: var(--gradient-1); color: #fff; box-shadow: 0 5px 14px -8px rgba(193, 56, 56, .75); }
+.lifeos-personal-scope .nutrition-primary-button:hover { transform: translateY(-1px); }
+.lifeos-personal-scope .nutrition-primary-button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.lifeos-personal-scope .nutrition-secondary-button { border: 1px solid var(--border); background: #fff; color: var(--text-secondary); }
+
+.lifeos-personal-scope .nutrition-section-label { margin-bottom: 9px; color: var(--text-muted); font-size: .68rem; font-weight: 750; }
+.lifeos-personal-scope .recent-meal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.lifeos-personal-scope .recent-meal-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.lifeos-personal-scope .recent-meal-card:hover { border-color: #bac4d1; background: #fff; box-shadow: var(--shadow); transform: translateY(-1px); }
+.lifeos-personal-scope .recent-meal-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 8px; background: #fff; color: var(--accent); }
+.lifeos-personal-scope .recent-meal-copy { min-width: 0; }
+.lifeos-personal-scope .recent-meal-copy strong,
+.lifeos-personal-scope .recent-meal-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lifeos-personal-scope .recent-meal-copy strong { color: var(--text-heading); font-size: .75rem; }
+.lifeos-personal-scope .recent-meal-copy small { margin-top: 2px; color: var(--text-muted); font-size: .62rem; }
+
+.lifeos-personal-scope .nutrition-empty-inline { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px dashed var(--border-light); border-radius: 11px; color: var(--text-muted); }
+.lifeos-personal-scope .nutrition-empty-inline strong,
+.lifeos-personal-scope .nutrition-empty-inline span { display: block; }
+.lifeos-personal-scope .nutrition-empty-inline strong { color: var(--text-secondary); font-size: .76rem; }
+.lifeos-personal-scope .nutrition-empty-inline span { margin-top: 1px; font-size: .68rem; }
+
+.lifeos-personal-scope .entry-count { padding: 5px 9px; border-radius: 20px; background: var(--bg-secondary); color: var(--text-muted); font-size: .66rem; font-weight: 750; }
+.lifeos-personal-scope .meal-timeline { margin-top: 2px; }
+.lifeos-personal-scope .meal-slot { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 11px; }
+.lifeos-personal-scope .meal-slot-marker { position: relative; display: flex; justify-content: center; }
+.lifeos-personal-scope .meal-slot-marker::after { content: ''; position: absolute; top: 13px; bottom: -13px; width: 1px; background: #dfe5ec; }
+.lifeos-personal-scope .meal-slot:last-child .meal-slot-marker::after { display: none; }
+.lifeos-personal-scope .meal-slot-marker span { position: relative; z-index: 1; width: 9px; height: 9px; margin-top: 5px; border: 2px solid #fff; border-radius: 50%; background: #aab5c2; box-shadow: 0 0 0 1px #c8d0da; }
+.lifeos-personal-scope .meal-slot-content { padding-bottom: 22px; }
+.lifeos-personal-scope .meal-slot-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.lifeos-personal-scope .meal-slot-title h3 { color: var(--text-heading); font-size: .78rem; font-weight: 800; }
+.lifeos-personal-scope .meal-slot-title div > span { color: var(--text-muted); font-size: .61rem; }
+.lifeos-personal-scope .meal-slot-title button { display: inline-flex; align-items: center; gap: 3px; padding: 3px 7px; border: 0; border-radius: 6px; background: transparent; color: var(--accent-light); font-size: .66rem; font-weight: 800; cursor: pointer; }
+.lifeos-personal-scope .meal-slot-title button:hover { background: var(--danger-glow); }
+.lifeos-personal-scope .meal-slot-empty { padding: 10px 12px; border: 1px dashed #e0e5eb; border-radius: 9px; color: #a4adba; font-size: .68rem; }
+
+.lifeos-personal-scope .logged-meal { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 12px 13px; border: 1px solid #e3e8ee; border-radius: 10px; background: #fafbfc; }
+.lifeos-personal-scope .logged-meal + .logged-meal { margin-top: 7px; }
+.lifeos-personal-scope .logged-meal-main { min-width: 0; }
+.lifeos-personal-scope .logged-meal-main > strong { color: var(--text-heading); font-size: .77rem; font-weight: 750; }
+.lifeos-personal-scope .logged-meal-main > p { margin-top: 5px; color: var(--text-muted); font-size: .65rem; }
+.lifeos-personal-scope .logged-meal-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 5px; color: var(--text-secondary); font-size: .63rem; font-weight: 650; }
+.lifeos-personal-scope .logged-meal-meta > i { width: 2px; height: 2px; border-radius: 50%; background: var(--text-muted); }
+.lifeos-personal-scope .source-chip { display: inline-flex; align-items: center; gap: 3px; color: var(--success); }
+.lifeos-personal-scope .meal-delete,
+.lifeos-personal-scope .icon-button { display: grid; flex: 0 0 auto; width: 32px; height: 32px; place-items: center; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-muted); cursor: pointer; }
+.lifeos-personal-scope .meal-delete:hover { border-color: rgba(229,85,85,.3); background: var(--danger-glow); color: var(--danger); }
+
+.lifeos-personal-scope .nutrition-insight-card { position: relative; overflow: hidden; background: linear-gradient(145deg, #202936, #151b24); color: #fff; }
+.lifeos-personal-scope .nutrition-insight-card::after { content: ''; position: absolute; top: -70px; right: -55px; width: 150px; height: 150px; border-radius: 50%; background: rgba(229, 85, 85, .2); filter: blur(2px); }
+.lifeos-personal-scope .insight-icon { position: relative; z-index: 1; display: grid; width: 35px; height: 35px; margin-bottom: 20px; place-items: center; border: 1px solid rgba(255,255,255,.14); border-radius: 10px; background: rgba(255,255,255,.08); color: #ff9999; }
+.lifeos-personal-scope .nutrition-insight-card .nutrition-eyebrow { color: #aab5c3; }
+.lifeos-personal-scope .nutrition-insight-card h2 { margin: 7px 0 9px; color: #fff; font-size: 1.04rem; }
+.lifeos-personal-scope .nutrition-insight-card p { color: #aeb8c5; font-size: .72rem; line-height: 1.62; }
+.lifeos-personal-scope .nutrition-insight-card > button { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; border: 0; background: transparent; color: #ffaaaa; font-size: .69rem; font-weight: 800; cursor: pointer; }
+
+.lifeos-personal-scope .target-summary > div { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-top: 1px solid #edf0f3; }
+.lifeos-personal-scope .target-summary span { color: var(--text-secondary); font-size: .7rem; }
+.lifeos-personal-scope .target-summary strong { color: var(--text-heading); font-size: .75rem; }
+.lifeos-personal-scope .target-form { display: grid; gap: 9px; margin-top: 10px; padding-top: 13px; border-top: 1px solid #edf0f3; }
+.lifeos-personal-scope .target-form label { display: grid; grid-template-columns: 1fr 88px; align-items: center; gap: 8px; font-size: .65rem; }
+.lifeos-personal-scope .target-form input { width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: 7px; color: var(--text-heading); }
+.lifeos-personal-scope .target-form p,
+.lifeos-personal-scope .coverage-card p { color: var(--text-muted); font-size: .67rem; line-height: 1.55; }
+.lifeos-personal-scope .coverage-card h2 { margin: 5px 0 6px; }
+
+.lifeos-personal-scope .nutrition-loading { display: flex; align-items: center; gap: 8px; margin: -10px 0 12px; color: var(--text-muted); font-size: .68rem; }
+.lifeos-personal-scope .nutrition-loading span { width: 11px; height: 11px; border: 2px solid #dfe5ec; border-top-color: var(--accent); border-radius: 50%; animation: nutrition-spin .8s linear infinite; }
+@keyframes nutrition-spin { to { transform: rotate(360deg); } }
+.lifeos-personal-scope .nutrition-alert { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; padding: 11px 13px; border-radius: 9px; font-size: .72rem; }
+.lifeos-personal-scope .nutrition-alert--error { border: 1px solid rgba(229,85,85,.2); background: var(--danger-glow); color: var(--danger); }
+
+.lifeos-personal-scope .nutrition-modal-backdrop { position: fixed; z-index: 300; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(16,24,40,.42); backdrop-filter: blur(4px); }
+.lifeos-personal-scope .nutrition-modal { width: min(610px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; padding: 24px; border: 1px solid rgba(255,255,255,.5); border-radius: 18px; background: #fff; box-shadow: 0 24px 80px rgba(16,24,40,.24); }
+.lifeos-personal-scope .nutrition-modal-header { align-items: flex-start; margin-bottom: 22px; }
+.lifeos-personal-scope .nutrition-modal-header h2 { color: var(--text-heading); font-size: 1.25rem; letter-spacing: -.03em; }
+.lifeos-personal-scope .nutrition-modal-header > button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--border); border-radius: 9px; background: #fff; color: var(--text-muted); cursor: pointer; }
+.lifeos-personal-scope .meal-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lifeos-personal-scope .meal-form-grid label { display: flex; flex-direction: column; gap: 6px; color: var(--text-secondary); font-size: .7rem; font-weight: 750; }
+.lifeos-personal-scope .meal-form-grid label > span { color: var(--text-muted); font-weight: 500; }
+.lifeos-personal-scope .meal-form-wide { grid-column: 1 / -1; }
+.lifeos-personal-scope .meal-form-grid input,
+.lifeos-personal-scope .meal-form-grid select,
+.lifeos-personal-scope .meal-form-grid textarea { width: 100%; padding: 10px 11px; border: 1px solid var(--border); border-radius: 9px; outline: 0; background: #fafbfc; color: var(--text-heading); font-size: .76rem; resize: vertical; }
+.lifeos-personal-scope .meal-form-grid input:focus,
+.lifeos-personal-scope .meal-form-grid select:focus,
+.lifeos-personal-scope .meal-form-grid textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.lifeos-personal-scope .nutrition-modal-note { margin-top: 15px; padding: 10px 11px; border-radius: 8px; background: var(--info-glow); }
+.lifeos-personal-scope .nutrition-modal-actions { justify-content: flex-end; margin-top: 20px; }
+
+.lifeos-personal-scope .weekly-review { display: grid; gap: 18px; }
+.lifeos-personal-scope .weekly-review-hero { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 27px 30px; border: 1px solid var(--border); border-radius: 18px; background: radial-gradient(circle at 90% 20%, rgba(229,85,85,.08), transparent 25%), #fff; }
+.lifeos-personal-scope .weekly-review-hero > div:first-child { max-width: 690px; }
+.lifeos-personal-scope .weekly-review-hero h1 { margin: 4px 0 8px; font-size: 1.6rem; }
+.lifeos-personal-scope .weekly-review-hero p { color: var(--text-secondary); font-size: .74rem; line-height: 1.6; }
+.lifeos-personal-scope .coverage-score { flex: 0 0 150px; padding-left: 25px; border-left: 1px solid var(--border); }
+.lifeos-personal-scope .coverage-score strong { display: block; color: var(--text-heading); font-size: 2.1rem; font-weight: 850; letter-spacing: -.06em; line-height: 1; }
+.lifeos-personal-scope .coverage-score strong span { color: var(--text-muted); font-size: 1rem; }
+.lifeos-personal-scope .coverage-score p { margin-top: 7px; font-size: .65rem; }
+
+.lifeos-personal-scope .weekly-day-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.lifeos-personal-scope .week-day { position: relative; display: flex; min-width: 0; flex-direction: column; align-items: center; padding: 11px 6px 10px; border: 1px solid var(--border); border-radius: 11px; background: #fff; cursor: pointer; }
+.lifeos-personal-scope .week-day::before { content: ''; position: absolute; top: 6px; right: 7px; width: 5px; height: 5px; border-radius: 50%; background: #b7c0cb; }
+.lifeos-personal-scope .week-day--complete::before { background: var(--success); }
+.lifeos-personal-scope .week-day--partial::before { background: var(--warning); }
+.lifeos-personal-scope .week-day:hover { border-color: #aeb9c7; box-shadow: var(--shadow); }
+.lifeos-personal-scope .week-day > span { color: var(--text-muted); font-size: .59rem; font-weight: 800; text-transform: uppercase; }
+.lifeos-personal-scope .week-day > strong { margin: 2px 0; color: var(--text-heading); font-size: 1rem; }
+.lifeos-personal-scope .week-day > i { overflow: hidden; max-width: 100%; color: var(--text-muted); font-size: .55rem; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }
+
+.lifeos-personal-scope .review-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .75fr); gap: 18px; align-items: stretch; }
+.lifeos-personal-scope .pattern-list { border-top: 1px solid #edf0f3; }
+.lifeos-personal-scope .pattern-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 11px; align-items: center; padding: 13px 0; border-bottom: 1px solid #edf0f3; }
+.lifeos-personal-scope .pattern-trend { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 8px; }
+.lifeos-personal-scope .pattern-trend--positive { background: var(--success-glow); color: var(--success); }
+.lifeos-personal-scope .pattern-trend--attention { background: var(--warning-glow); color: var(--warning); }
+.lifeos-personal-scope .pattern-trend--neutral { background: var(--bg-secondary); color: var(--text-muted); }
+.lifeos-personal-scope .pattern-row > div:nth-child(2) strong,
+.lifeos-personal-scope .pattern-row > div:nth-child(2) span { display: block; }
+.lifeos-personal-scope .pattern-row > div:nth-child(2) strong { color: var(--text-heading); font-size: .73rem; }
+.lifeos-personal-scope .pattern-row > div:nth-child(2) span { color: var(--text-muted); font-size: .62rem; }
+.lifeos-personal-scope .pattern-status { padding: 5px 8px; border-radius: 20px; font-size: .58rem; font-style: normal; font-weight: 800; }
+.lifeos-personal-scope .pattern-status--positive { background: var(--success-glow); color: var(--success); }
+.lifeos-personal-scope .pattern-status--attention { background: var(--warning-glow); color: var(--warning); }
+.lifeos-personal-scope .pattern-status--neutral { background: var(--bg-secondary); color: var(--text-secondary); }
+
+.lifeos-personal-scope .review-action-card { padding: 24px; border-radius: 17px; background: #202936; color: #fff; }
+.lifeos-personal-scope .review-action-card h2 { margin: 8px 0 10px; color: #fff; font-size: 1.08rem; }
+.lifeos-personal-scope .review-action-card p { color: #abb5c2; font-size: .7rem; line-height: 1.6; }
+.lifeos-personal-scope .review-action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.lifeos-personal-scope .review-action-buttons button { display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 10px; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: rgba(255,255,255,.08); color: #fff; font-size: .64rem; font-weight: 750; cursor: pointer; }
+.lifeos-personal-scope .review-action-buttons button:first-child { border-color: #e55555; background: #e55555; }
+.lifeos-personal-scope .review-empty-state { display: flex; align-items: center; gap: 17px; padding: 28px; border: 1px dashed var(--border-light); border-radius: 16px; background: #fff; }
+.lifeos-personal-scope .review-empty-state > span { display: grid; flex: 0 0 auto; width: 46px; height: 46px; place-items: center; border-radius: 12px; background: var(--info-glow); color: var(--info); }
+.lifeos-personal-scope .review-empty-state > div { flex: 1; }
+.lifeos-personal-scope .review-empty-state p { margin-top: 4px; color: var(--text-secondary); font-size: .7rem; }
+.lifeos-personal-scope .review-empty-state button { display: inline-flex; align-items: center; gap: 5px; padding: 9px 12px; border: 1px solid var(--accent); border-radius: 8px; background: var(--accent); color: #fff; font-size: .68rem; font-weight: 800; cursor: pointer; }
+.lifeos-personal-scope .review-footnote { padding: 13px 15px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+
+@media (max-width: 1100px) {
+  .lifeos-personal-scope .nutrition-layout { grid-template-columns: minmax(0, 1fr) 270px; }
+  .lifeos-personal-scope .recent-meal-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .lifeos-personal-scope .nutrition-page { padding: 20px 16px 40px; }
+  .lifeos-personal-scope .nutrition-layout,
+  .lifeos-personal-scope .review-grid { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .nutrition-side-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lifeos-personal-scope .nutrition-insight-card { grid-row: span 2; }
+}
+
+@media (max-width: 640px) {
+  .lifeos-personal-scope .nutrition-page { padding: 16px 12px 34px; }
+  .lifeos-personal-scope .nutrition-topbar { align-items: stretch; flex-direction: column; }
+  .lifeos-personal-scope .nutrition-tabs { display: grid; grid-template-columns: 1fr 1fr; }
+  .lifeos-personal-scope .nutrition-tabs button { justify-content: center; }
+  .lifeos-personal-scope .nutrition-date-control { align-self: stretch; justify-content: space-between; }
+  .lifeos-personal-scope .nutrition-date-control label { flex: 1; }
+  .lifeos-personal-scope .nutrition-overview-card,
+  .lifeos-personal-scope .nutrition-section-card,
+  .lifeos-personal-scope .nutrition-side-card,
+  .lifeos-personal-scope .nutrition-insight-card { padding: 18px; border-radius: 14px; }
+  .lifeos-personal-scope .nutrition-card-heading { align-items: flex-start; }
+  .lifeos-personal-scope .nutrition-card-heading:not(.compact) { flex-direction: column; }
+  .lifeos-personal-scope .nutrition-metrics { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .nutrition-metric { padding: 14px 0; }
+  .lifeos-personal-scope .nutrition-metric + .nutrition-metric { padding-left: 0; border-top: 1px solid #e9edf2; border-left: 0; }
+  .lifeos-personal-scope .nutrition-side-column { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .weekly-review-hero { align-items: flex-start; flex-direction: column; padding: 22px 19px; }
+  .lifeos-personal-scope .coverage-score { width: 100%; padding: 15px 0 0; border-top: 1px solid var(--border); border-left: 0; }
+  .lifeos-personal-scope .weekly-day-strip { overflow-x: auto; grid-template-columns: repeat(7, minmax(72px, 1fr)); padding-bottom: 5px; }
+  .lifeos-personal-scope .review-empty-state { align-items: flex-start; flex-direction: column; padding: 20px; }
+  .lifeos-personal-scope .pattern-row { grid-template-columns: 31px minmax(0, 1fr); }
+  .lifeos-personal-scope .pattern-status { grid-column: 2; width: fit-content; }
+  .lifeos-personal-scope .meal-form-grid { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .meal-form-wide { grid-column: auto; }
+  .lifeos-personal-scope .nutrition-modal { padding: 19px; }
+}
+
 /* Dark mode retired for UI consistency — the [data-personal-theme]
    attribute now resolves to the single premium light theme above. */
 

@@ -1,6 +1,6 @@
-import type { SchemaProperty } from '../../types';
+import type { SchemaField, SchemaProperty } from '../../types';
 
-const uuid: { type: string; format: string } = { type: 'string', format: 'uuid' };
+const uuid: SchemaField = { type: 'uuid', format: 'uuid' };
 
 const orderItemSchema: SchemaProperty = {
   type: 'object',
@@ -19,7 +19,7 @@ export const createOrderBodySchema: SchemaProperty = {
   type: 'object',
   properties: {
     customer_id: { ...uuid, required: true },
-    items: { type: 'array', required: true, items: orderItemSchema } as unknown as SchemaProperty,
+    items: { type: 'array', required: true, items: orderItemSchema },
     note: { type: 'string', trim: true, maxLength: 500 },
   },
 };

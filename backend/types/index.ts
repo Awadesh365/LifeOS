@@ -32,6 +32,7 @@ export interface SchemaField {
   max?: number;
   maxLength?: number;
   format?: string;
+  items?: SchemaProperty;
 }
 
 export interface SchemaProperty {

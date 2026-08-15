@@ -1,284 +1,366 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  IconButton,
-  MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-  Alert,
-  CircularProgress,
-  Paper,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+  ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, CalendarDays, Check,
+  ChevronLeft, ChevronRight, CircleDashed, Copy, Info, Plus, RotateCcw,
+  Search, Settings2, Trash2, Utensils, X,
+} from 'lucide-react';
 import Header from '../components/Header';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import {
-  fetchDiet,
-  addDietLog,
-  deleteDietLog,
-  addSupplement,
-  consumeSupplement,
-} from '../../../redux/slices/personalSlice';
-import type { DietLog, Supplement } from '../types';
+import { addDietLog, deleteDietLog, fetchDiet } from '../../../redux/slices/personalSlice';
+import type { DietLog } from '../types';
 
-interface DietProps {
-  isMobile?: boolean;
+interface DietProps { isMobile?: boolean; }
+type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+type Coverage = 'complete' | 'partial' | 'uncertain' | 'untracked';
+type View = 'today' | 'review';
+
+const MEAL_TYPES: Array<{ value: MealType; label: string; window: string }> = [
+  { value: 'breakfast', label: 'Breakfast', window: 'Morning' },
+  { value: 'lunch', label: 'Lunch', window: 'Midday' },
+  { value: 'dinner', label: 'Dinner', window: 'Evening' },
+  { value: 'snack', label: 'Snacks', window: 'Any time' },
+];
+
+const COVERAGE_OPTIONS: Array<{ value: Coverage; label: string }> = [
+  { value: 'uncertain', label: 'Not reviewed' },
+  { value: 'complete', label: 'Likely complete' },
+  { value: 'partial', label: 'Partially logged' },
+  { value: 'untracked', label: 'Intentionally untracked' },
+];
+
+const isoToday = () => new Date().toISOString().slice(0, 10);
+const atNoon = (date: string) => new Date(`${date}T12:00:00`);
+
+function moveDate(date: string, amount: number) {
+  const next = atNoon(date);
+  next.setDate(next.getDate() + amount);
+  return next.toISOString().slice(0, 10);
 }
 
-const MEAL_TYPES: DietLog['mealType'][] = ['breakfast', 'lunch', 'dinner', 'snack'];
+function shortDate(date: string) {
+  return new Intl.DateTimeFormat('en', { weekday: 'short', month: 'short', day: 'numeric' }).format(atNoon(date));
+}
+
+function longDate(date: string) {
+  return new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(atNoon(date));
+}
+
+function loadRecord<T>(key: string, fallback: T): T {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) as T : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export default function Diet({ isMobile = false }: DietProps) {
   const dispatch = useAppDispatch();
-  const { logs, supplements, loading, error } = useAppSelector((s) => s.personal.diet);
-
-  const today = new Date().toISOString().slice(0, 10);
-  const [date, setDate] = useState(today);
-
+  const { logs, history, loading, error } = useAppSelector((state) => state.personal.diet);
+  const [date, setDate] = useState(isoToday());
+  const [view, setView] = useState<View>('today');
+  const [showForm, setShowForm] = useState(false);
+  const [showTargets, setShowTargets] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [coverageByDate, setCoverageByDate] = useState<Record<string, Coverage>>(() => loadRecord('lifeos-nutrition-coverage', {}));
+  const [targets, setTargets] = useState(() => loadRecord('lifeos-nutrition-targets', { calories: 2100, protein: 130 }));
   const [form, setForm] = useState<Omit<DietLog, 'id' | 'date'>>({
-    mealType: 'breakfast',
-    items: '',
-    protein: 0,
-    calories: 0,
-    notes: '',
+    mealType: 'breakfast', items: '', protein: 0, calories: 0, notes: '',
   });
 
-  const [suppForm, setSuppForm] = useState<Omit<Supplement, 'id' | 'remainingDays'>>({
-    name: '',
-    quantity: 0,
-    unit: 'g',
-    dailyUsage: 0,
-    notes: '',
-  });
+  useEffect(() => { dispatch(fetchDiet(date)); }, [dispatch, date]);
 
-  useEffect(() => {
-    dispatch(fetchDiet(date));
-  }, [dispatch, date]);
+  const totalProtein = logs.reduce((sum, log) => sum + Number(log.protein || 0), 0);
+  const totalCalories = logs.reduce((sum, log) => sum + Number(log.calories || 0), 0);
+  const coverage = coverageByDate[date] || 'uncertain';
+  const currentCoverage = COVERAGE_OPTIONS.find((option) => option.value === coverage)!;
 
-  const totalProtein = logs.reduce((s, l) => s + (l.protein || 0), 0);
-  const totalCalories = logs.reduce((s, l) => s + (l.calories || 0), 0);
+  const recentMeals = useMemo(() => {
+    const seen = new Set<string>();
+    return [...history]
+      .filter((meal) => meal.date !== date)
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .filter((meal) => {
+        const key = `${meal.mealType}:${meal.items.trim().toLowerCase()}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 3);
+  }, [date, history]);
 
-  const handleAddLog = () => {
-    dispatch(addDietLog({ date, ...form }));
-    setForm({ mealType: 'breakfast', items: '', protein: 0, calories: 0, notes: '' });
+  const weekDates = useMemo(() => Array.from({ length: 7 }, (_, index) => moveDate(date, index - 6)), [date]);
+  const weeklyStats = useMemo(() => {
+    const days = weekDates.map((day) => {
+      const dayLogs = history.filter((meal) => meal.date === day);
+      return {
+        date: day,
+        logs: dayLogs,
+        calories: dayLogs.reduce((sum, meal) => sum + Number(meal.calories || 0), 0),
+        protein: dayLogs.reduce((sum, meal) => sum + Number(meal.protein || 0), 0),
+        coverage: coverageByDate[day] || 'uncertain' as Coverage,
+      };
+    });
+    const sufficient = days.filter((day) => day.coverage === 'complete');
+    return {
+      days, sufficient,
+      averageCalories: sufficient.length ? Math.round(sufficient.reduce((sum, day) => sum + day.calories, 0) / sufficient.length) : 0,
+      averageProtein: sufficient.length ? Math.round(sufficient.reduce((sum, day) => sum + day.protein, 0) / sufficient.length) : 0,
+    };
+  }, [coverageByDate, history, weekDates]);
+
+  const updateCoverage = (value: Coverage) => {
+    setCoverageByDate((current) => {
+      const next = { ...current, [date]: value };
+      localStorage.setItem('lifeos-nutrition-coverage', JSON.stringify(next));
+      return next;
+    });
   };
 
-  const handleDeleteLog = (id: string) => {
-    dispatch(deleteDietLog(id));
+  const updateTargets = (field: 'calories' | 'protein', value: number) => {
+    setTargets((current) => {
+      const next = { ...current, [field]: Math.max(0, value) };
+      localStorage.setItem('lifeos-nutrition-targets', JSON.stringify(next));
+      return next;
+    });
   };
 
-  const handleAddSupplement = () => {
-    dispatch(addSupplement(suppForm));
-    setSuppForm({ name: '', quantity: 0, unit: 'g', dailyUsage: 0, notes: '' });
+  const openMealForm = (mealType: MealType = 'breakfast') => {
+    setForm((current) => ({ ...current, mealType }));
+    setShowForm(true);
   };
 
-  const handleConsume = (id: string, amount: number) => {
-    dispatch(consumeSupplement({ id, amount }));
+  const handleAddLog = async () => {
+    if (!form.items.trim() || saving) return;
+    setSaving(true);
+    try {
+      await dispatch(addDietLog({ date, ...form, items: form.items.trim() })).unwrap();
+      setForm({ mealType: 'breakfast', items: '', protein: 0, calories: 0, notes: '' });
+      setShowForm(false);
+    } finally { setSaving(false); }
   };
+
+  const copyRecentMeal = async (meal: DietLog) => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      await dispatch(addDietLog({
+        date, mealType: meal.mealType, items: meal.items,
+        protein: Number(meal.protein || 0), calories: Number(meal.calories || 0),
+        notes: meal.notes ? `${meal.notes} · Copied from ${shortDate(meal.date)}` : `Copied from ${shortDate(meal.date)}`,
+      })).unwrap();
+    } finally { setSaving(false); }
+  };
+
+  const proteinProgress = targets.protein ? Math.min(100, (totalProtein / targets.protein) * 100) : 0;
+  const calorieProgress = targets.calories ? Math.min(100, (totalCalories / targets.calories) * 100) : 0;
+  const selectedIsToday = date === isoToday();
 
   return (
     <>
-      <Header title="Diet & Nutrition" subtitle="Log meals, protein, calories, and supplement stock" />
-      <Box sx={{ p: isMobile ? 2 : 3 }}>
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      <Header title="Nutrition" subtitle="Capture reality. Review patterns. Change one useful thing." />
+      <main className={`nutrition-page ${isMobile ? 'nutrition-page--mobile' : ''}`}>
+        {error && <div className="nutrition-alert nutrition-alert--error" role="alert"><Info size={17} /><span>{error}</span></div>}
 
-        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <TextField
-            type="date"
-            size="small"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            sx={{ minWidth: 160 }}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-          {loading && <CircularProgress size={20} />}
-        </Box>
+        <div className="nutrition-topbar">
+          <div className="nutrition-tabs" role="tablist" aria-label="Nutrition views">
+            <button className={view === 'today' ? 'active' : ''} onClick={() => setView('today')} type="button"><Utensils size={16} /> Today</button>
+            <button className={view === 'review' ? 'active' : ''} onClick={() => setView('review')} type="button"><BarChart3 size={16} /> Weekly review</button>
+          </div>
+          <div className="nutrition-date-control">
+            <button type="button" aria-label="Previous day" onClick={() => setDate(moveDate(date, -1))}><ChevronLeft size={18} /></button>
+            <label><CalendarDays size={16} /><input type="date" value={date} max={isoToday()} onChange={(event) => setDate(event.target.value)} /><span>{selectedIsToday ? 'Today' : shortDate(date)}</span></label>
+            <button type="button" aria-label="Next day" disabled={selectedIsToday} onClick={() => setDate(moveDate(date, 1))}><ChevronRight size={18} /></button>
+          </div>
+        </div>
 
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          {[
-            { label: 'Protein', value: `${totalProtein}g` },
-            { label: 'Calories', value: totalCalories },
-            { label: 'Meals', value: logs.length },
-          ].map((item) => (
-            <Grid size={{ xs: 12, sm: 4 }} key={item.label}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {item.label}
-                  </Typography>
-                  <Typography variant="h4">{item.value}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        {loading && <div className="nutrition-loading"><span /> Updating nutrition record…</div>}
 
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Add Meal
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
-              <TextField
-                select
-                size="small"
-                value={form.mealType}
-                onChange={(e) => setForm({ ...form, mealType: e.target.value as DietLog['mealType'] })}
-                sx={{ minWidth: 130 }}
-              >
-                {MEAL_TYPES.map((m) => (
-                  <MenuItem key={m} value={m}>
-                    {m.charAt(0).toUpperCase() + m.slice(1)}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                size="small"
-                placeholder="Items (comma separated)"
-                value={form.items}
-                onChange={(e) => setForm({ ...form, items: e.target.value })}
-                sx={{ minWidth: 200 }}
-              />
-              <TextField
-                type="number"
-                size="small"
-                placeholder="Protein (g)"
-                value={form.protein || ''}
-                onChange={(e) => setForm({ ...form, protein: parseFloat(e.target.value) || 0 })}
-                sx={{ minWidth: 110 }}
-              />
-              <TextField
-                type="number"
-                size="small"
-                placeholder="Calories"
-                value={form.calories || ''}
-                onChange={(e) => setForm({ ...form, calories: parseFloat(e.target.value) || 0 })}
-                sx={{ minWidth: 100 }}
-              />
-              <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddLog}>
-                Add
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
+        {view === 'today' ? (
+          <div className="nutrition-layout">
+            <section className="nutrition-main-column">
+              <article className="nutrition-overview-card">
+                <div className="nutrition-card-heading">
+                  <div><span className="nutrition-eyebrow">{longDate(date)}</span><h1>Nutrition today</h1></div>
+                  <label className={`coverage-select coverage-select--${coverage}`}>
+                    {coverage === 'complete' ? <Check size={14} /> : <CircleDashed size={14} />}
+                    <select value={coverage} onChange={(event) => updateCoverage(event.target.value as Coverage)}>
+                      {COVERAGE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="nutrition-metrics">
+                  <Metric label="Energy recorded" value={totalCalories.toLocaleString()} unit={`/ ${targets.calories.toLocaleString()} kcal`} progress={calorieProgress} />
+                  <Metric label="Protein recorded" value={`${totalProtein}`} unit={`/ ${targets.protein} g`} progress={proteinProgress} />
+                  <Metric label="Meals recorded" value={`${logs.length}`} unit="entries" progress={Math.min(100, logs.length * 25)} />
+                </div>
+                <div className="nutrition-data-note"><Info size={15} /><span>Totals reflect what you recorded, not necessarily everything you ate. Fiber and micronutrients need structured food data and are not estimated here.</span></div>
+              </article>
 
-        {logs.length > 0 && (
-          <TableContainer component={Paper} sx={{ mb: 3 }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Items</TableCell>
-                  <TableCell align="right">Protein</TableCell>
-                  <TableCell align="right">Calories</TableCell>
-                  <TableCell align="right" sx={{ width: 48 }} />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {logs.map((l) => (
-                  <TableRow key={l.id}>
-                    <TableCell>
-                      <Chip label={l.mealType} size="small" variant="outlined" />
-                    </TableCell>
-                    <TableCell>{l.items}</TableCell>
-                    <TableCell align="right">{l.protein}g</TableCell>
-                    <TableCell align="right">{l.calories}</TableCell>
-                    <TableCell align="right">
-                      <IconButton size="small" onClick={() => handleDeleteLog(l.id)}>
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+              <article className="nutrition-section-card nutrition-quick-log">
+                <div className="nutrition-card-heading compact">
+                  <div><span className="nutrition-eyebrow">Low-friction capture</span><h2>Log a meal</h2></div>
+                  <button type="button" className="nutrition-primary-button" onClick={() => openMealForm()}><Plus size={17} /> Add manually</button>
+                </div>
+                {recentMeals.length > 0 ? (
+                  <div className="recent-meals">
+                    <p className="nutrition-section-label">Eat a recent meal again</p>
+                    <div className="recent-meal-grid">
+                      {recentMeals.map((meal) => (
+                        <button key={meal.id} type="button" className="recent-meal-card" onClick={() => copyRecentMeal(meal)} disabled={saving}>
+                          <span className="recent-meal-icon"><RotateCcw size={17} /></span>
+                          <span className="recent-meal-copy"><strong>{meal.items}</strong><small>{meal.mealType} · {meal.protein}g protein · {meal.calories} kcal</small></span>
+                          <Copy size={16} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="nutrition-empty-inline"><Search size={19} /><div><strong>Your recent meals will appear here.</strong><span>After you log a meal, repeating it takes one tap.</span></div></div>
+                )}
+              </article>
 
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Supplements
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center', mb: 2 }}>
-              <TextField
-                size="small"
-                placeholder="Name"
-                value={suppForm.name}
-                onChange={(e) => setSuppForm({ ...suppForm, name: e.target.value })}
-                sx={{ minWidth: 140 }}
-              />
-              <TextField
-                type="number"
-                size="small"
-                placeholder="Quantity"
-                value={suppForm.quantity || ''}
-                onChange={(e) => setSuppForm({ ...suppForm, quantity: parseFloat(e.target.value) || 0 })}
-                sx={{ minWidth: 100 }}
-              />
-              <TextField
-                type="number"
-                size="small"
-                placeholder="Daily Use"
-                value={suppForm.dailyUsage || ''}
-                onChange={(e) => setSuppForm({ ...suppForm, dailyUsage: parseFloat(e.target.value) || 0 })}
-                sx={{ minWidth: 100 }}
-              />
-              <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddSupplement}>
-                Add
-              </Button>
-            </Box>
+              <article className="nutrition-section-card">
+                <div className="nutrition-card-heading compact">
+                  <div><span className="nutrition-eyebrow">Meal record</span><h2>What you ate</h2></div>
+                  <span className="entry-count">{logs.length} {logs.length === 1 ? 'entry' : 'entries'}</span>
+                </div>
+                <div className="meal-timeline">
+                  {MEAL_TYPES.map((mealType) => {
+                    const entries = logs.filter((log) => log.mealType === mealType.value);
+                    return (
+                      <div className="meal-slot" key={mealType.value}>
+                        <div className="meal-slot-marker"><span /></div>
+                        <div className="meal-slot-content">
+                          <div className="meal-slot-title">
+                            <div><h3>{mealType.label}</h3><span>{mealType.window}</span></div>
+                            <button type="button" onClick={() => openMealForm(mealType.value)}><Plus size={15} /> Log</button>
+                          </div>
+                          {entries.length ? entries.map((entry) => (
+                            <div className="logged-meal" key={entry.id}>
+                              <div className="logged-meal-main">
+                                <strong>{entry.items}</strong>
+                                <div className="logged-meal-meta"><span>{entry.protein}g protein</span><i /><span>{entry.calories} kcal</span><i /><span className="source-chip"><Check size={11} /> Manual · confirmed</span></div>
+                                {entry.notes && <p>{entry.notes}</p>}
+                              </div>
+                              <button className="meal-delete" type="button" onClick={() => dispatch(deleteDietLog(entry.id))} aria-label={`Delete ${entry.items}`}><Trash2 size={16} /></button>
+                            </div>
+                          )) : <p className="meal-slot-empty">Nothing recorded</p>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
+            </section>
 
-            {supplements.length > 0 && (
-              <TableContainer component={Paper}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell align="right">Quantity</TableCell>
-                      <TableCell align="right">Days Left</TableCell>
-                      <TableCell align="right" sx={{ width: 100 }} />
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {supplements.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell>{s.name}</TableCell>
-                        <TableCell align="right">
-                          {s.quantity}{s.unit}
-                        </TableCell>
-                        <TableCell align="right">
-                          {s.remainingDays?.toFixed(0)} days
-                        </TableCell>
-                        <TableCell align="right">
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => handleConsume(s.id, s.dailyUsage)}
-                          >
-                            Consume
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </CardContent>
-        </Card>
-      </Box>
+            <aside className="nutrition-side-column">
+              <article className="nutrition-insight-card">
+                <span className="insight-icon"><ArrowUpRight size={19} /></span><span className="nutrition-eyebrow">Worth noticing</span>
+                <h2>{logs.length === 0 ? 'Start with a representative day.' : coverage === 'uncertain' ? 'How complete is this record?' : proteinProgress < 75 ? 'Protein is below your configured context.' : 'Your protein record is near its target.'}</h2>
+                <p>{logs.length === 0 ? 'Capture what actually happens. There is no score to protect and no streak to break.' : coverage === 'uncertain' ? 'Mark the day likely complete or partial so it can be interpreted honestly in the weekly review.' : proteinProgress < 75 ? 'This is an observation, not a failure. A repeated meal may be the smallest useful adjustment.' : 'Keep the meal pattern repeatable before adding more complexity.'}</p>
+                <button type="button" onClick={() => setView('review')}>Open weekly context <ArrowRight size={15} /></button>
+              </article>
+
+              <article className="nutrition-side-card">
+                <div className="nutrition-card-heading compact"><div><span className="nutrition-eyebrow">Your context</span><h2>Targets</h2></div><button className="icon-button" type="button" onClick={() => setShowTargets((value) => !value)} aria-label="Adjust targets"><Settings2 size={17} /></button></div>
+                <div className="target-summary"><div><span>Energy</span><strong>{targets.calories.toLocaleString()} kcal</strong></div><div><span>Protein</span><strong>{targets.protein} g</strong></div></div>
+                {showTargets && <div className="target-form">
+                  <label>Energy context<input type="number" min="0" value={targets.calories} onChange={(event) => updateTargets('calories', Number(event.target.value))} /></label>
+                  <label>Protein context<input type="number" min="0" value={targets.protein} onChange={(event) => updateTargets('protein', Number(event.target.value))} /></label>
+                  <p>Manually configured. Targets are context, not commandments.</p>
+                </div>}
+              </article>
+
+              <article className="nutrition-side-card coverage-card">
+                <span className="nutrition-eyebrow">Data quality</span><h2>{currentCoverage.label}</h2>
+                <p>{coverage === 'complete' ? 'This day can be included in trend averages.' : coverage === 'partial' ? 'This day stays visible but is excluded from averages.' : coverage === 'untracked' ? 'Nothing was expected from this day.' : 'Review coverage before using this day in analysis.'}</p>
+              </article>
+            </aside>
+          </div>
+        ) : <WeeklyReview endDate={date} stats={weeklyStats} targets={targets} onSelectDay={(nextDate) => { setDate(nextDate); setView('today'); }} />}
+      </main>
+
+      {showForm && (
+        <div className="nutrition-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.currentTarget === event.target) setShowForm(false); }}>
+          <section className="nutrition-modal" role="dialog" aria-modal="true" aria-labelledby="meal-dialog-title">
+            <div className="nutrition-modal-header"><div><span className="nutrition-eyebrow">Manual · confirmed by you</span><h2 id="meal-dialog-title">Log a meal</h2></div><button type="button" onClick={() => setShowForm(false)} aria-label="Close meal form"><X size={20} /></button></div>
+            <div className="meal-form-grid">
+              <label>Meal<select value={form.mealType} onChange={(event) => setForm({ ...form, mealType: event.target.value as MealType })}>{MEAL_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}</select></label>
+              <label className="meal-form-wide">What did you eat?<input autoFocus placeholder="e.g. rice, dal, paneer and curd" value={form.items} onChange={(event) => setForm({ ...form, items: event.target.value })} /></label>
+              <label>Protein recorded (g)<input type="number" min="0" step="0.1" placeholder="0" value={form.protein || ''} onChange={(event) => setForm({ ...form, protein: Number(event.target.value) || 0 })} /></label>
+              <label>Energy recorded (kcal)<input type="number" min="0" step="1" placeholder="0" value={form.calories || ''} onChange={(event) => setForm({ ...form, calories: Number(event.target.value) || 0 })} /></label>
+              <label className="meal-form-wide">Context or notes <span>Optional</span><textarea rows={3} placeholder="Restaurant meal, estimated portion, busy workday…" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label>
+            </div>
+            <div className="nutrition-modal-note"><Info size={15} /> Enter only values you know. Missing is more useful than false precision.</div>
+            <div className="nutrition-modal-actions"><button className="nutrition-secondary-button" type="button" onClick={() => setShowForm(false)}>Cancel</button><button className="nutrition-primary-button" type="button" disabled={!form.items.trim() || saving} onClick={handleAddLog}>{saving ? 'Saving…' : 'Confirm meal'} <Check size={17} /></button></div>
+          </section>
+        </div>
+      )}
     </>
   );
+}
+
+function Metric({ label, value, unit, progress }: { label: string; value: string; unit: string; progress: number }) {
+  return <div className="nutrition-metric"><span>{label}</span><div><strong>{value}</strong><small>{unit}</small></div><div className="nutrition-progress"><i style={{ width: `${progress}%` }} /></div></div>;
+}
+
+interface WeeklyReviewProps {
+  endDate: string;
+  stats: { days: Array<{ date: string; logs: DietLog[]; calories: number; protein: number; coverage: Coverage }>; sufficient: Array<{ date: string; logs: DietLog[]; calories: number; protein: number; coverage: Coverage }>; averageCalories: number; averageProtein: number; };
+  targets: { calories: number; protein: number };
+  onSelectDay: (date: string) => void;
+}
+
+function WeeklyReview({ endDate, stats, targets, onSelectDay }: WeeklyReviewProps) {
+  const proteinRatio = targets.protein ? stats.averageProtein / targets.protein : 0;
+  const action = proteinRatio < 0.8 ? 'Add one repeatable protein-rich food to the meal that is easiest to control.' : 'Keep one reliable meal unchanged next week and continue collecting representative data.';
+  const [actionState, setActionState] = useState<'idle' | 'saved' | 'ignored'>(() =>
+    loadRecord(`lifeos-nutrition-action-${endDate}`, 'idle'),
+  );
+
+  const chooseAction = (next: 'saved' | 'ignored') => {
+    localStorage.setItem(`lifeos-nutrition-action-${endDate}`, JSON.stringify(next));
+    setActionState(next);
+  };
+
+  return (
+    <section className="weekly-review">
+      <div className="weekly-review-hero">
+        <div><span className="nutrition-eyebrow">Week ending {shortDate(endDate)}</span><h1>Your weekly nutrition review</h1><p>Only days marked likely complete are used in averages. Partial and unreviewed days remain visible without becoming zero-intake days.</p></div>
+        <div className="coverage-score"><strong>{stats.sufficient.length}<span>/7</span></strong><p>days sufficiently logged</p></div>
+      </div>
+      <div className="weekly-day-strip">
+        {stats.days.map((day) => <button key={day.date} type="button" onClick={() => onSelectDay(day.date)} className={`week-day week-day--${day.coverage}`}><span>{new Intl.DateTimeFormat('en', { weekday: 'short' }).format(atNoon(day.date))}</span><strong>{atNoon(day.date).getDate()}</strong><i>{day.logs.length ? `${day.logs.length} logged` : 'No record'}</i></button>)}
+      </div>
+      {stats.sufficient.length ? (
+        <div className="review-grid">
+          <article className="review-patterns nutrition-section-card">
+            <div className="nutrition-card-heading compact"><div><span className="nutrition-eyebrow">Reliable-day averages</span><h2>Patterns</h2></div><span className="entry-count">{stats.sufficient.length} included</span></div>
+            <div className="pattern-list">
+              <PatternRow label="Protein" value={`${stats.averageProtein} g average`} status={proteinRatio >= 0.85 ? 'Consistent' : 'Worth attention'} tone={proteinRatio >= 0.85 ? 'positive' : 'attention'} />
+              <PatternRow label="Energy" value={`${stats.averageCalories.toLocaleString()} kcal recorded`} status="Context only" tone="neutral" />
+              <PatternRow label="Fiber" value="Structured food data needed" status="Insufficient data" tone="neutral" />
+              <PatternRow label="Fruit + vegetables" value="Food groups not yet captured" status="Insufficient data" tone="neutral" />
+            </div>
+          </article>
+          <article className="review-action-card">
+            <span className="insight-icon"><ArrowRight size={19} /></span><span className="nutrition-eyebrow">One possible action</span><h2>{action}</h2>
+            <p>{proteinRatio < 0.8 ? `Protein averaged ${stats.averageProtein} g across ${stats.sufficient.length} sufficiently logged days, against your manually configured ${targets.protein} g context.` : 'The current data does not justify a more complicated recommendation.'}</p>
+            <div className="review-action-buttons">
+              <button type="button" onClick={() => chooseAction('saved')}>{actionState === 'saved' ? 'Added to next week' : 'Use next week'} {actionState === 'saved' ? <Check size={15} /> : <ArrowRight size={15} />}</button>
+              <button type="button" onClick={() => chooseAction('ignored')}>{actionState === 'ignored' ? 'Ignored' : 'Not useful'}</button>
+            </div>
+          </article>
+        </div>
+      ) : (
+        <div className="review-empty-state"><span><CircleDashed size={24} /></span><div><h2>No trustworthy weekly average yet</h2><p>Mark days “Likely complete” after reviewing them. LifeOS will not turn missing or partial records into confident conclusions.</p></div><button type="button" onClick={() => onSelectDay(endDate)}>Review today <ArrowRight size={16} /></button></div>
+      )}
+      <div className="review-footnote"><Info size={16} /><span><strong>Associations:</strong> no cross-domain insight yet. More sufficiently logged paired nutrition, training, sleep, or body data is required.</span></div>
+    </section>
+  );
+}
+
+function PatternRow({ label, value, status, tone }: { label: string; value: string; status: string; tone: 'positive' | 'attention' | 'neutral' }) {
+  return <div className="pattern-row"><div className={`pattern-trend pattern-trend--${tone}`}>{tone === 'positive' ? <ArrowUpRight size={17} /> : tone === 'attention' ? <ArrowDownRight size={17} /> : <CircleDashed size={17} />}</div><div><strong>{label}</strong><span>{value}</span></div><em className={`pattern-status pattern-status--${tone}`}>{status}</em></div>;
 }

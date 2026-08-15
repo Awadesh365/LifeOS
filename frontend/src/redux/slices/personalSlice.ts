@@ -55,6 +55,7 @@ interface PersonalState {
   futurePlans: DomainState<FuturePlan>;
   diet: {
     logs: DietLog[];
+    history: DietLog[];
     supplements: Supplement[];
     loading: boolean;
     error: string | null;
@@ -78,7 +79,7 @@ const initialState: PersonalState = {
   projects: { items: [], loading: false, error: null },
   relationships: { data: { relationship: null, relatives: [] }, loading: false, error: null },
   futurePlans: { items: [], loading: false, error: null },
-  diet: { logs: [], supplements: [], loading: false, error: null },
+  diet: { logs: [], history: [], supplements: [], loading: false, error: null },
   career: { items: [], loading: false, error: null },
 };
 
@@ -842,11 +843,16 @@ export const fetchDiet = createAsyncThunk(
   'personal/fetchDiet',
   async (date: string, { rejectWithValue }) => {
     try {
-      const [logsRes, suppRes] = await Promise.all([
+      const [logsRes, historyRes, suppRes] = await Promise.all([
         fetch(`${HEALTH_API}/diet/logs?date=${date}`).then((r) => r.json()),
+        fetch(`${HEALTH_API}/diet/logs`).then((r) => r.json()),
         fetch(`${HEALTH_API}/diet/supplements`).then((r) => r.json()),
       ]);
-      return { logs: logsRes as DietLog[], supplements: suppRes as Supplement[] };
+      return {
+        logs: logsRes as DietLog[],
+        history: historyRes as DietLog[],
+        supplements: suppRes as Supplement[],
+      };
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to load diet data');
     }
@@ -1372,6 +1378,7 @@ const personalSlice = createSlice({
       .addCase(fetchDiet.fulfilled, (state, action) => {
         state.diet.loading = false;
         state.diet.logs = action.payload.logs;
+        state.diet.history = action.payload.history;
         state.diet.supplements = action.payload.supplements;
       })
       .addCase(fetchDiet.rejected, (state, action) => {
@@ -1380,9 +1387,11 @@ const personalSlice = createSlice({
       })
       .addCase(addDietLog.fulfilled, (state, action) => {
         state.diet.logs.push(action.payload);
+        state.diet.history.push(action.payload);
       })
       .addCase(deleteDietLog.fulfilled, (state, action) => {
         state.diet.logs = state.diet.logs.filter((l) => l.id !== action.payload);
+        state.diet.history = state.diet.history.filter((l) => l.id !== action.payload);
       })
       .addCase(addSupplement.fulfilled, (state, action) => {
         state.diet.supplements.push(action.payload);

@@ -25,7 +25,8 @@ function check(
   if (!schema || typeof schema !== 'object') return value;
 
   if (schema.type === 'array' && Array.isArray(value)) {
-    return value.map((item, i) => check(item, schema.items || {}, `${path}[${i}]`, errors, rejectUnknown));
+    if (!schema.items) return value;
+    return value.map((item, i) => check(item, schema.items!, `${path}[${i}]`, errors, rejectUnknown));
   }
 
   const result: Record<string, any> = {};
@@ -48,7 +49,7 @@ function check(
         errors.push({ path: valPath, message: `${key} must be an array` });
         continue;
       }
-      result[key] = check(propVal, { type: 'array', items: field.items }, valPath, errors, rejectUnknown);
+      result[key] = check(propVal, field, valPath, errors, rejectUnknown);
       continue;
     }
 

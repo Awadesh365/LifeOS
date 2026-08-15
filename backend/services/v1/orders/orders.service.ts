@@ -14,8 +14,9 @@ export const createOrder = async ({ tenantId, customerId, items, actor }: Create
       { tenant_id: tenantId, customer_id: customerId, status: 'PENDING' },
       { transaction },
     );
+    const orderId = created.get('id') as string;
     await models.OrderItem.bulkCreate(
-      items.map((it) => ({ order_id: created.id, sku: it.sku, qty: it.qty })),
+      items.map((it) => ({ order_id: orderId, sku: it.sku, qty: it.qty })),
       { transaction },
     );
     return created;

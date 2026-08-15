@@ -1,4 +1,3 @@
-import path from 'path';
 import dotenv from 'dotenv';
 import {
   parsePositiveIntegerEnv,
@@ -7,7 +6,9 @@ import {
   parseBool,
 } from './parseEnv';
 
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+// Resolve .env from the directory the backend is started in. Using __dirname
+// breaks after compilation because this file moves from config/ to dist/config/.
+dotenv.config();
 
 const dbPool = {
   max: parsePositiveIntegerEnv(process.env.DB_POOL_MAX, 5),
@@ -54,7 +55,7 @@ interface FlagsConfig {
   emailsEnabled: boolean;
 }
 
-interface DbPool {
+export interface DbPool {
   max: number;
   min: number;
   idle: number;
