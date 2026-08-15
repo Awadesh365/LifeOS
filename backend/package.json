@@ -1,0 +1,14 @@
+{
+  "name": "@lifeos/backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix personal run dev",
+    "build": "npm --prefix personal run build",
+    "start": "npm --prefix personal run start",
+    "db:migrate": "npm --prefix personal run db:migrate",
+    "db:seed": "npm --prefix personal run db:seed",
+    "db:sync": "npm --prefix personal run db:sync",
+    "seed:local": "npm --prefix personal run seed:local"
+  }
+}
