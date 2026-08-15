@@ -23,6 +23,7 @@ import {
 } from '../../../redux/slices/personalSlice';
 import type { EmergencyFund } from '../types';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 
 interface FundsProps {
   isMobile?: boolean;
@@ -124,8 +125,11 @@ export default function Funds(_props: FundsProps) {
           </CardContent>
         </Card>
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add Fund</Typography>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+          <Typography variant="h6">Add a reserve account</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Combine fixed deposits, recurring deposits, and liquid savings into one safety-buffer view.
+          </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={3}>
               <TextField
@@ -231,6 +235,14 @@ export default function Funds(_props: FundsProps) {
                 </Grid>
               );
             })}
+            {funds.length === 0 && (
+              <Grid item xs={12}>
+                <EmptyState
+                  title="No emergency reserve yet"
+                  description="Create your first reserve account to start measuring progress toward a reliable financial safety buffer."
+                />
+              </Grid>
+            )}
           </Grid>
         )}
       </Box>

@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { fetchJobs, createJob, updateJobStatus, deleteJob } from '../../../redux/slices/personalSlice';
 import type { Job } from '../types';
@@ -99,35 +100,35 @@ export default function Jobs({ isMobile = false }: JobsProps) {
         {/* Stats */}
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid item xs={6} sm={3}>
-            <Card sx={{ bgcolor: 'info.main', color: 'info.contrastText' }}>
+            <Card sx={{ borderTop: '3px solid', borderTopColor: 'info.main' }}>
               <CardContent>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Total Applied</Typography>
+                <Typography variant="body2" color="text.secondary">Total Applied</Typography>
                 <Typography variant="h4" fontWeight={700}>{applied}</Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={6} sm={3}>
-            <Card sx={{ bgcolor: 'warning.main', color: 'warning.contrastText' }}>
+            <Card sx={{ borderTop: '3px solid', borderTopColor: 'warning.main' }}>
               <CardContent>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Interviews</Typography>
+                <Typography variant="body2" color="text.secondary">Interviews</Typography>
                 <Typography variant="h4" fontWeight={700}>{interviews}</Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={6} sm={3}>
-            <Card sx={{ bgcolor: 'success.main', color: 'success.contrastText' }}>
+            <Card sx={{ borderTop: '3px solid', borderTopColor: 'success.main' }}>
               <CardContent>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Offers</Typography>
+                <Typography variant="body2" color="text.secondary">Offers</Typography>
                 <Typography variant="h4" fontWeight={700}>{offers}</Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={6} sm={3}>
-            <Card sx={{ bgcolor: 'error.main', color: 'error.contrastText' }}>
+            <Card sx={{ borderTop: '3px solid', borderTopColor: 'primary.main' }}>
               <CardContent>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Target</Typography>
+                <Typography variant="body2" color="text.secondary">Target</Typography>
                 <Typography variant="h4" fontWeight={700}>₹50K+</Typography>
-                <Typography variant="caption" sx={{ opacity: 0.8 }}>min. next salary</Typography>
+                <Typography variant="caption" color="text.secondary">Minimum next salary</Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -135,7 +136,7 @@ export default function Jobs({ isMobile = false }: JobsProps) {
 
         {/* Add Job Form */}
         <Card sx={{ mb: 3 }}>
-          <CardHeader title="➕ Add Application" />
+          <CardHeader title="Add application" subheader="Keep the pipeline current so the next action is always visible." />
           <CardContent>
             <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
               <TextField
@@ -169,17 +170,15 @@ export default function Jobs({ isMobile = false }: JobsProps) {
         {/* Job Table */}
         <Card>
           <CardHeader
-            title="📋 Applications"
+            title="Applications"
             action={<Chip label={`${jobsList.length} total`} color="info" size="small" />}
           />
           <CardContent>
             {jobsList.length === 0 ? (
-              <Box sx={{ textAlign: 'center', py: 6 }}>
-                <Typography variant="h2" sx={{ mb: 1 }}>📝</Typography>
-                <Typography variant="body1" color="text.secondary">
-                  No applications yet. Start applying to 5 jobs per day. Your future salary depends on it.
-                </Typography>
-              </Box>
+              <EmptyState
+                title="No applications in your pipeline"
+                description="Add the first role you are pursuing. A focused, current pipeline is more useful than a long forgotten list."
+              />
             ) : (
               <TableContainer>
                 <Table size={isMobile ? 'small' : 'medium'}>

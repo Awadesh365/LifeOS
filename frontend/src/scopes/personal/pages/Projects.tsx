@@ -9,7 +9,7 @@ import {
   Tab,
   Chip,
   Collapse,
-  IconButton,
+  ButtonBase,
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import Header from '../components/Header';
@@ -109,8 +109,10 @@ export default function Projects({ isMobile }: ProjectsProps) {
   };
 
   return (
-    <Box sx={{ p: isMobile ? 2 : 3 }}>
+    <>
       <Header title="Projects" subtitle="Life projects and professional work" />
+
+      <Box sx={{ p: isMobile ? 2 : 3 }}>
 
       <Tabs
         value={tab}
@@ -135,9 +137,10 @@ export default function Projects({ isMobile }: ProjectsProps) {
               const isOpen = openParts[part.name] || false;
               return (
                 <Card key={part.name} variant="outlined">
-                  <Box
+                  <ButtonBase
                     sx={{
                       display: 'flex',
+                      width: '100%',
                       alignItems: 'center',
                       gap: 1.5,
                       p: 2,
@@ -147,10 +150,11 @@ export default function Projects({ isMobile }: ProjectsProps) {
                       '&:hover': { bgcolor: 'action.hover' },
                     }}
                     onClick={() => togglePart(part.name)}
+                    aria-expanded={isOpen}
                   >
-                    <IconButton size="small" sx={{ p: 0 }}>
+                    <Box sx={{ display: 'grid', width: 28, height: 28, placeItems: 'center', color: 'text.secondary' }}>
                       {isOpen ? <ExpandMoreIcon /> : <ChevronRightIcon />}
-                    </IconButton>
+                    </Box>
                     <Box sx={{ flex: 1 }}>
                       <Typography fontWeight={700} fontSize="0.95rem">
                         {part.name}
@@ -168,7 +172,7 @@ export default function Projects({ isMobile }: ProjectsProps) {
                         opacity: 0.6,
                       }}
                     />
-                  </Box>
+                  </ButtonBase>
                   <Collapse in={isOpen}>
                     <Box sx={{ p: 1 }}>
                       {part.projects.map((project, j) => (
@@ -290,6 +294,7 @@ export default function Projects({ isMobile }: ProjectsProps) {
           </Grid>
         </Box>
       )}
-    </Box>
+      </Box>
+    </>
   );
 }

@@ -26,6 +26,7 @@ import {
 } from '../../../redux/slices/personalSlice';
 import type { Contact } from '../types';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 
 interface NetworkingProps {
   isMobile?: boolean;
@@ -82,8 +83,11 @@ export default function Networking(_props: NetworkingProps) {
       <Box sx={{ p: 3 }}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add Contact</Typography>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+          <Typography variant="h6">Add someone important</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Track relationships that deserve intentional follow-up—not every name in your address book.
+          </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={3}>
               <TextField
@@ -191,6 +195,12 @@ export default function Networking(_props: NetworkingProps) {
             </Grid>
           </Box>
         ))}
+        {contacts.length === 0 && (
+          <EmptyState
+            title="Your relationship circle is empty"
+            description="Add a mentor, colleague, friend, or family member you want to stay meaningfully connected with."
+          />
+        )}
       </Box>
     </>
   );

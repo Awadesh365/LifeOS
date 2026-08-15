@@ -23,6 +23,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import {
   fetchWealth,
@@ -242,9 +243,11 @@ export default function Wealth({ isMobile = false }: WealthProps) {
                 </Table>
               </TableContainer>
             ) : (
-              <Typography variant="body2" color="text.secondary">
-                No entries for this period.
-              </Typography>
+              <EmptyState
+                compact
+                title="No cashflow recorded this month"
+                description="Add income, an expense, or an investment above to build your monthly picture."
+              />
             )}
           </CardContent>
         </Card>
@@ -304,7 +307,7 @@ export default function Wealth({ isMobile = false }: WealthProps) {
               </Button>
             </Box>
 
-            {investments.length > 0 && (
+            {investments.length > 0 ? (
               <TableContainer component={Paper}>
                 <Table size="small">
                   <TableHead>
@@ -352,6 +355,12 @@ export default function Wealth({ isMobile = false }: WealthProps) {
                   </TableBody>
                 </Table>
               </TableContainer>
+            ) : (
+              <EmptyState
+                compact
+                title="No investments in your portfolio"
+                description="Add a SIP, stock, mutual fund, deposit, or gold position to track capital and returns."
+              />
             )}
           </CardContent>
         </Card>

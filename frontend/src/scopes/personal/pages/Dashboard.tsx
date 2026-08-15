@@ -253,9 +253,13 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
             <Paper
               sx={{
                 p: 2,
-                textAlign: 'center',
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
+                textAlign: 'left',
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderTop: '3px solid',
+                borderTopColor: 'primary.main',
               }}
             >
               <Typography variant="body2">Today&apos;s Habits</Typography>
@@ -269,9 +273,13 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
             <Paper
               sx={{
                 p: 2,
-                textAlign: 'center',
-                bgcolor: 'error.main',
-                color: 'error.contrastText',
+                textAlign: 'left',
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderTop: '3px solid',
+                borderTopColor: 'warning.main',
               }}
             >
               <Typography variant="body2">Current Streak</Typography>
@@ -287,9 +295,13 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
             <Paper
               sx={{
                 p: 2,
-                textAlign: 'center',
-                bgcolor: 'success.main',
-                color: 'success.contrastText',
+                textAlign: 'left',
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderTop: '3px solid',
+                borderTopColor: 'success.main',
               }}
             >
               <Typography variant="body2">Skills Completed</Typography>
@@ -303,9 +315,13 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
             <Paper
               sx={{
                 p: 2,
-                textAlign: 'center',
-                bgcolor: 'info.main',
-                color: 'info.contrastText',
+                textAlign: 'left',
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderTop: '3px solid',
+                borderTopColor: 'info.main',
               }}
             >
               <Typography variant="body2">Jobs Applied</Typography>
@@ -315,13 +331,17 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
               </Typography>
             </Paper>
           </Grid>
-          <Grid size={{ xs: 6, md: 4, lg: 2.4 }}>
+          <Grid size={{ xs: 12, md: 4, lg: 2.4 }}>
             <Paper
               sx={{
                 p: 2,
-                textAlign: 'center',
-                bgcolor: 'warning.main',
-                color: 'warning.contrastText',
+                textAlign: 'left',
+                bgcolor: 'background.paper',
+                color: 'text.primary',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderTop: '3px solid',
+                borderTopColor: 'secondary.main',
               }}
             >
               <Typography variant="body2">Goal Progress</Typography>
@@ -337,7 +357,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6">Today&apos;s Task List</Typography>
-              <Button component={Link} to="/personal/habits" size="small">
+              <Button component={Link} to="/habits" size="small" variant="outlined">
                 Open tracker
               </Button>
             </Box>
@@ -368,6 +388,14 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
                     justifyContent: 'flex-start',
                     gap: 1,
                     opacity: habit.done ? 0.7 : 1,
+                    minHeight: 48,
+                    borderColor: habit.done ? 'success.light' : 'divider',
+                    bgcolor: habit.done ? 'rgba(2, 121, 0, 0.05)' : 'background.paper',
+                    color: habit.done ? 'success.dark' : 'text.primary',
+                    '&:hover': {
+                      borderColor: habit.done ? 'success.main' : 'text.disabled',
+                      bgcolor: habit.done ? 'rgba(2, 121, 0, 0.08)' : '#F8FAFC',
+                    },
                   }}
                 >
                   <Chip
@@ -416,6 +444,11 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
                     }}
                   />
                 ))
+              )}
+              {!strongStack.frontend.length && !strongStack.backend.length && !strongStack.cloud.length && (
+                <Typography variant="body2" color="text.secondary">
+                  Your saved technology stack will appear here.
+                </Typography>
               )}
             </Box>
           </CardContent>

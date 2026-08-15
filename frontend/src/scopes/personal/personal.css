@@ -502,9 +502,9 @@
 /* Dark mode retired for UI consistency — the [data-personal-theme]
    attribute now resolves to the single premium light theme above. */
 
-.lifeos-personal-scope *, .lifeos-personal-scope *::before, .lifeos-personal-scope *::after {
-  margin: 0;
-  padding: 0;
+.lifeos-personal-scope *,
+.lifeos-personal-scope *::before,
+.lifeos-personal-scope *::after {
   box-sizing: border-box;
 }
 
@@ -3892,6 +3892,522 @@
   }
 }
 
+/* ============================================================
+   PROFESSIONAL APP SHELL + CORE PHILOSOPHY
+   ============================================================ */
+.lifeos-personal-scope .app-layout {
+  width: 100%;
+  background: #f5f7fa;
+}
+
+.lifeos-personal-scope .main-area {
+  min-width: 0;
+  margin-left: 0;
+  background:
+    radial-gradient(circle at 78% -10%, rgba(229, 85, 85, 0.055), transparent 28%),
+    #f5f7fa;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root {
+  color: #5f6b7a;
+  text-decoration: none;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root:hover {
+  color: #111827;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root.active {
+  color: #ffffff;
+}
+
+.lifeos-personal-scope .header {
+  min-height: 72px;
+  height: 72px;
+  padding: 0 clamp(20px, 2.5vw, 36px);
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom-color: rgba(216, 224, 234, 0.76);
+  box-shadow: 0 10px 30px -28px rgba(16, 24, 40, 0.5);
+}
+
+.lifeos-personal-scope .header-left h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.lifeos-personal-scope .header-left p {
+  margin-top: 3px;
+  font-size: 0.7rem;
+}
+
+.lifeos-personal-scope .philosophy-page {
+  min-height: 100vh;
+}
+
+.lifeos-personal-scope .philosophy-workspace {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 32px 0 72px;
+}
+
+.lifeos-personal-scope .philosophy-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 390px;
+  overflow: hidden;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(38px, 6vw, 72px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.035), transparent 45%),
+    linear-gradient(135deg, #151b25 0%, #222c3b 100%);
+  box-shadow: 0 30px 70px -46px rgba(15, 23, 42, 0.85);
+  color: #fff;
+}
+
+.lifeos-personal-scope .philosophy-hero-glow {
+  position: absolute;
+  z-index: -1;
+  top: -120px;
+  right: -60px;
+  width: 410px;
+  height: 410px;
+  border-radius: 50%;
+  background: rgba(229, 85, 85, 0.22);
+  filter: blur(20px);
+}
+
+.lifeos-personal-scope .philosophy-hero::after {
+  position: absolute;
+  z-index: -1;
+  right: 15%;
+  bottom: -170px;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  content: '';
+}
+
+.lifeos-personal-scope .philosophy-hero-content {
+  max-width: 760px;
+}
+
+.lifeos-personal-scope .philosophy-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  color: #f5b1b1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .philosophy-hero h1 {
+  max-width: 720px;
+  color: #fff;
+  font-size: clamp(2.35rem, 4.6vw, 4.6rem);
+  font-weight: 750;
+  letter-spacing: -0.065em;
+  line-height: 1.02;
+}
+
+.lifeos-personal-scope .philosophy-hero h1 span {
+  color: #f07878;
+}
+
+.lifeos-personal-scope .philosophy-hero-copy {
+  max-width: 660px;
+  margin-top: 24px;
+  color: #b8c2d0;
+  font-size: clamp(0.94rem, 1.3vw, 1.08rem);
+  line-height: 1.75;
+}
+
+.lifeos-personal-scope .philosophy-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.lifeos-personal-scope .philosophy-chip {
+  height: 30px;
+  border-radius: 999px;
+  font-size: 0.67rem;
+}
+
+.lifeos-personal-scope .philosophy-chip--light {
+  background: #fff;
+  color: #18202c;
+}
+
+.lifeos-personal-scope .philosophy-chip--ghost {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #d7dde6;
+}
+
+.lifeos-personal-scope .philosophy-hero-mark {
+  display: grid;
+  flex: 0 0 118px;
+  width: 118px;
+  height: 118px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: rotate(6deg);
+}
+
+.lifeos-personal-scope .philosophy-hero-mark svg {
+  color: #f07878;
+  font-size: 58px;
+  transform: rotate(-6deg);
+}
+
+.lifeos-personal-scope .philosophy-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.lifeos-personal-scope .philosophy-summary-card {
+  display: flex;
+  min-height: 118px;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid #e0e5ec;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 40px -38px rgba(16, 24, 40, 0.42);
+}
+
+.lifeos-personal-scope .philosophy-summary-card > span {
+  color: #e55555;
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.lifeos-personal-scope .philosophy-summary-card h2 {
+  color: #18202c;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lifeos-personal-scope .philosophy-summary-card p {
+  margin-top: 7px;
+  color: #6c7787;
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.lifeos-personal-scope .philosophy-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 42px;
+  align-items: start;
+  margin-top: 64px;
+}
+
+.lifeos-personal-scope .philosophy-article {
+  min-width: 0;
+}
+
+.lifeos-personal-scope .philosophy-section {
+  padding-bottom: 52px;
+  border-bottom: 1px solid #dfe5ec;
+}
+
+.lifeos-personal-scope .philosophy-section + .philosophy-section {
+  padding-top: 52px;
+}
+
+.lifeos-personal-scope .philosophy-section--last {
+  border-bottom: 0;
+}
+
+.lifeos-personal-scope .philosophy-section-label {
+  margin-bottom: 13px;
+  color: #d84c4c;
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .philosophy-section > h2 {
+  max-width: 720px;
+  color: #18202c;
+  font-size: clamp(1.55rem, 2.4vw, 2.2rem);
+  font-weight: 780;
+  letter-spacing: -0.045em;
+  line-height: 1.18;
+}
+
+.lifeos-personal-scope .philosophy-section > p {
+  max-width: 760px;
+  margin-top: 18px;
+  color: #4f5c6c;
+  font-size: 0.91rem;
+  line-height: 1.82;
+}
+
+.lifeos-personal-scope .philosophy-section > .philosophy-lead {
+  color: #273241;
+  font-size: 1.03rem;
+  font-weight: 560;
+}
+
+.lifeos-personal-scope .philosophy-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-top: 28px;
+  padding: 20px 22px;
+  border-left: 3px solid #e55555;
+  border-radius: 0 14px 14px 0;
+  background: #fff;
+  color: #d84c4c;
+}
+
+.lifeos-personal-scope .philosophy-quote blockquote {
+  color: #273241;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.lifeos-personal-scope .philosophy-principle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.lifeos-personal-scope .philosophy-principle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e0e5ec;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.lifeos-personal-scope .philosophy-principle-icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 11px;
+}
+
+.lifeos-personal-scope .philosophy-principle-icon svg { font-size: 19px; }
+.lifeos-personal-scope .philosophy-principle-icon--coral { background: #fff0f0; color: #d84c4c; }
+.lifeos-personal-scope .philosophy-principle-icon--violet { background: #f2efff; color: #7058c9; }
+.lifeos-personal-scope .philosophy-principle-icon--green { background: #eaf7ef; color: #287a4a; }
+.lifeos-personal-scope .philosophy-principle-icon--blue { background: #edf5ff; color: #2c6eae; }
+
+.lifeos-personal-scope .philosophy-principle-card h3 {
+  color: #273241;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .philosophy-principle-card p {
+  margin-top: 4px;
+  color: #768191;
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.lifeos-personal-scope .philosophy-standard-card {
+  position: sticky;
+  top: 96px;
+  padding: 26px;
+  border: 1px solid #dfe5ec;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 24px 55px -45px rgba(16, 24, 40, 0.55);
+}
+
+.lifeos-personal-scope .philosophy-standard-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 22px;
+  place-items: center;
+  border-radius: 12px;
+  background: #18202c;
+  color: #fff;
+}
+
+.lifeos-personal-scope .philosophy-standard-kicker {
+  color: #d84c4c;
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .philosophy-standard-card h2 {
+  margin-top: 6px;
+  color: #18202c;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.lifeos-personal-scope .philosophy-standard-intro {
+  margin-top: 9px;
+  color: #768191;
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.lifeos-personal-scope .philosophy-standard-card ol {
+  display: grid;
+  gap: 0;
+  margin-top: 20px;
+  list-style: none;
+}
+
+.lifeos-personal-scope .philosophy-standard-card li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  padding: 13px 0;
+  border-top: 1px solid #edf0f4;
+}
+
+.lifeos-personal-scope .philosophy-standard-card li > span {
+  color: #a0a9b5;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.lifeos-personal-scope .philosophy-standard-card li p {
+  color: #3f4b5a;
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.lifeos-personal-scope .philosophy-standard-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #f6f7f9;
+  color: #d84c4c;
+}
+
+.lifeos-personal-scope .philosophy-standard-footer svg { font-size: 16px; }
+.lifeos-personal-scope .philosophy-standard-footer p { color: #596575; font-size: 0.66rem; font-weight: 700; }
+
+.lifeos-personal-scope .philosophy-closing-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 30px;
+  padding: 28px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #e55555, #c83d3d);
+  box-shadow: 0 24px 48px -34px rgba(229, 85, 85, 0.7);
+  color: #fff;
+}
+
+.lifeos-personal-scope .philosophy-closing-card span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .philosophy-closing-card h3 {
+  margin-top: 5px;
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+}
+
+.lifeos-personal-scope .philosophy-closing-card p {
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+}
+
+.lifeos-personal-scope .philosophy-closing-card > svg { flex: 0 0 auto; font-size: 34px; }
+
+@media (max-width: 1080px) {
+  .lifeos-personal-scope .philosophy-reading-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .philosophy-standard-card {
+    position: static;
+  }
+}
+
+@media (max-width: 780px) {
+  .lifeos-personal-scope .philosophy-workspace {
+    width: min(100% - 28px, 680px);
+    padding: 18px 0 48px;
+  }
+
+  .lifeos-personal-scope .philosophy-hero {
+    min-height: 0;
+    padding: 34px 26px;
+    border-radius: 22px;
+  }
+
+  .lifeos-personal-scope .philosophy-hero-mark {
+    display: none;
+  }
+
+  .lifeos-personal-scope .philosophy-summary-grid,
+  .lifeos-personal-scope .philosophy-principle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifeos-personal-scope .philosophy-reading-layout {
+    gap: 28px;
+    margin-top: 42px;
+  }
+
+  .lifeos-personal-scope .philosophy-section,
+  .lifeos-personal-scope .philosophy-section + .philosophy-section {
+    padding-top: 0;
+    padding-bottom: 38px;
+  }
+
+  .lifeos-personal-scope .philosophy-section + .philosophy-section {
+    padding-top: 38px;
+  }
+
+  .lifeos-personal-scope .philosophy-closing-card {
+    padding: 22px;
+  }
+}
+
 @media (max-width: 480px) {
   .lifeos-personal-scope .stats-grid {
     grid-template-columns: 1fr;
@@ -4085,6 +4601,446 @@
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--text-heading);
+}
+
+/* ============================================================
+   LIFEOS PRODUCT UI — SHARED EXPERIENCE LAYER
+   Kept last intentionally so legacy page styles cannot break the shell.
+   ============================================================ */
+.lifeos-personal-scope {
+  --product-bg: #f5f7fa;
+  --product-surface: #ffffff;
+  --product-surface-soft: #f8fafc;
+  --product-ink: #151b26;
+  --product-muted: #667085;
+  --product-border: #dbe3ec;
+  --product-accent: #e55555;
+  background: var(--product-bg);
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope .app-layout,
+.lifeos-personal-scope .main-area {
+  min-width: 0;
+  background: var(--product-bg);
+}
+
+.lifeos-personal-scope .main-area > .header + .MuiBox-root {
+  width: min(100%, 1500px);
+  margin-inline: auto;
+  padding: clamp(20px, 2.4vw, 36px) !important;
+}
+
+.lifeos-personal-scope .sidebar-shell {
+  position: sticky;
+  z-index: 60;
+  top: 0;
+  border-right-color: #e3e8ef;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 10px 0 28px -30px rgba(15, 23, 42, 0.45);
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiList-root {
+  scrollbar-gutter: stable;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root {
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  color: #596579;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root:hover {
+  border-color: #e7ebf0;
+  background: #f7f8fa;
+  color: #151b26;
+  text-decoration: none;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root.active {
+  border-color: #1d2633;
+  background: linear-gradient(135deg, #171f2a 0%, #253142 100%);
+  box-shadow: 0 12px 22px -16px rgba(15, 23, 42, 0.82);
+  color: #fff;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemIcon-root {
+  color: #7a8595;
+}
+
+.lifeos-personal-scope .header {
+  min-height: 76px;
+  height: 76px;
+  padding-inline: clamp(20px, 2.5vw, 38px);
+  border-bottom: 1px solid rgba(219, 227, 236, 0.92);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 12px 28px -30px rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(18px) saturate(1.25);
+}
+
+.lifeos-personal-scope .header-left h2 {
+  color: var(--product-ink);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.lifeos-personal-scope .header-left p {
+  max-width: 60ch;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--product-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .header-search {
+  position: relative;
+  display: flex;
+  width: clamp(210px, 19vw, 280px);
+  height: 42px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 9px 0 13px;
+  border: 1px solid var(--product-border);
+  border-radius: 11px;
+  outline: none;
+  background: #f7f9fb;
+  box-shadow: none;
+  color: #697586;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.lifeos-personal-scope .header-search:hover {
+  border-color: #bac5d2;
+  background: #fff;
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope .header-search:focus-visible {
+  border-color: var(--product-accent);
+  box-shadow: 0 0 0 3px rgba(229, 85, 85, 0.12);
+}
+
+.lifeos-personal-scope .header-search-icon {
+  position: static;
+  flex: 0 0 auto;
+  color: #7b8797;
+}
+
+.lifeos-personal-scope .header-search > span {
+  flex: 1;
+}
+
+.lifeos-personal-scope .header-search-kbd {
+  position: static;
+  flex: 0 0 auto;
+  padding: 2px 6px;
+  border: 1px solid #dfe5ec;
+  border-radius: 6px;
+  background: #fff;
+  color: #8a95a4;
+  font-family: inherit;
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
+.lifeos-personal-scope .header-today {
+  display: flex;
+  min-width: 68px;
+  height: 42px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 12px;
+  border-left: 1px solid #e5eaf0;
+  color: #8993a2;
+  font-size: 0.58rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .header-today strong {
+  margin-top: 2px;
+  color: #2b3543;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lifeos-personal-scope .header-avatar-pill {
+  height: 42px;
+  padding: 0 12px 0 5px;
+  border-color: var(--product-border);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 4px 14px -12px rgba(15, 23, 42, 0.6);
+}
+
+.lifeos-personal-scope .header-avatar {
+  width: 30px;
+  height: 30px;
+}
+
+.lifeos-personal-scope .command-backdrop {
+  position: fixed;
+  z-index: 1600;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: min(16vh, 150px) 20px 20px;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(7px);
+  animation: commandFadeIn 0.16s ease-out;
+}
+
+.lifeos-personal-scope .command-palette {
+  width: min(580px, 100%);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 34px 90px -28px rgba(15, 23, 42, 0.55);
+  animation: commandSlideIn 0.2s ease-out;
+}
+
+.lifeos-personal-scope .command-search-row {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px 0 20px;
+  border-bottom: 1px solid #e8edf2;
+  color: #7b8797;
+}
+
+.lifeos-personal-scope .command-search-row input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--product-ink);
+  font: inherit;
+  font-size: 0.98rem;
+}
+
+.lifeos-personal-scope .command-search-row button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #e2e7ed;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #707b8b;
+  cursor: pointer;
+}
+
+.lifeos-personal-scope .command-results {
+  max-height: min(52vh, 430px);
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.lifeos-personal-scope .command-label {
+  padding: 6px 10px 8px;
+  color: #8a95a4;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .command-result {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #657184;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.lifeos-personal-scope .command-result:hover,
+.lifeos-personal-scope .command-result:focus-visible {
+  outline: 0;
+  background: #f4f6f9;
+  color: var(--product-accent);
+}
+
+.lifeos-personal-scope .command-result strong,
+.lifeos-personal-scope .command-result small {
+  display: block;
+}
+
+.lifeos-personal-scope .command-result strong {
+  color: var(--product-ink);
+  font-size: 0.82rem;
+}
+
+.lifeos-personal-scope .command-result small {
+  margin-top: 2px;
+  color: #8a95a4;
+  font-size: 0.65rem;
+}
+
+.lifeos-personal-scope .command-empty {
+  padding: 38px 20px;
+  color: #7a8595;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.lifeos-personal-scope .command-footer {
+  display: flex;
+  gap: 18px;
+  padding: 10px 18px;
+  border-top: 1px solid #e8edf2;
+  background: #f8fafc;
+  color: #8a95a4;
+  font-size: 0.62rem;
+}
+
+.lifeos-personal-scope .MuiCard-root,
+.lifeos-personal-scope .MuiPaper-root:not(.MuiDrawer-paper) {
+  border-color: var(--product-border);
+}
+
+.lifeos-personal-scope .MuiCardHeader-root {
+  padding: 22px 22px 0;
+}
+
+.lifeos-personal-scope .MuiCardHeader-title {
+  font-size: 0.96rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.lifeos-personal-scope .MuiAlert-root {
+  font-size: 0.78rem;
+}
+
+.lifeos-personal-scope .MuiTableContainer-root {
+  overflow-x: auto;
+  border: 1px solid #e4e9ef;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.lifeos-personal-scope .MuiTableCell-root {
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .training-page,
+.lifeos-personal-scope .nutrition-page {
+  width: min(100%, 1500px);
+  margin-inline: auto;
+}
+
+@keyframes commandFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes commandSlideIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 900px) {
+  .lifeos-personal-scope .mobile-header-bar {
+    min-height: 52px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e3e8ef;
+    background: #fff;
+  }
+
+  .lifeos-personal-scope .header {
+    min-height: 68px;
+    height: auto;
+    padding: 13px 18px;
+  }
+
+  .lifeos-personal-scope .header-left h2 {
+    font-size: 1rem;
+  }
+
+  .lifeos-personal-scope .header-left {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .lifeos-personal-scope .header-left p {
+    display: -webkit-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .lifeos-personal-scope .header-right {
+    display: none;
+  }
+
+  .lifeos-personal-scope .main-area > .header + .MuiBox-root {
+    padding: 18px !important;
+  }
+
+  .lifeos-personal-scope .MuiCardContent-root {
+    padding: 18px;
+  }
+
+  .lifeos-personal-scope .training-page {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .lifeos-personal-scope .training-commandbar,
+  .lifeos-personal-scope .workout-preview-layout,
+  .lifeos-personal-scope .execution-layout,
+  .lifeos-personal-scope .program-layout,
+  .lifeos-personal-scope .progress-grid {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .lifeos-personal-scope .main-area > .header + .MuiBox-root {
+    padding: 16px !important;
+  }
+
+  .lifeos-personal-scope .command-backdrop {
+    align-items: flex-end;
+    padding: 12px;
+  }
+
+  .lifeos-personal-scope .command-palette {
+    border-radius: 18px;
+  }
+
+  .lifeos-personal-scope .command-results {
+    max-height: 52vh;
+  }
+
+  .lifeos-personal-scope .command-footer {
+    display: none;
+  }
 }
 
 /* ================================================

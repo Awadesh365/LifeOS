@@ -25,7 +25,8 @@ export default function ArticleSidebar({
 
     if (item.type === 'article') {
       return (
-        <div
+        <button
+          type="button"
           key={item.path}
           onClick={() => onSelectArticle(item)}
           style={{
@@ -42,7 +43,13 @@ export default function ArticleSidebar({
             fontSize: '0.85rem',
             fontWeight: isSelected ? 600 : 400,
             marginBottom: '2px',
-            borderLeft: isSelected ? '3px solid var(--accent)' : '3px solid transparent'
+            borderLeft: isSelected ? '3px solid var(--accent)' : '3px solid transparent',
+            borderTop: 'none',
+            borderRight: 'none',
+            borderBottom: 'none',
+            width: '100%',
+            fontFamily: 'inherit',
+            textAlign: 'left'
           }}
           onMouseEnter={(e) => {
             if (!isSelected) {
@@ -63,14 +70,15 @@ export default function ArticleSidebar({
           }}>
             {item.title || item.name.replace(/\.md$/, '')}
           </span>
-        </div>
+        </button>
       );
     }
 
     // Folder or section
     return (
       <div key={item.path}>
-        <div
+        <button
+          type="button"
           onClick={() => onToggleSection(item.path)}
           style={{
             display: 'flex',
@@ -84,7 +92,12 @@ export default function ArticleSidebar({
             color: 'var(--text-heading)',
             fontSize: '0.88rem',
             fontWeight: 600,
-            marginBottom: '2px'
+            marginBottom: '2px',
+            border: 'none',
+            background: 'transparent',
+            width: '100%',
+            fontFamily: 'inherit',
+            textAlign: 'left'
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = 'rgba(229, 85, 85, 0.06)';
@@ -117,7 +130,7 @@ export default function ArticleSidebar({
               {item.children.length}
             </span>
           )}
-        </div>
+        </button>
         
         {isExpanded && hasChildren && (
           <div>

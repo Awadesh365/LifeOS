@@ -128,9 +128,9 @@ export default function Goals({ isMobile = false }: GoalsProps) {
           <>
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} sm={4}>
-                <Card sx={{ bgcolor: 'primary.main', color: 'primary.contrastText' }}>
+                <Card sx={{ borderTop: '3px solid', borderTopColor: 'primary.main' }}>
                   <CardContent>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Overall Progress</Typography>
+                    <Typography variant="body2" color="text.secondary">Overall Progress</Typography>
                     <Typography variant="h4" fontWeight={700}>{overallProgress}%</Typography>
                     <LinearProgress
                       variant="determinate"
@@ -139,27 +139,26 @@ export default function Goals({ isMobile = false }: GoalsProps) {
                         mt: 1,
                         height: 6,
                         borderRadius: 3,
-                        bgcolor: 'rgba(255,255,255,0.3)',
-                        '& .MuiLinearProgress-bar': { bgcolor: '#fff' },
+                        bgcolor: '#E7ECF2',
                       }}
                     />
                   </CardContent>
                 </Card>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <Card sx={{ bgcolor: 'success.main', color: 'success.contrastText' }}>
+                <Card sx={{ borderTop: '3px solid', borderTopColor: 'success.main' }}>
                   <CardContent>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Goals Started</Typography>
+                    <Typography variant="body2" color="text.secondary">Goals Started</Typography>
                     <Typography variant="h4" fontWeight={700}>{startedCount}/{goals.length}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
               <Grid item xs={12} sm={4}>
-                <Card sx={{ bgcolor: 'warning.main', color: 'warning.contrastText' }}>
+                <Card sx={{ borderTop: '3px solid', borderTopColor: 'warning.main' }}>
                   <CardContent>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Current Salary</Typography>
+                    <Typography variant="body2" color="text.secondary">Current Salary</Typography>
                     <Typography variant="h4" fontWeight={700}>₹30K</Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>Target: ₹1 Lakh+</Typography>
+                    <Typography variant="caption" color="text.secondary">Target: ₹1 Lakh+</Typography>
                   </CardContent>
                 </Card>
               </Grid>

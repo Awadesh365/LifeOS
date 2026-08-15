@@ -26,6 +26,7 @@ import {
 } from '../../../redux/slices/personalSlice';
 import type { FuturePlan } from '../types';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 
 interface FuturePlansProps {
   isMobile?: boolean;
@@ -82,8 +83,11 @@ export default function FuturePlans(_props: FuturePlansProps) {
       <Box sx={{ p: 3 }}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add Plan</Typography>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+          <Typography variant="h6">Create a future plan</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Turn a major life intention into a dated, budgeted plan you can review.
+          </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={2}>
               <FormControl fullWidth size="small">
@@ -199,6 +203,12 @@ export default function FuturePlans(_props: FuturePlansProps) {
             </Grid>
           </Box>
         ))}
+        {plans.length === 0 && (
+          <EmptyState
+            title="Your future plan is still a blank canvas"
+            description="Start with one meaningful commitment—a home, company, relationship milestone, or another long-range plan."
+          />
+        )}
       </Box>
     </>
   );

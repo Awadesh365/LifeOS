@@ -864,6 +864,7 @@ export default function Learning({ isMobile = false }: LearningProps) {
                   <IconButton
                     size="small"
                     color="error"
+                    aria-label={`Delete ${section.title} section`}
                     onClick={() => handleDeleteSection(section.id)}
                   >
                     <DeleteIcon fontSize="small" />
@@ -1040,6 +1041,7 @@ export default function Learning({ isMobile = false }: LearningProps) {
                         )}
                         <IconButton
                           size="small"
+                          aria-label={`Edit ${item.topic}`}
                           onClick={() => startEdit(section.id, item)}
                         >
                           <EditIcon fontSize="small" />
@@ -1047,6 +1049,7 @@ export default function Learning({ isMobile = false }: LearningProps) {
                         <IconButton
                           size="small"
                           color="error"
+                          aria-label={`Delete ${item.topic}`}
                           onClick={() =>
                             handleDeleteItem(section.id, item.id)
                           }

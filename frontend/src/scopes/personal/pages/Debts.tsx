@@ -23,6 +23,7 @@ import {
 } from '../../../redux/slices/personalSlice';
 import type { Debt } from '../types';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 
 interface DebtsProps {
   isMobile?: boolean;
@@ -120,8 +121,11 @@ export default function Debts(_props: DebtsProps) {
           </Grid>
         </Grid>
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add Debt</Typography>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+          <Typography variant="h6">Add a debt</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Record who is owed, the total amount, and the month you intend to close it.
+          </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={3}>
               <TextField
@@ -235,6 +239,12 @@ export default function Debts(_props: DebtsProps) {
                 </CardContent>
               </Card>
             ))}
+            {debts.length === 0 && (
+              <EmptyState
+                title="No active debt recorded"
+                description="You are clear here. If you take on a new obligation, add it above and LifeOS will track every payment."
+              />
+            )}
           </Box>
         )}
       </Box>

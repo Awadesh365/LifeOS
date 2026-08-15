@@ -7,7 +7,7 @@ export const palette = {
   navy: "#1E2530",          // Brand secondary hsl(215 31% 13%)
   navyElevated: "#252E3C",  // hsl(215 28% 18%)
 
-  background: "#FCFCFD",
+  background: "#F5F7FA",
   surface: "#FFFFFF",
   surfaceAlt: "#F4F6F9",
   surfaceElevated: "#EDF0F5",
@@ -73,12 +73,12 @@ const themeOptions: ThemeOptions = {
   },
   typography: {
     fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
-    h1: { fontWeight: 700, fontSize: "2.5rem",  letterSpacing: "-0.05em" },
-    h2: { fontWeight: 700, fontSize: "2rem",    letterSpacing: "-0.04em" },
-    h3: { fontWeight: 600, fontSize: "1.75rem", letterSpacing: "-0.03em" },
-    h4: { fontWeight: 600, fontSize: "1.5rem",  letterSpacing: "-0.03em" },
-    h5: { fontWeight: 600, fontSize: "1.125rem",letterSpacing: "-0.02em" },
-    h6: { fontWeight: 600, fontSize: "1rem",    letterSpacing: "-0.01em" },
+    h1: { fontWeight: 750, fontSize: "2.5rem",  letterSpacing: "-0.05em" },
+    h2: { fontWeight: 750, fontSize: "2rem",    letterSpacing: "-0.04em" },
+    h3: { fontWeight: 700, fontSize: "1.75rem", letterSpacing: "-0.035em" },
+    h4: { fontWeight: 700, fontSize: "1.5rem",  letterSpacing: "-0.03em" },
+    h5: { fontWeight: 700, fontSize: "1.125rem",letterSpacing: "-0.02em" },
+    h6: { fontWeight: 700, fontSize: "1rem",    letterSpacing: "-0.015em" },
     subtitle1: { fontWeight: 600, fontSize: "0.9375rem" },
     subtitle2: { fontWeight: 600, fontSize: "0.875rem" },
     body1:     { fontSize: "0.9375rem", lineHeight: 1.6 },
@@ -119,16 +119,25 @@ const themeOptions: ThemeOptions = {
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        html: {
+          backgroundColor: palette.background,
+        },
         body: {
           fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
+          backgroundColor: palette.background,
+          color: palette.foreground,
+        },
+        "::selection": {
+          backgroundColor: "rgba(229, 85, 85, 0.18)",
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: "8px",
-          padding: "8px 18px",
+          borderRadius: "10px",
+          minHeight: 42,
+          padding: "9px 18px",
           fontWeight: 600,
           fontSize: "0.875rem",
           letterSpacing: "-0.01em",
@@ -136,11 +145,20 @@ const themeOptions: ThemeOptions = {
           boxShadow: "none",
           "&:hover": {
             boxShadow: "none",
-            filter: "brightness(0.95)",
+            filter: "brightness(0.97)",
+          },
+          "&:focus-visible": {
+            outline: `3px solid rgba(229, 85, 85, 0.2)`,
+            outlineOffset: 2,
           },
         },
         contained: {
-          "&:hover": { transform: "none" },
+          boxShadow: "0 8px 18px -12px rgba(193, 56, 56, 0.8)",
+          "&:hover": { transform: "translateY(-1px)" },
+        },
+        outlined: {
+          borderColor: palette.border,
+          backgroundColor: palette.surface,
         },
       },
     },
@@ -149,12 +167,17 @@ const themeOptions: ThemeOptions = {
         root: {
           backgroundImage: "none",
           border: `1px solid ${palette.border}`,
-          boxShadow: "0 4px 20px -8px rgba(16,24,40,0.08)",
+          boxShadow: "0 14px 32px -28px rgba(16,24,40,0.32)",
           borderRadius: "16px",
-          transition: "box-shadow 0.2s ease",
-          "&:hover": {
-            boxShadow: "0 8px 28px -8px rgba(16,24,40,0.12)",
-          },
+          overflow: "hidden",
+        },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          padding: 22,
+          "&:last-child": { paddingBottom: 22 },
         },
       },
     },
@@ -164,7 +187,96 @@ const themeOptions: ThemeOptions = {
           backgroundImage: "none",
         },
         rounded: {
-          borderRadius: "12px",
+          borderRadius: "16px",
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          minHeight: 42,
+          borderRadius: 10,
+          backgroundColor: palette.surface,
+          transition: "box-shadow 0.18s ease, background-color 0.18s ease",
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#B7C2D0",
+          },
+          "&.Mui-focused": {
+            boxShadow: "0 0 0 3px rgba(229, 85, 85, 0.1)",
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderWidth: 1,
+          },
+        },
+        notchedOutline: {
+          borderColor: palette.border,
+        },
+        input: {
+          fontSize: "0.875rem",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.875rem",
+          color: palette.muted,
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          border: "1px solid currentColor",
+          alignItems: "center",
+        },
+        standardError: {
+          color: "#9F2D2D",
+          backgroundColor: "#FFF4F3",
+          borderColor: "#F6CECB",
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 10,
+          "&:focus-visible": {
+            outline: `3px solid rgba(229, 85, 85, 0.2)`,
+            outlineOffset: 2,
+          },
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: { minHeight: 44 },
+        indicator: { height: 2, borderRadius: 999 },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          minHeight: 44,
+          padding: "10px 16px",
+          textTransform: "none",
+          fontWeight: 700,
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          color: palette.muted,
+          backgroundColor: palette.surfaceAlt,
+          fontSize: "0.72rem",
+          fontWeight: 700,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        },
+        root: {
+          borderColor: "#E8EDF3",
         },
       },
     },

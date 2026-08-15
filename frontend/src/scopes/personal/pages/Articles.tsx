@@ -170,11 +170,12 @@ export default function Articles({ isMobile }: ArticlesProps) {
   const sidebarWidth = 320;
 
   return (
-    <Box sx={{ maxWidth: 1400, mx: 'auto', p: 0 }}>
+    <>
       <Header
         title="The Manifesto"
         subtitle={loading ? 'Loading from backend...' : 'A life philosophy written by Awadesh'}
       />
+      <Box sx={{ width: '100%', maxWidth: 1400, mx: 'auto', p: 0 }}>
       {error && (
         <Alert severity="error" sx={{ mx: 3, mt: 2 }}>
           {error}
@@ -184,6 +185,7 @@ export default function Articles({ isMobile }: ArticlesProps) {
       {isMobile && !sidebarOpen && (
         <Button
           onClick={() => setSidebarOpen(true)}
+          aria-label="Open article navigation"
           sx={{
             position: 'fixed',
             bottom: 3,
@@ -207,7 +209,7 @@ export default function Articles({ isMobile }: ArticlesProps) {
         sx={{
           display: 'flex',
           gap: 0,
-          height: 'calc(100vh - 64px)',
+          height: 'calc(100vh - 76px)',
           overflow: 'hidden',
           position: 'relative',
         }}
@@ -263,6 +265,7 @@ export default function Articles({ isMobile }: ArticlesProps) {
               </Typography>
               <Button
                 onClick={() => setSidebarOpen(false)}
+                aria-label="Close article navigation"
                 sx={{ minWidth: 0, color: 'text.secondary' }}
               >
                 <CloseIcon />
@@ -408,6 +411,7 @@ export default function Articles({ isMobile }: ArticlesProps) {
           )}
         </Box>
       </Box>
-    </Box>
+      </Box>
+    </>
   );
 }

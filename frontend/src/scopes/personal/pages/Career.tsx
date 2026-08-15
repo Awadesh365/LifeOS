@@ -26,6 +26,7 @@ import {
 } from '../../../redux/slices/personalSlice';
 import type { CareerEntry } from '../types';
 import Header from '../components/Header';
+import EmptyState from '../components/EmptyState';
 
 interface CareerProps {
   isMobile?: boolean;
@@ -81,8 +82,11 @@ export default function Career(_props: CareerProps) {
       <Box sx={{ p: 3 }}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add Career Entry</Typography>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+          <Typography variant="h6">Add a role snapshot</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Capture the facts first. You can evaluate company health and manager quality after saving.
+          </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={3}>
               <TextField
@@ -213,6 +217,12 @@ export default function Career(_props: CareerProps) {
             </Card>
           ))}
         </Box>
+        {entries.length === 0 && (
+          <EmptyState
+            title="No career snapshots yet"
+            description="Add your current or previous role to create a clear record of pay, workplace quality, and your stay-or-leave decision."
+          />
+        )}
       </Box>
     </>
   );

@@ -1,6 +1,4 @@
 import { NavLink } from 'react-router-dom';
-import { api } from '../api/client';
-import { useState, useEffect } from 'react';
 import {
   Box, Typography, List, ListItem, ListItemButton, ListItemIcon,
   ListItemText, Divider, Avatar, IconButton, Drawer,
@@ -68,12 +66,12 @@ interface SidebarProps {
 
 function SidebarBrand({ isCollapsed }: { isCollapsed: boolean }) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: isCollapsed ? 0 : 2, py: 2, justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
-      <Avatar sx={{ bgcolor: 'primary.main', width: 36, height: 36, fontWeight: 700, fontSize: 16 }}>L</Avatar>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: isCollapsed ? 0 : 2, py: 2.25, justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
+      <Avatar sx={{ bgcolor: 'secondary.main', width: 38, height: 38, fontWeight: 800, fontSize: 15, borderRadius: 2.25 }}>L</Avatar>
       {!isCollapsed && (
         <Box>
-          <Typography variant="subtitle2" fontWeight={700}>LifeOS</Typography>
-          <Typography variant="caption" color="text.secondary">Personal Tracker</Typography>
+          <Typography variant="subtitle2" fontWeight={800} letterSpacing="-0.02em">LifeOS</Typography>
+          <Typography variant="caption" color="text.secondary">Personal operating system</Typography>
         </Box>
       )}
     </Box>
@@ -89,7 +87,7 @@ interface SidebarNavProps {
 
 function SidebarNav({ items, scopedPath, isCollapsed, onNavClick }: SidebarNavProps) {
   return (
-    <List component="nav" sx={{ flex: 1, px: isCollapsed ? 0.5 : 1 }}>
+    <List component="nav" sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: isCollapsed ? 0.75 : 1.25, py: 1 }}>
       {items.map((group) => (
         <Box key={group.section}>
           {!isCollapsed && (
@@ -111,11 +109,14 @@ function SidebarNav({ items, scopedPath, isCollapsed, onNavClick }: SidebarNavPr
                   minHeight: 40,
                   px: isCollapsed ? 1 : 2,
                   justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  color: 'text.secondary',
+                  '&:hover': { bgcolor: 'grey.100', color: 'text.primary' },
                   '&.active': {
-                    bgcolor: 'primary.main',
-                    color: 'primary.contrastText',
-                    '& .MuiListItemIcon-root': { color: 'primary.contrastText' },
-                    '&:hover': { bgcolor: 'primary.dark' },
+                    bgcolor: 'secondary.main',
+                    color: 'secondary.contrastText',
+                    boxShadow: '0 8px 20px -14px rgba(30, 37, 48, 0.65)',
+                    '& .MuiListItemIcon-root': { color: 'secondary.contrastText' },
+                    '&:hover': { bgcolor: 'secondary.dark' },
                   },
                 }}
               >
@@ -156,27 +157,14 @@ export default function Sidebar({
   setSidebarOpen,
   basePath = '/',
 }: SidebarProps) {
-  const [quote, setQuote] = useState('');
   const scopedPath = (path: string) =>
     path === '/' ? basePath : `${basePath.replace(/\/$/, '')}${path}`;
-
-  useEffect(() => {
-    let isActive = true;
-    api.getQuote()
-      .then((data: any) => {
-        if (isActive) setQuote(data.quote || '');
-      })
-      .catch(() => {
-        if (isActive) setQuote('');
-      });
-    return () => { isActive = false; };
-  }, []);
 
   const handleNavClick = () => {
     if (isMobile) setSidebarOpen(false);
   };
 
-  const drawerWidth = isCollapsed ? 72 : 260;
+  const drawerWidth = isCollapsed ? 76 : 280;
 
   if (isMobile) {
     return (
@@ -184,20 +172,15 @@ export default function Sidebar({
         <Drawer
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          PaperProps={{ sx: { width: 260, bgcolor: 'background.paper' } }}
+          PaperProps={{ sx: { width: 280, bgcolor: 'background.paper', backgroundImage: 'none' } }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2 }}>
             <SidebarBrand isCollapsed={false} />
-            <IconButton onClick={() => setSidebarOpen(false)} size="small">
+            <IconButton onClick={() => setSidebarOpen(false)} size="small" aria-label="Close navigation">
               <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
           <SidebarNav items={NAV_ITEMS} scopedPath={scopedPath} isCollapsed={false} onNavClick={handleNavClick} />
-          {quote && (
-            <Box sx={{ px: 2, py: 1.5, borderTop: 1, borderColor: 'divider' }}>
-              <Typography variant="caption" color="text.secondary" fontStyle="italic">"{quote}"</Typography>
-            </Box>
-          )}
           <SidebarProfile isCollapsed={false} />
         </Drawer>
       </>
@@ -205,20 +188,36 @@ export default function Sidebar({
   }
 
   return (
-    <Box sx={{ width: drawerWidth, flexShrink: 0, transition: 'width 0.3s', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider', height: '100%', position: 'sticky', top: 0 }}>
+    <Box
+      className="sidebar-shell"
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        transition: 'width 0.25s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRight: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+        overflow: 'hidden',
+      }}
+    >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: isCollapsed ? 'center' : 'space-between', px: isCollapsed ? 0 : 2 }}>
         {!isCollapsed && <SidebarBrand isCollapsed={false} />}
         {isCollapsed && <SidebarBrand isCollapsed={true} />}
-        <IconButton onClick={toggleSidebar} size="small" title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+        <IconButton
+          onClick={toggleSidebar}
+          size="small"
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
+        >
           {isCollapsed ? <MenuIcon fontSize="small" /> : <MenuOpenIcon fontSize="small" />}
         </IconButton>
       </Box>
       <SidebarNav items={NAV_ITEMS} scopedPath={scopedPath} isCollapsed={isCollapsed} />
-      {!isCollapsed && quote && (
-        <Box sx={{ px: 2, py: 1.5, borderTop: 1, borderColor: 'divider' }}>
-          <Typography variant="caption" color="text.secondary" fontStyle="italic">"{quote}"</Typography>
-        </Box>
-      )}
       <SidebarProfile isCollapsed={isCollapsed} />
     </Box>
   );
