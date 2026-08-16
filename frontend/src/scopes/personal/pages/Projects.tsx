@@ -179,7 +179,7 @@ export default function Projects({ isMobile }: ProjectsProps) {
                         <Box
                           key={j}
                           component="a"
-                          href="/articles"
+                          href="/app/articles"
                           onClick={() => {
                             localStorage.setItem('selectedArticlePath', project.path);
                           }}

@@ -32,6 +32,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
+    "@react-three/fiber": "^8.18.0",
     "@reduxjs/toolkit": "^2.11.0",
     "@tanstack/react-query": "^5.24.0",
     "axios": "^1.6.7",
@@ -51,6 +52,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.22.0",
     "react-window": "^2.2.3",
+    "three": "^0.185.1",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4"
   },
@@ -66,6 +68,7 @@
     "@types/papaparse": "^5.5.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
+    "@types/three": "^0.185.0",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-react": "^4.2.1",

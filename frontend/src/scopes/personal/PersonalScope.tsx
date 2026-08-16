@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
@@ -55,6 +55,10 @@ const PersonalScope = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  useEffect(() => {
+    document.title = "LifeOS — Personal workspace";
+  }, []);
+
   const toggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
@@ -81,7 +85,7 @@ const PersonalScope = () => {
             isMobile={isMobile}
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            basePath="/"
+            basePath="/app"
           />
           <Box className="main-area">
             {isMobile && (
@@ -128,7 +132,7 @@ const PersonalScope = () => {
               />
               <Route path="diet" element={<Diet isMobile={isMobile} />} />
               <Route path="training" element={<Training isMobile={isMobile} />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/app" replace />} />
             </Routes>
           </Box>
         </Box>

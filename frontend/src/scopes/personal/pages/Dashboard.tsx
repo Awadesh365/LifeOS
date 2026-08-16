@@ -357,7 +357,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6">Today&apos;s Task List</Typography>
-              <Button component={Link} to="/habits" size="small" variant="outlined">
+              <Button component={Link} to="/app/habits" size="small" variant="outlined">
                 Open tracker
               </Button>
             </Box>
