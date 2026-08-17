@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, CalendarDays, Check,
-  ChevronLeft, ChevronRight, CircleDashed, Copy, Info, Plus, RotateCcw,
-  Search, Settings2, Trash2, Utensils, X,
+  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BarChart3, BookOpen,
+  CalendarDays, Check, ChevronLeft, ChevronRight, CircleDashed, Copy, Database,
+  Flame, Info, LayoutDashboard, Leaf, Plus, RotateCcw, Search, Settings2,
+  Trash2, X,
 } from 'lucide-react';
 import Header from '../components/Header';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
@@ -12,7 +13,7 @@ import type { DietLog } from '../types';
 interface DietProps { isMobile?: boolean; }
 type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 type Coverage = 'complete' | 'partial' | 'uncertain' | 'untracked';
-type View = 'today' | 'review';
+type View = 'overview' | 'today' | 'review';
 
 const MEAL_TYPES: Array<{ value: MealType; label: string; window: string }> = [
   { value: 'breakfast', label: 'Breakfast', window: 'Morning' },
@@ -58,7 +59,7 @@ export default function Diet({ isMobile = false }: DietProps) {
   const dispatch = useAppDispatch();
   const { logs, history, loading, error } = useAppSelector((state) => state.personal.diet);
   const [date, setDate] = useState(isoToday());
-  const [view, setView] = useState<View>('today');
+  const [view, setView] = useState<View>('overview');
   const [showForm, setShowForm] = useState(false);
   const [showTargets, setShowTargets] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -164,8 +165,9 @@ export default function Diet({ isMobile = false }: DietProps) {
 
         <div className="nutrition-topbar">
           <div className="nutrition-tabs" role="tablist" aria-label="Nutrition views">
-            <button className={view === 'today' ? 'active' : ''} onClick={() => setView('today')} type="button"><Utensils size={16} /> Today</button>
-            <button className={view === 'review' ? 'active' : ''} onClick={() => setView('review')} type="button"><BarChart3 size={16} /> Weekly review</button>
+            <button role="tab" aria-selected={view === 'overview'} className={view === 'overview' ? 'active' : ''} onClick={() => setView('overview')} type="button"><LayoutDashboard size={16} /> Overview</button>
+            <button role="tab" aria-selected={view === 'today'} className={view === 'today' ? 'active' : ''} onClick={() => setView('today')} type="button"><BookOpen size={16} /> Diary</button>
+            <button role="tab" aria-selected={view === 'review'} className={view === 'review' ? 'active' : ''} onClick={() => setView('review')} type="button"><BarChart3 size={16} /> Weekly review</button>
           </div>
           <div className="nutrition-date-control">
             <button type="button" aria-label="Previous day" onClick={() => setDate(moveDate(date, -1))}><ChevronLeft size={18} /></button>
@@ -176,7 +178,17 @@ export default function Diet({ isMobile = false }: DietProps) {
 
         {loading && <div className="nutrition-loading"><span /> Updating nutrition record…</div>}
 
-        {view === 'today' ? (
+        {view === 'overview' ? (
+          <NutritionOverview
+            endDate={date}
+            stats={weeklyStats}
+            targets={targets}
+            onOpenDiary={() => setView('today')}
+            onOpenReview={() => setView('review')}
+            onOpenTargets={() => { setView('today'); setShowTargets(true); }}
+            onSelectDay={(nextDate) => { setDate(nextDate); setView('today'); }}
+          />
+        ) : view === 'today' ? (
           <div className="nutrition-layout">
             <section className="nutrition-main-column">
               <article className="nutrition-overview-card">
@@ -299,6 +311,135 @@ export default function Diet({ isMobile = false }: DietProps) {
       )}
     </>
   );
+}
+
+interface NutritionOverviewProps {
+  endDate: string;
+  stats: WeeklyReviewProps['stats'];
+  targets: WeeklyReviewProps['targets'];
+  onOpenDiary: () => void;
+  onOpenReview: () => void;
+  onOpenTargets: () => void;
+  onSelectDay: (date: string) => void;
+}
+
+function NutritionOverview({ endDate, stats, targets, onOpenDiary, onOpenReview, onOpenTargets, onSelectDay }: NutritionOverviewProps) {
+  const recordedDays = stats.days.filter((day) => day.logs.length > 0);
+  const includedDays = stats.sufficient;
+  const averageEnergy = includedDays.length ? stats.averageCalories : null;
+  const averageProtein = includedDays.length ? stats.averageProtein : null;
+  const proteinPercent = averageProtein !== null && targets.protein ? Math.round((averageProtein / targets.protein) * 100) : null;
+  const maximumEnergy = Math.max(targets.calories || 1, ...stats.days.map((day) => day.calories));
+  const mealCounts = MEAL_TYPES.map((meal) => ({
+    ...meal,
+    count: stats.days.reduce((sum, day) => sum + day.logs.filter((log) => log.mealType === meal.value).length, 0),
+  }));
+  const mostLoggedMeal = [...mealCounts].sort((a, b) => b.count - a.count)[0];
+  const periodStart = stats.days[0]?.date || endDate;
+  const hasReliableData = includedDays.length > 0;
+
+  return (
+    <section className="nutrition-dashboard" aria-labelledby="nutrition-overview-title">
+      <div className="nutrition-dashboard-hero">
+        <div>
+          <span className="nutrition-eyebrow">7-day overview</span>
+          <h1 id="nutrition-overview-title">Your nutrition, in context</h1>
+          <p>{shortDate(periodStart)} – {shortDate(endDate)} · Only likely complete days contribute to averages.</p>
+        </div>
+        <button type="button" className="nutrition-primary-button" onClick={onOpenDiary}><Plus size={17} /> Log food</button>
+      </div>
+
+      <div className="overview-metric-grid">
+        <button type="button" className="overview-metric-card" onClick={onOpenReview}>
+          <span className="overview-metric-icon overview-metric-icon--energy"><Flame size={18} /></span>
+          <span>Energy</span>
+          <strong>{averageEnergy === null ? '—' : averageEnergy.toLocaleString()} <small>kcal avg</small></strong>
+          <em>{hasReliableData ? `${includedDays.length} reliable ${includedDays.length === 1 ? 'day' : 'days'}` : 'Needs a complete day'} <ArrowRight size={14} /></em>
+        </button>
+        <button type="button" className="overview-metric-card" onClick={onOpenReview}>
+          <span className="overview-metric-icon overview-metric-icon--protein"><Activity size={18} /></span>
+          <span>Protein</span>
+          <strong>{averageProtein === null ? '—' : averageProtein} <small>g avg</small></strong>
+          <em>{proteinPercent === null ? 'No reliable average' : `${proteinPercent}% of context`} <ArrowRight size={14} /></em>
+        </button>
+        <button type="button" className="overview-metric-card overview-metric-card--unknown" onClick={onOpenDiary}>
+          <span className="overview-metric-icon overview-metric-icon--fiber"><Leaf size={18} /></span>
+          <span>Fiber</span>
+          <strong>— <small>g avg</small></strong>
+          <em>Structured foods needed <ArrowRight size={14} /></em>
+        </button>
+        <button type="button" className="overview-metric-card" onClick={onOpenReview}>
+          <span className="overview-metric-icon overview-metric-icon--quality"><Database size={18} /></span>
+          <span>Data completeness</span>
+          <strong>{includedDays.length}<small>/ 7 days</small></strong>
+          <em>{recordedDays.length} with entries <ArrowRight size={14} /></em>
+        </button>
+      </div>
+
+      <div className="overview-main-grid">
+        <article className="nutrition-section-card overview-trend-card">
+          <div className="nutrition-card-heading compact">
+            <div><span className="nutrition-eyebrow">Recorded energy</span><h2>Weekly trend</h2></div>
+            <span className="overview-legend"><i /> Recorded <i /> Target context</span>
+          </div>
+          {recordedDays.length ? (
+            <div className="nutrition-bar-chart" role="group" aria-label={`Energy recorded over seven days. ${recordedDays.length} days contain entries and ${includedDays.length} are marked likely complete.`}>
+              <div className="chart-target-line" style={{ bottom: `${Math.min(90, (targets.calories / maximumEnergy) * 82)}%` }}><span>{targets.calories.toLocaleString()} kcal</span></div>
+              {stats.days.map((day) => {
+                const height = day.logs.length ? Math.max(5, (day.calories / maximumEnergy) * 82) : 0;
+                return <button key={day.date} type="button" className={`chart-day chart-day--${day.coverage}`} onClick={() => onSelectDay(day.date)} aria-label={`${shortDate(day.date)}: ${day.logs.length ? `${day.calories} kilocalories recorded, ${day.coverage}` : 'no record'}`}>
+                  <span className="chart-value">{day.logs.length ? day.calories.toLocaleString() : '—'}</span>
+                  <span className="chart-bar-track"><i style={{ height: `${height}%` }} /></span>
+                  <strong>{new Intl.DateTimeFormat('en', { weekday: 'short' }).format(atNoon(day.date))}</strong>
+                </button>;
+              })}
+            </div>
+          ) : (
+            <div className="overview-empty-chart"><CircleDashed size={24} /><div><strong>No trend to show yet</strong><span>Log a representative day to begin building useful context.</span></div><button type="button" onClick={onOpenDiary}>Open diary</button></div>
+          )}
+          <p className="chart-caption">Missing days remain gaps. Partial and unreviewed days are visible but excluded from the reliable-day average.</p>
+        </article>
+
+        <article className="nutrition-section-card overview-adequacy-card">
+          <div className="nutrition-card-heading compact"><div><span className="nutrition-eyebrow">Target context</span><h2>Nutrient adequacy</h2></div><button className="icon-button" type="button" onClick={onOpenTargets} aria-label="Adjust nutrition targets"><Settings2 size={17} /></button></div>
+          <div className="adequacy-list">
+            <AdequacyRow label="Protein" value={proteinPercent} detail={proteinPercent === null ? 'Not enough reliable days' : `${averageProtein} g of ${targets.protein} g`} />
+            <AdequacyRow label="Fiber" value={null} detail="Not captured by manual logs" />
+            <AdequacyRow label="Micronutrients" value={null} detail="Structured food data required" />
+          </div>
+          <div className="nutrition-data-note"><Info size={15} /><span>Unknown values are not treated as zero. Add only reference values you can verify.</span></div>
+        </article>
+      </div>
+
+      <div className="overview-lower-grid">
+        <article className="nutrition-section-card">
+          <div className="nutrition-card-heading compact"><div><span className="nutrition-eyebrow">Meal pattern</span><h2>What was captured</h2></div><span className="entry-count">{stats.days.reduce((sum, day) => sum + day.logs.length, 0)} entries</span></div>
+          <div className="meal-pattern-grid">
+            {mealCounts.map((meal) => <div key={meal.value}><span>{meal.label}</span><strong>{meal.count}</strong><i><b style={{ width: `${Math.min(100, (meal.count / 7) * 100)}%` }} /></i></div>)}
+          </div>
+          <button type="button" className="overview-text-link" onClick={onOpenDiary}>Browse diary <ArrowRight size={15} /></button>
+        </article>
+        <article className="overview-insight-card">
+          <span className="insight-icon"><ArrowUpRight size={19} /></span>
+          <span className="nutrition-eyebrow">Observation · this week</span>
+          <h2>{recordedDays.length === 0 ? 'Build context with one representative day.' : includedDays.length === 0 ? 'Review completeness before interpreting this week.' : `${mostLoggedMeal.label} was your most consistently recorded meal.`}</h2>
+          <p>{recordedDays.length === 0 ? 'There is no score to protect and no streak to break.' : includedDays.length === 0 ? `${recordedDays.length} ${recordedDays.length === 1 ? 'day has' : 'days have'} entries, but none are marked likely complete.` : `Based on ${includedDays.length} likely complete ${includedDays.length === 1 ? 'day' : 'days'}. This describes your records, not food quality.`}</p>
+          <button type="button" onClick={onOpenReview}>Review evidence and limits <ArrowRight size={15} /></button>
+        </article>
+      </div>
+
+      <div className="overview-actions">
+        <div><strong>Ready to look back?</strong><span>Turn this week’s records into one practical next step.</span></div>
+        <button type="button" className="nutrition-primary-button" onClick={onOpenReview}>Review week <ArrowRight size={16} /></button>
+        <button type="button" className="nutrition-secondary-button" onClick={onOpenDiary}>Open diary</button>
+      </div>
+    </section>
+  );
+}
+
+function AdequacyRow({ label, value, detail }: { label: string; value: number | null; detail: string }) {
+  const boundedValue = value === null ? 0 : Math.min(100, value);
+  return <div className={`adequacy-row ${value === null ? 'adequacy-row--unknown' : ''}`}><div><strong>{label}</strong><span>{detail}</span></div><em>{value === null ? 'Unknown' : `${value}%`}</em><i><b style={{ width: `${boundedValue}%` }} /></i></div>;
 }
 
 function Metric({ label, value, unit, progress }: { label: string; value: string; unit: string; progress: number }) {
