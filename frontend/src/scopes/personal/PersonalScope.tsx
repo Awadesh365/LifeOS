@@ -20,7 +20,7 @@ import Funds from "./pages/Funds";
 import Networking from "./pages/Networking";
 import Career from "./pages/Career";
 import FuturePlans from "./pages/FuturePlans";
-import Diet from "./pages/Diet";
+import NutritionPortal from "./nutrition/NutritionPortal";
 import Training from "./pages/Training";
 import "./personal.css";
 
@@ -130,7 +130,7 @@ const PersonalScope = () => {
                 path="future-plans"
                 element={<FuturePlans isMobile={isMobile} />}
               />
-              <Route path="diet" element={<Diet isMobile={isMobile} />} />
+              <Route path="diet/*" element={<NutritionPortal isMobile={isMobile} />} />
               <Route path="training" element={<Training isMobile={isMobile} />} />
               <Route path="*" element={<Navigate to="/app" replace />} />
             </Routes>

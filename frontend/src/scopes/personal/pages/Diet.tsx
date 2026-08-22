@@ -10,7 +10,12 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { addDietLog, deleteDietLog, fetchDiet } from '../../../redux/slices/personalSlice';
 import type { DietLog } from '../types';
 
-interface DietProps { isMobile?: boolean; }
+interface DietProps {
+  isMobile?: boolean;
+  initialView?: View;
+  initialDate?: string;
+  showHeader?: boolean;
+}
 type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 type Coverage = 'complete' | 'partial' | 'uncertain' | 'untracked';
 type View = 'overview' | 'today' | 'review';
@@ -55,11 +60,11 @@ function loadRecord<T>(key: string, fallback: T): T {
   }
 }
 
-export default function Diet({ isMobile = false }: DietProps) {
+export default function Diet({ isMobile = false, initialView = 'overview', initialDate, showHeader = true }: DietProps) {
   const dispatch = useAppDispatch();
   const { logs, history, loading, error } = useAppSelector((state) => state.personal.diet);
-  const [date, setDate] = useState(isoToday());
-  const [view, setView] = useState<View>('overview');
+  const [date, setDate] = useState(initialDate || isoToday());
+  const [view, setView] = useState<View>(initialView);
   const [showForm, setShowForm] = useState(false);
   const [showTargets, setShowTargets] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -159,7 +164,7 @@ export default function Diet({ isMobile = false }: DietProps) {
 
   return (
     <>
-      <Header title="Nutrition" subtitle="Capture reality. Review patterns. Change one useful thing." />
+      {showHeader && <Header title="Nutrition" subtitle="Capture reality. Review patterns. Change one useful thing." />}
       <main className={`nutrition-page ${isMobile ? 'nutrition-page--mobile' : ''}`}>
         {error && <div className="nutrition-alert nutrition-alert--error" role="alert"><Info size={17} /><span>{error}</span></div>}
 
