@@ -1,19 +1,31 @@
-.lifeos-personal-scope .nutrition-portal { display: grid; min-height: calc(100vh - 76px); grid-template-columns: 190px minmax(0, 1fr); background: #f7f9fb; }
-.lifeos-personal-scope .nutrition-rail { position: sticky; top: 0; align-self: start; height: calc(100vh - 76px); overflow-y: auto; padding: 17px 12px; border-right: 1px solid var(--border); background: rgba(255,255,255,.9); }
-.lifeos-personal-scope .nutrition-rail-brand { display: flex; align-items: center; gap: 9px; padding: 3px 7px 14px; border-bottom: 1px solid #edf0f3; }
-.lifeos-personal-scope .nutrition-rail-brand > span { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 9px; background: var(--success-glow); color: var(--success); }
-.lifeos-personal-scope .nutrition-rail-brand strong,
-.lifeos-personal-scope .nutrition-rail-brand small { display: block; }
-.lifeos-personal-scope .nutrition-rail-brand strong { color: var(--text-heading); font-size: .74rem; }
-.lifeos-personal-scope .nutrition-rail-brand small { color: var(--text-muted); font-size: .54rem; }
-.lifeos-personal-scope .nutrition-nav-group { display: grid; gap: 2px; margin-top: 14px; }
-.lifeos-personal-scope .nutrition-nav-group > span { padding: 0 8px 5px; color: var(--text-muted); font-size: .52rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
-.lifeos-personal-scope .nutrition-nav-group a { display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 9px; border-radius: 8px; color: var(--text-secondary); font-size: .66rem; font-weight: 650; text-decoration: none; }
-.lifeos-personal-scope .nutrition-nav-group a:hover { background: var(--bg-secondary); color: var(--text-heading); text-decoration: none; }
-.lifeos-personal-scope .nutrition-nav-group a.active { background: var(--navy); color: #fff; }
+.lifeos-personal-scope .nutrition-portal { min-height: calc(100vh - 76px); background: #f7f9fb; }
+.lifeos-personal-scope .header--with-navigation .header-left { flex: 0 0 clamp(220px, 20vw, 340px); }
+.lifeos-personal-scope .header--navigation-only .header-navigation { margin-left: 0; }
+.lifeos-personal-scope .header-avatar-pill--compact { width: 42px; padding: 0 5px; }
+.lifeos-personal-scope .header-navigation { min-width: 0; flex: 1; }
+.lifeos-personal-scope .nutrition-topnav { display: flex; width: 100%; min-width: 0; align-items: center; gap: 5px; }
+.lifeos-personal-scope .nutrition-topnav-primary { display: flex; min-width: 0; flex: 1; align-items: center; gap: 3px; overflow-x: auto; scrollbar-width: none; }
+.lifeos-personal-scope .nutrition-topnav-primary::-webkit-scrollbar { display: none; }
+.lifeos-personal-scope .nutrition-topnav-primary a,
+.lifeos-personal-scope .nutrition-more-menu > summary { display: inline-flex; min-height: 36px; flex: 0 0 auto; align-items: center; gap: 6px; padding: 0 10px; border-radius: 8px; color: var(--text-secondary); font-size: .62rem; font-weight: 720; text-decoration: none; cursor: pointer; list-style: none; }
+.lifeos-personal-scope .nutrition-more-menu > summary::-webkit-details-marker { display: none; }
+.lifeos-personal-scope .nutrition-topnav-primary a:hover,
+.lifeos-personal-scope .nutrition-more-menu > summary:hover { background: var(--bg-secondary); color: var(--text-heading); text-decoration: none; }
+.lifeos-personal-scope .nutrition-topnav-primary a.active,
+.lifeos-personal-scope .nutrition-more-menu.active > summary,
+.lifeos-personal-scope .nutrition-more-menu[open] > summary { background: var(--navy); color: #fff; }
+.lifeos-personal-scope .nutrition-topnav-primary a:focus-visible,
+.lifeos-personal-scope .nutrition-more-menu > summary:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+.lifeos-personal-scope .nutrition-more-menu { position: relative; flex: 0 0 auto; }
+.lifeos-personal-scope .nutrition-more-panel { position: absolute; top: calc(100% + 9px); right: 0; display: grid; width: min(590px, calc(100vw - 40px)); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 13px; border: 1px solid var(--border); border-radius: 13px; background: #fff; box-shadow: 0 18px 45px -18px rgba(16,24,40,.34); }
+.lifeos-personal-scope .nutrition-more-panel > div { display: grid; align-content: start; gap: 3px; }
+.lifeos-personal-scope .nutrition-more-panel > div > span { padding: 4px 8px; color: var(--text-muted); font-size: .5rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.lifeos-personal-scope .nutrition-more-panel a { display: flex; align-items: center; gap: 8px; min-height: 35px; padding: 0 8px; border-radius: 7px; color: var(--text-secondary); font-size: .6rem; font-weight: 680; text-decoration: none; }
+.lifeos-personal-scope .nutrition-more-panel a:hover { background: var(--bg-secondary); color: var(--text-heading); text-decoration: none; }
+.lifeos-personal-scope .nutrition-more-panel a.active { background: var(--navy-soft); color: var(--navy); }
 .lifeos-personal-scope .nutrition-workspace { min-width: 0; }
 .lifeos-personal-scope .nutrition-workspace > .nutrition-page { max-width: none; }
-.lifeos-personal-scope .nutrition-module { width: min(1180px, 100%); margin: 0 auto; padding: 28px 32px 48px; }
+.lifeos-personal-scope .nutrition-module { width: min(1400px, 100%); margin: 0 auto; padding: 28px 38px 48px; }
 .lifeos-personal-scope .nutrition-page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 23px; }
 .lifeos-personal-scope .nutrition-page-header > div { max-width: 720px; }
 .lifeos-personal-scope .nutrition-page-header > div > span { display: block; color: var(--success); font-size: .58rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
@@ -216,18 +228,31 @@
 .lifeos-personal-scope .danger-zone button:disabled { opacity: .4; cursor: not-allowed; }
 
 @media (max-width: 1050px) {
-  .lifeos-personal-scope .nutrition-portal { grid-template-columns: 1fr; }
-  .lifeos-personal-scope .nutrition-rail { position: static; display: flex; height: auto; gap: 7px; overflow-x: auto; padding: 9px 14px; border-right: 0; border-bottom: 1px solid var(--border); }
-  .lifeos-personal-scope .nutrition-rail-brand { display: none; }
-  .lifeos-personal-scope .nutrition-nav-group { display: flex; flex: 0 0 auto; gap: 4px; margin: 0; }
-  .lifeos-personal-scope .nutrition-nav-group > span { display: none; }
-  .lifeos-personal-scope .nutrition-nav-group a { white-space: nowrap; }
   .lifeos-personal-scope .nutrition-module { padding: 24px; }
   .lifeos-personal-scope .food-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+@media (max-width: 1500px) and (min-width: 901px) {
+  .lifeos-personal-scope .header--with-navigation .header-left { flex-basis: 210px; }
+  .lifeos-personal-scope .header--with-navigation .nutrition-topnav-primary a span { display: none; }
+  .lifeos-personal-scope .header--with-navigation .nutrition-topnav-primary a.active span { display: inline; }
+}
+
+@media (min-width: 1500px) {
+  .lifeos-personal-scope .food-card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
 @media (max-width: 700px) {
   .lifeos-personal-scope .nutrition-module { padding: 19px 13px 38px; }
+  .lifeos-personal-scope .header--with-navigation { flex-wrap: wrap; gap: 9px; padding-bottom: 10px; }
+  .lifeos-personal-scope .header--with-navigation .header-left { flex: 1 1 100%; }
+  .lifeos-personal-scope .header--with-navigation .header-left p { display: none; }
+  .lifeos-personal-scope .header--with-navigation .header-navigation { flex: 1 1 100%; order: 3; }
+  .lifeos-personal-scope .nutrition-topnav { height: 38px; }
+  .lifeos-personal-scope .nutrition-topnav-primary a { padding: 0 8px; }
+  .lifeos-personal-scope .nutrition-topnav-primary a span { display: none; }
+  .lifeos-personal-scope .nutrition-topnav-primary a.active span { display: inline; }
+  .lifeos-personal-scope .nutrition-more-panel { width: min(360px, calc(100vw - 18px)); grid-template-columns: 1fr; max-height: 70vh; overflow-y: auto; }
   .lifeos-personal-scope .nutrition-page-header { align-items: flex-start; flex-direction: column; }
   .lifeos-personal-scope .portal-header-actions { width: 100%; justify-content: stretch; }
   .lifeos-personal-scope .portal-header-actions > button { flex: 1; }
@@ -250,7 +275,7 @@
 }
 
 @media print {
-  .lifeos-personal-scope .nutrition-rail,
+  .lifeos-personal-scope .nutrition-topnav,
   .lifeos-personal-scope .header,
   .lifeos-personal-scope .nutrition-page-header button { display: none !important; }
   .lifeos-personal-scope .nutrition-portal { display: block; }

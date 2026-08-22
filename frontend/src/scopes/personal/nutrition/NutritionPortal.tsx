@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import {
   AlertTriangle, Apple, ArrowRight, BarChart3, Bell, BookOpen, CalendarDays,
   Check, ChevronRight, ClipboardList, Database, Download, FileBarChart, Filter,
-  HeartHandshake, Info, LayoutDashboard, Leaf, Link2, Lock, Plus, Search,
-  Settings2, ShieldCheck, ShoppingBasket, SlidersHorizontal, Sparkles, Target,
+  HeartHandshake, Info, LayoutDashboard, Link2, Lock, Plus, Search,
+  MoreHorizontal, Settings2, ShieldCheck, ShoppingBasket, SlidersHorizontal, Sparkles, Target,
   Trash2, UtensilsCrossed, X,
 } from 'lucide-react';
-import { NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Diet from '../pages/Diet';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
@@ -49,12 +49,17 @@ const FOOD_IDEAS: FoodItem[] = [
   { id: 'roasted-chana', name: 'Roasted chana snack', category: 'Snack', preparation: 'Roasted chana with fruit or chaas', basis: 'One serving', calories: null, protein: null, fiber: null, source: 'Meal idea · nutrition not imported', completeness: 'reference-needed', ingredients: ['roasted chana', 'seasonal fruit', 'chaas'], note: 'Use the package label if you want to add nutrient values.' },
 ];
 
-const NAV_GROUPS = [
-  { label: 'Track', items: [['Overview', '', LayoutDashboard], ['Diary', 'diary', BookOpen], ['Coverage', 'history', CalendarDays]] },
-  { label: 'Library', items: [['Foods', 'foods', Apple], ['Meals', 'meals', UtensilsCrossed], ['Recipes', 'recipes', ClipboardList]] },
-  { label: 'Plan', items: [['Planner', 'planner', CalendarDays], ['Groceries', 'grocery', ShoppingBasket]] },
-  { label: 'Understand', items: [['Insights', 'insights', Sparkles], ['Reports', 'reports', FileBarChart], ['Exports', 'exports', Download]] },
-  { label: 'Manage', items: [['Targets', 'targets', Target], ['Data', 'data-sources', Database], ['Integrations', 'integrations', Link2], ['Settings', 'settings/preferences', Settings2]] },
+const PRIMARY_NAV = [
+  ['Overview', '', LayoutDashboard], ['Diary', 'diary', BookOpen],
+  ['Foods', 'foods', Apple], ['Meals', 'meals', UtensilsCrossed],
+  ['Recipes', 'recipes', ClipboardList], ['Planner', 'planner', CalendarDays],
+  ['Insights', 'insights', Sparkles],
+] as const;
+
+const SECONDARY_NAV = [
+  { label: 'Review', items: [['Coverage', 'history', CalendarDays], ['Reports', 'reports', FileBarChart], ['Exports', 'exports', Download]] },
+  { label: 'Plan & data', items: [['Groceries', 'grocery', ShoppingBasket], ['Targets', 'targets', Target], ['Data sources', 'data-sources', Database], ['Data quality', 'data-quality', ShieldCheck]] },
+  { label: 'System', items: [['Integrations', 'integrations', Link2], ['Settings', 'settings/preferences', Settings2]] },
 ] as const;
 
 const NUTRITION_API = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:3001/api';
@@ -109,12 +114,8 @@ function useLocalState<T>(key: string, initial: T) {
 export default function NutritionPortal({ isMobile = false }: { isMobile?: boolean }) {
   return (
     <>
-      <Header title="Nutrition" subtitle="Track, plan and understand your food without false precision." />
+      <Header hideSearch compactAvatar navigation={<NutritionNavigation />} />
       <div className="nutrition-portal">
-        <aside className="nutrition-rail" aria-label="Nutrition navigation">
-          <div className="nutrition-rail-brand"><span><Leaf size={17} /></span><div><strong>Nutrition</strong><small>Strategy & planning</small></div></div>
-          {NAV_GROUPS.map((group) => <div className="nutrition-nav-group" key={group.label}><span>{group.label}</span>{group.items.map(([label, path, Icon]) => <NavLink key={path || 'overview'} to={`/app/diet${path ? `/${path}` : ''}`} end={!path}><Icon size={16} /><span>{label}</span></NavLink>)}</div>)}
-        </aside>
         <div className="nutrition-workspace">
           <Routes>
             <Route index element={<Diet isMobile={isMobile} showHeader={false} initialView="overview" />} />
@@ -166,6 +167,21 @@ export default function NutritionPortal({ isMobile = false }: { isMobile?: boole
         </div>
       </div>
     </>
+  );
+}
+
+function NutritionNavigation() {
+  const location = useLocation();
+  const secondaryActive = ['/history', '/grocery', '/reports', '/exports', '/targets', '/data-', '/integrations', '/settings', '/sharing', '/reviews'].some((segment) => location.pathname.includes(`/diet${segment}`));
+  const closeMore = (event: React.MouseEvent<HTMLAnchorElement>) => event.currentTarget.closest('details')?.removeAttribute('open');
+  return (
+        <nav className="nutrition-topnav" aria-label="Nutrition navigation">
+          <div className="nutrition-topnav-primary">{PRIMARY_NAV.map(([label, path, Icon]) => <NavLink key={path || 'overview'} to={`/app/diet${path ? `/${path}` : ''}`} end={!path}><Icon size={15} /><span>{label}</span></NavLink>)}</div>
+          <details className={`nutrition-more-menu ${secondaryActive ? 'active' : ''}`}>
+            <summary><MoreHorizontal size={17} /><span>More</span></summary>
+            <div className="nutrition-more-panel">{SECONDARY_NAV.map((group) => <div key={group.label}><span>{group.label}</span>{group.items.map(([label, path, Icon]) => <NavLink key={path} to={`/app/diet/${path}`} onClick={closeMore}><Icon size={16} /><span>{label}</span></NavLink>)}</div>)}</div>
+          </details>
+        </nav>
   );
 }
 

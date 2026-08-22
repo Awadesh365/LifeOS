@@ -25,7 +25,7 @@ const destinations = [
   ['Core Philosophy', '/app/philosophy', 'Vision'],
 ];
 
-export default function Header({ title, subtitle }) {
+export default function Header({ title, subtitle, navigation, hideSearch = false, compactAvatar = false }) {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -63,27 +63,29 @@ export default function Header({ title, subtitle }) {
 
   return (
     <>
-      <header className="header">
-        <div className="header-left">
-          <h2>{title}</h2>
+      <header className={`header ${navigation ? 'header--with-navigation' : ''} ${!title && !subtitle ? 'header--navigation-only' : ''}`}>
+        {(title || subtitle) && <div className="header-left">
+          {title && <h2>{title}</h2>}
           {subtitle && <p>{subtitle}</p>}
-        </div>
+        </div>}
+
+        {navigation && <div className="header-navigation">{navigation}</div>}
 
         <div className="header-right">
-          <button type="button" className="header-search" onClick={() => setSearchOpen(true)}>
+          {!hideSearch && <button type="button" className="header-search" onClick={() => setSearchOpen(true)}>
             <SearchIcon className="header-search-icon" sx={{ fontSize: 18 }} />
             <span>Search LifeOS</span>
             <kbd className="header-search-kbd">⌘K</kbd>
-          </button>
+          </button>}
 
           <div className="header-today" aria-label="Today's date">
             <span>Today</span>
             <strong>{new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(new Date())}</strong>
           </div>
 
-          <button type="button" className="header-avatar-pill" aria-label="Account for Awadesh">
+          <button type="button" className={`header-avatar-pill ${compactAvatar ? 'header-avatar-pill--compact' : ''}`} aria-label="Account for Awadesh">
             <span className="header-avatar">A</span>
-            <span className="header-avatar-name">Awadesh</span>
+            {!compactAvatar && <span className="header-avatar-name">Awadesh</span>}
           </button>
         </div>
       </header>
