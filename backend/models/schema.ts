@@ -26,6 +26,7 @@ export type LifeTrackerModels = {
   FuturePlan: LifeTrackerModel;
   DietLog: LifeTrackerModel;
   Supplement: LifeTrackerModel;
+  NutritionRecord: LifeTrackerModel;
   CareerEntry: LifeTrackerModel;
   TrainingProfile: LifeTrackerModel;
   Exercise: LifeTrackerModel;
@@ -245,8 +246,8 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     date: { type: DataTypes.STRING, allowNull: false },
     mealType: { type: DataTypes.STRING, allowNull: false, field: 'meal_type' },
     items: { type: DataTypes.TEXT, allowNull: false },
-    protein: { type: DataTypes.FLOAT, defaultValue: 0 },
-    calories: { type: DataTypes.FLOAT, defaultValue: 0 },
+    protein: { type: DataTypes.FLOAT },
+    calories: { type: DataTypes.FLOAT },
     notes: { type: DataTypes.TEXT },
   }, { ...baseOptions, tableName: 'diet_logs' });
 
@@ -259,6 +260,12 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     remainingDays: { type: DataTypes.FLOAT, defaultValue: 0, field: 'remaining_days' },
     notes: { type: DataTypes.TEXT },
   }, { ...baseOptions, tableName: 'supplements' });
+
+  const NutritionRecord = sequelize.define('NutritionRecord', {
+    key: { type: DataTypes.STRING, primaryKey: true },
+    value: { type: DataTypes.JSONB, allowNull: false },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'nutrition_records' });
 
   const CareerEntry = sequelize.define('CareerEntry', {
     id: { type: DataTypes.STRING, primaryKey: true },
@@ -432,6 +439,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     FuturePlan,
     DietLog,
     Supplement,
+    NutritionRecord,
     CareerEntry,
     TrainingProfile,
     Exercise,

@@ -28,3 +28,11 @@ export const updateSupplement = asyncHandler(async (req, res) => {
 export const consumeSupplement = asyncHandler(async (req, res) => {
   res.json(await dietService.consumeSupplement(req.params.id, req.body.amount));
 });
+
+export const getRecord = asyncHandler(async (req, res) => {
+  res.json(await dietService.getRecord(req.params.key));
+});
+
+export const upsertRecord = asyncHandler(async (req, res) => {
+  res.json(await dietService.upsertRecord(req.params.key, req.body.value));
+});

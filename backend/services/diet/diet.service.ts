@@ -60,3 +60,29 @@ export async function consumeSupplement(id: string, amount: number) {
   await supplement.update({ quantity: newQuantity, remainingDays });
   return supplement.toJSON();
 }
+
+const allowedNutritionRecordKeys = new Set([
+  'lifeos-custom-foods', 'lifeos-saved-meals', 'lifeos-recipes', 'lifeos-meal-plans',
+  'lifeos-grocery-checked', 'lifeos-nutrition-targets', 'lifeos-nutrition-coverage',
+  'lifeos-nutrition-reports', 'lifeos-nutrition-sharing', 'lifeos-nutrition-data-issues',
+  'lifeos-nutrition-preferences',
+]);
+
+function assertNutritionRecordKey(key: string) {
+  if (!allowedNutritionRecordKeys.has(key) && !key.startsWith('lifeos-nutrition-action-')) {
+    throw createHttpError(400, 'Unsupported nutrition record key');
+  }
+}
+
+export async function getRecord(key: string) {
+  assertNutritionRecordKey(key);
+  const record = await models.NutritionRecord.findByPk(key, { raw: true }) as Record<string, any> | null;
+  return { key, value: record?.value ?? null, updatedAt: record?.updatedAt ?? null };
+}
+
+export async function upsertRecord(key: string, value: unknown) {
+  assertNutritionRecordKey(key);
+  if (value === undefined) throw createHttpError(400, 'Nutrition record value is required');
+  const [record] = await models.NutritionRecord.upsert({ key, value, updatedAt: new Date() }, { returning: true });
+  return record.toJSON();
+}

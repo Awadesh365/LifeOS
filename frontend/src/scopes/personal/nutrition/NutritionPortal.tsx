@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle, Apple, ArrowRight, BarChart3, Bell, BookOpen, CalendarDays,
   Check, ChevronRight, ClipboardList, Database, Download, FileBarChart, Filter,
@@ -9,6 +9,8 @@ import {
 import { NavLink, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Diet from '../pages/Diet';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { addDietLog, fetchDiet } from '../../../redux/slices/personalSlice';
 import '../nutrition-portal.css';
 
 type NutritionValue = number | null;
@@ -30,6 +32,7 @@ interface FoodItem {
 }
 
 interface PlanItem { id: string; date: string; slot: string; foodId: string; }
+type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
 const FOOD_IDEAS: FoodItem[] = [
   { id: 'vegetable-poha', name: 'Vegetable poha', category: 'Breakfast', preparation: 'Poha with peas, carrot, onion, lemon and peanuts', basis: 'One prepared bowl', calories: null, protein: null, fiber: null, source: 'Meal idea · nutrition not imported', completeness: 'reference-needed', ingredients: ['poha', 'peas', 'carrot', 'onion', 'lemon', 'peanuts'], note: 'A quick savory breakfast idea. Confirm ingredients and portions before calculating nutrition.' },
@@ -54,14 +57,50 @@ const NAV_GROUPS = [
   { label: 'Manage', items: [['Targets', 'targets', Target], ['Data', 'data-sources', Database], ['Integrations', 'integrations', Link2], ['Settings', 'settings/preferences', Settings2]] },
 ] as const;
 
+const NUTRITION_API = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:3001/api';
+
 function useLocalState<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(() => {
     try { const stored = localStorage.getItem(key); return stored ? JSON.parse(stored) as T : initial; }
     catch { return initial; }
   });
+  useEffect(() => {
+    let active = true;
+    const pendingKey = `${key}--pending`;
+    const endpoint = `${NUTRITION_API}/diet/records/${encodeURIComponent(key)}`;
+    const sync = async () => {
+      try {
+        const pending = localStorage.getItem(pendingKey);
+        if (pending !== null) {
+          const response = await fetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(pending) }) });
+          if (response.ok) localStorage.removeItem(pendingKey);
+          return;
+        }
+        const response = await fetch(endpoint);
+        if (!response.ok) return;
+        const record = await response.json() as { value: T | null };
+        if (record.value !== null && active) {
+          setValue(record.value);
+          localStorage.setItem(key, JSON.stringify(record.value));
+        } else if (record.value === null) {
+          const local = localStorage.getItem(key);
+          if (local !== null) await fetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(local) }) });
+        }
+      } catch {
+        // Local data remains available and mutations stay queued for the next mount.
+      }
+    };
+    void sync();
+    return () => { active = false; };
+  }, [key]);
   const persist = (next: T | ((current: T) => T)) => setValue((current) => {
     const result = typeof next === 'function' ? (next as (current: T) => T)(current) : next;
     localStorage.setItem(key, JSON.stringify(result));
+    const pendingKey = `${key}--pending`;
+    localStorage.setItem(pendingKey, JSON.stringify(result));
+    void fetch(`${NUTRITION_API}/diet/records/${encodeURIComponent(key)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: result }) })
+      .then((response) => { if (response.ok && localStorage.getItem(pendingKey) === JSON.stringify(result)) localStorage.removeItem(pendingKey); })
+      .catch(() => undefined);
     return result;
   });
   return [value, persist] as const;
@@ -169,15 +208,29 @@ function findFood(id?: string, custom: FoodItem[] = []) { return [...FOOD_IDEAS,
 function FoodDetail() {
   const { foodId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [customFoods] = useLocalState<FoodItem[]>('lifeos-custom-foods', []);
   const [savedMeals, setSavedMeals] = useLocalState<string[]>('lifeos-saved-meals', []);
+  const [showLog, setShowLog] = useState(false);
+  const [savingLog, setSavingLog] = useState(false);
+  const [logForm, setLogForm] = useState<{ date: string; mealType: MealSlot }>({ date: new Date().toISOString().slice(0, 10), mealType: 'lunch' });
   const food = findFood(foodId, customFoods);
   if (!food) return <EmptyState icon={Apple} title="Food not found" body="This item may have been removed from your custom library." action={<button className="portal-secondary" onClick={() => navigate('/app/diet/foods')}>Back to foods</button>} />;
   const saved = savedMeals.includes(food.id);
-  return <section className="nutrition-module"><PageHeader eyebrow={`${food.category} · ${food.basis}`} title={food.name} description={food.preparation} action={<button type="button" className="portal-primary" onClick={() => setSavedMeals((current) => saved ? current.filter((id) => id !== food.id) : [...current, food.id])}>{saved ? <Check size={16} /> : <Plus size={16} />}{saved ? 'Saved as meal' : 'Save meal'}</button>} />
+  const logMeal = async () => {
+    if (savingLog) return;
+    setSavingLog(true);
+    try {
+      await dispatch(addDietLog({ date: logForm.date, mealType: logForm.mealType, items: food.name, protein: food.protein, calories: food.calories, notes: `${food.preparation} · Source: ${food.source}` })).unwrap();
+      setShowLog(false);
+      navigate(`/app/diet/diary/${logForm.date}`);
+    } finally { setSavingLog(false); }
+  };
+  return <section className="nutrition-module"><PageHeader eyebrow={`${food.category} · ${food.basis}`} title={food.name} description={food.preparation} action={<div className="portal-header-actions"><button type="button" className="portal-secondary" onClick={() => setSavedMeals((current) => saved ? current.filter((id) => id !== food.id) : [...current, food.id])}>{saved ? <Check size={16} /> : <Plus size={16} />}{saved ? 'Saved' : 'Save meal'}</button><button type="button" className="portal-primary" onClick={() => setShowLog(true)}><BookOpen size={16} /> Log this meal</button></div>} />
     <div className="food-detail-grid"><article className="portal-card"><div className="portal-card-heading"><h2>Nutrition reference</h2><QualityBadge value={food.completeness} /></div><div className="nutrition-reference-grid"><div><span>Energy</span><strong>{food.calories ?? 'Unknown'}{food.calories !== null && ' kcal'}</strong></div><div><span>Protein</span><strong>{food.protein ?? 'Unknown'}{food.protein !== null && ' g'}</strong></div><div><span>Fiber</span><strong>{food.fiber ?? 'Unknown'}{food.fiber !== null && ' g'}</strong></div></div><div className="portal-info"><Info size={16} /><span>{food.calories === null ? 'This is a meal idea, not a nutrition reference. Enter actual ingredients and verified package or database values before analysis.' : `Values use the stated basis: ${food.basis}.`}</span></div></article>
     <article className="portal-card"><h2>Ingredients</h2><div className="ingredient-list">{food.ingredients.map((ingredient) => <span key={ingredient}><Check size={13} />{ingredient}</span>)}</div><p className="portal-body-copy">{food.note}</p></article>
     <article className="portal-card source-panel"><span className="nutrition-eyebrow">Provenance</span><h2>{food.source}</h2><dl><div><dt>Basis</dt><dd>{food.basis}</dd></div><div><dt>Completeness</dt><dd>{food.completeness}</dd></div><div><dt>Preparation</dt><dd>{food.preparation}</dd></div></dl><button className="portal-text-button" type="button" onClick={() => navigate('/app/diet/data-sources/report-issue')}>Report a data issue <ArrowRight size={14} /></button></article></div>
+    {showLog && <div className="portal-dialog-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setShowLog(false)}><section className="portal-dialog" role="dialog" aria-modal="true" aria-labelledby="log-food-title"><div className="portal-dialog-head"><div><span className="nutrition-eyebrow">Confirmation required</span><h2 id="log-food-title">Log {food.name}</h2></div><button onClick={() => setShowLog(false)} aria-label="Close"><X size={18} /></button></div><div className="portal-form-grid"><label>Date<input type="date" max={new Date().toISOString().slice(0, 10)} value={logForm.date} onChange={(event) => setLogForm({ ...logForm, date: event.target.value })} /></label><label>Meal<select value={logForm.mealType} onChange={(event) => setLogForm({ ...logForm, mealType: event.target.value as MealSlot })}><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label></div><div className="portal-info"><Info size={15} /><span>{food.calories === null || food.protein === null ? 'Unknown nutrients will stay unknown in the diary; they will not be saved as zero.' : `This logs the confirmed reference values for ${food.basis}.`}</span></div><div className="portal-form-actions"><button className="portal-secondary" onClick={() => setShowLog(false)}>Cancel</button><button className="portal-primary" disabled={savingLog || !logForm.date} onClick={logMeal}>{savingLog ? 'Saving…' : 'Confirm meal'}</button></div></section></div>}
   </section>;
 }
 
@@ -267,7 +320,35 @@ function ReportsPage({ mode }: { mode: 'center' | 'builder' | 'preview' }) {
   return <section className="nutrition-module"><PageHeader eyebrow="Reports center" title="Nutrition reports" description="Create reviewable, export-safe summaries with limitations included." action={<button className="portal-primary" onClick={() => navigate('/app/diet/reports/new')}><Plus size={16} /> New report</button>} />{reports.length ? <div className="portal-list">{reports.map((r) => <button key={r.id} onClick={() => navigate(`/app/diet/reports/${r.id}`)}><FileBarChart size={18} /><span><strong>{r.name}</strong><small>{r.period} · {r.sections.length} sections</small></span><ChevronRight size={16} /></button>)}</div> : <EmptyState icon={FileBarChart} title="No reports created" body="Build a report when you want to review or share a period." />}</section>;
 }
 
-function ExportsPage() { return <section className="nutrition-module"><PageHeader eyebrow="Export center" title="Export nutrition data" description="Prepare portable copies of your records. Exports preserve source and completeness fields." /><div className="export-grid">{[['Diary records', 'CSV', 'Meal entries and confirmed values'], ['Food library', 'JSON', 'Custom foods and provenance'], ['Weekly report', 'PDF', 'Printable review with caveats']].map(([name, format, desc]) => <article className="portal-card" key={name}><Download size={20} /><h2>{name}</h2><p>{desc}</p><span>{format}</span><button disabled title="Server-side export is not configured">Export unavailable</button></article>)}</div><div className="portal-info"><Info size={16} /><span>Export generation requires a backend endpoint. No download is simulated.</span></div></section>; }
+function downloadTextFile(filename: string, content: string, type: string) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value: unknown) {
+  if (value === null || value === undefined) return '';
+  const text = String(value);
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function ExportsPage() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { history, loading } = useAppSelector((state) => state.personal.diet);
+  const [customFoods] = useLocalState<FoodItem[]>('lifeos-custom-foods', []);
+  useEffect(() => { if (!history.length) void dispatch(fetchDiet(new Date().toISOString().slice(0, 10))); }, [dispatch, history.length]);
+  const exportDiary = () => {
+    const headings = ['date', 'meal_type', 'items', 'protein_g', 'energy_kcal', 'notes'];
+    const rows = history.map((log) => [log.date, log.mealType, log.items, log.protein, log.calories, log.notes].map(csvCell).join(','));
+    downloadTextFile(`lifeos-nutrition-diary-${new Date().toISOString().slice(0, 10)}.csv`, [headings.join(','), ...rows].join('\n'), 'text/csv;charset=utf-8');
+  };
+  const exportFoods = () => downloadTextFile(`lifeos-food-library-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), foods: [...FOOD_IDEAS, ...customFoods] }, null, 2), 'application/json');
+  return <section className="nutrition-module"><PageHeader eyebrow="Export center" title="Export nutrition data" description="Prepare portable copies of your records. Exports preserve source and completeness fields." /><div className="export-grid"><article className="portal-card"><Download size={20} /><h2>Diary records</h2><p>Meal entries and confirmed values. Unknown nutrient cells remain blank.</p><span>CSV</span><button disabled={loading || !history.length} onClick={exportDiary}>{loading ? 'Loading…' : history.length ? `Export ${history.length} records` : 'No records to export'}</button></article><article className="portal-card"><Download size={20} /><h2>Food library</h2><p>Meal ideas, custom foods, nutrient completeness and provenance.</p><span>JSON</span><button onClick={exportFoods}>Export {FOOD_IDEAS.length + customFoods.length} foods</button></article><article className="portal-card"><Download size={20} /><h2>Weekly report</h2><p>Printable review with its evidence and caveats included.</p><span>PDF via print</span><button onClick={() => navigate('/app/diet/reports')}>Choose report</button></article></div><div className="portal-info"><ShieldCheck size={16} /><span>Files are generated locally in your browser. Nothing is uploaded to create these exports.</span></div></section>;
+}
 
 function SharingPage() { const [enabled, setEnabled] = useLocalState('lifeos-nutrition-sharing', false); return <section className="nutrition-module"><PageHeader eyebrow="Permissions" title="Sharing" description="Control whether nutrition reports can be shared outside your account." /><div className="settings-stack"><SettingToggle icon={HeartHandshake} title="Allow report sharing" body="Creates permission for future share links; it does not publish existing data." checked={enabled} onChange={setEnabled} /><div className="portal-card"><h2>People with access</h2><p className="portal-body-copy">No one else has access.</p></div></div></section>; }
 

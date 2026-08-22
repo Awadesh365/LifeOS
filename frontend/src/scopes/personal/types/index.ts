@@ -248,8 +248,8 @@ export interface DietLog {
   date: string;
   mealType: string;
   items: string;
-  protein: number;
-  calories: number;
+  protein: number | null;
+  calories: number | null;
   notes: string;
 }
 

@@ -71,7 +71,7 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
   const [coverageByDate, setCoverageByDate] = useState<Record<string, Coverage>>(() => loadRecord('lifeos-nutrition-coverage', {}));
   const [targets, setTargets] = useState(() => loadRecord('lifeos-nutrition-targets', { calories: 2100, protein: 130 }));
   const [form, setForm] = useState<Omit<DietLog, 'id' | 'date'>>({
-    mealType: 'breakfast', items: '', protein: 0, calories: 0, notes: '',
+    mealType: 'breakfast', items: '', protein: null, calories: null, notes: '',
   });
 
   useEffect(() => { dispatch(fetchDiet(date)); }, [dispatch, date]);
@@ -141,7 +141,7 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
     setSaving(true);
     try {
       await dispatch(addDietLog({ date, ...form, items: form.items.trim() })).unwrap();
-      setForm({ mealType: 'breakfast', items: '', protein: 0, calories: 0, notes: '' });
+      setForm({ mealType: 'breakfast', items: '', protein: null, calories: null, notes: '' });
       setShowForm(false);
     } finally { setSaving(false); }
   };
@@ -152,7 +152,7 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
     try {
       await dispatch(addDietLog({
         date, mealType: meal.mealType, items: meal.items,
-        protein: Number(meal.protein || 0), calories: Number(meal.calories || 0),
+        protein: meal.protein, calories: meal.calories,
         notes: meal.notes ? `${meal.notes} · Copied from ${shortDate(meal.date)}` : `Copied from ${shortDate(meal.date)}`,
       })).unwrap();
     } finally { setSaving(false); }
@@ -226,7 +226,7 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
                       {recentMeals.map((meal) => (
                         <button key={meal.id} type="button" className="recent-meal-card" onClick={() => copyRecentMeal(meal)} disabled={saving}>
                           <span className="recent-meal-icon"><RotateCcw size={17} /></span>
-                          <span className="recent-meal-copy"><strong>{meal.items}</strong><small>{meal.mealType} · {meal.protein}g protein · {meal.calories} kcal</small></span>
+                          <span className="recent-meal-copy"><strong>{meal.items}</strong><small>{meal.mealType} · {meal.protein === null ? 'protein unknown' : `${meal.protein}g protein`} · {meal.calories === null ? 'energy unknown' : `${meal.calories} kcal`}</small></span>
                           <Copy size={16} />
                         </button>
                       ))}
@@ -257,7 +257,7 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
                             <div className="logged-meal" key={entry.id}>
                               <div className="logged-meal-main">
                                 <strong>{entry.items}</strong>
-                                <div className="logged-meal-meta"><span>{entry.protein}g protein</span><i /><span>{entry.calories} kcal</span><i /><span className="source-chip"><Check size={11} /> Manual · confirmed</span></div>
+                                <div className="logged-meal-meta"><span>{entry.protein === null ? 'Protein unknown' : `${entry.protein}g protein`}</span><i /><span>{entry.calories === null ? 'Energy unknown' : `${entry.calories} kcal`}</span><i /><span className="source-chip"><Check size={11} /> Manual · confirmed</span></div>
                                 {entry.notes && <p>{entry.notes}</p>}
                               </div>
                               <button className="meal-delete" type="button" onClick={() => dispatch(deleteDietLog(entry.id))} aria-label={`Delete ${entry.items}`}><Trash2 size={16} /></button>
@@ -305,8 +305,8 @@ export default function Diet({ isMobile = false, initialView = 'overview', initi
             <div className="meal-form-grid">
               <label>Meal<select value={form.mealType} onChange={(event) => setForm({ ...form, mealType: event.target.value as MealType })}>{MEAL_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}</select></label>
               <label className="meal-form-wide">What did you eat?<input autoFocus placeholder="e.g. rice, dal, paneer and curd" value={form.items} onChange={(event) => setForm({ ...form, items: event.target.value })} /></label>
-              <label>Protein recorded (g)<input type="number" min="0" step="0.1" placeholder="0" value={form.protein || ''} onChange={(event) => setForm({ ...form, protein: Number(event.target.value) || 0 })} /></label>
-              <label>Energy recorded (kcal)<input type="number" min="0" step="1" placeholder="0" value={form.calories || ''} onChange={(event) => setForm({ ...form, calories: Number(event.target.value) || 0 })} /></label>
+              <label>Protein recorded (g)<input type="number" min="0" step="0.1" placeholder="Unknown" value={form.protein ?? ''} onChange={(event) => setForm({ ...form, protein: event.target.value === '' ? null : Number(event.target.value) })} /></label>
+              <label>Energy recorded (kcal)<input type="number" min="0" step="1" placeholder="Unknown" value={form.calories ?? ''} onChange={(event) => setForm({ ...form, calories: event.target.value === '' ? null : Number(event.target.value) })} /></label>
               <label className="meal-form-wide">Context or notes <span>Optional</span><textarea rows={3} placeholder="Restaurant meal, estimated portion, busy workday…" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label>
             </div>
             <div className="nutrition-modal-note"><Info size={15} /> Enter only values you know. Missing is more useful than false precision.</div>
