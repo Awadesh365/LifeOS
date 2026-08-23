@@ -4,12 +4,13 @@ import config from '../config/env.js';
 import { defineLifeTrackerModels } from './schema.js';
 
 const sequelize = config.db.url
-  ? new Sequelize(config.db.url, { logging: false })
+  ? new Sequelize(config.db.url, { logging: false, pool: config.db.pool })
   : new Sequelize(config.db.name, config.db.user, config.db.password, {
     host: config.db.host,
     port: config.db.port,
     dialect: 'postgres',
     logging: false,
+    pool: config.db.pool,
   });
 
 const models = defineLifeTrackerModels(sequelize);

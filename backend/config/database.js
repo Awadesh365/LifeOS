@@ -5,7 +5,14 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const base = {
   dialect: 'postgres',
-  logging: false
+  logging: false,
+  pool: {
+    max: Number(process.env.DB_POOL_MAX || 5),
+    min: Number(process.env.DB_POOL_MIN || 0),
+    idle: Number(process.env.DB_POOL_IDLE_MS || 10000),
+    acquire: Number(process.env.DB_POOL_ACQUIRE_MS || 30000),
+    evict: Number(process.env.DB_POOL_EVICT_MS || 10000)
+  }
 };
 
 const TEST_DB_NAME_PATTERN = /(^|_|-)test($|_|-)/i;
@@ -33,15 +40,18 @@ const fromEnv = (envName) => {
     return { ...base, use_env_variable: 'TEST_DATABASE_URL' };
   }
 
-  if (process.env.DATABASE_URL) {
+  const databaseUrl = process.env.DATABASE_DIRECT_URL || process.env.DATABASE_URL;
+
+  if (databaseUrl) {
     if (isTestEnv) {
-      const derived = deriveTestDatabaseUrl(process.env.DATABASE_URL);
+      const derived = deriveTestDatabaseUrl(databaseUrl);
       if (derived) {
         process.env.SEQUELIZE_TEST_DATABASE_URL = derived;
         return { ...base, use_env_variable: 'SEQUELIZE_TEST_DATABASE_URL' };
       }
     }
-    return { ...base, use_env_variable: 'DATABASE_URL' };
+    process.env.SEQUELIZE_DATABASE_URL = databaseUrl;
+    return { ...base, use_env_variable: 'SEQUELIZE_DATABASE_URL' };
   }
 
   return {

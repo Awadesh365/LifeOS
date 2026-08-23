@@ -34,7 +34,10 @@ read_env() {
   printf '%s' "$fallback"
 }
 
-database_url="$(read_env DATABASE_URL '')"
+database_url="$(read_env DATABASE_DIRECT_URL '')"
+if [ -z "$database_url" ]; then
+  database_url="$(read_env DATABASE_URL '')"
+fi
 db_host="$(read_env DB_HOST '127.0.0.1')"
 db_port="$(read_env DB_PORT '5433')"
 db_name="$(read_env DB_NAME 'lifeos')"

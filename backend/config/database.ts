@@ -3,6 +3,7 @@ import config from './env.js';
 const base = {
   dialect: 'postgres',
   logging: false,
+  pool: config.db.pool,
 };
 
 const TEST_DB_NAME_PATTERN = /(^|_|-)test($|_|-)/i;
@@ -30,15 +31,18 @@ const fromEnv = (envName: string) => {
     return { ...base, use_env_variable: 'TEST_DATABASE_URL' };
   }
 
-  if (config.db.url) {
+  const databaseUrl = config.db.directUrl || config.db.url;
+
+  if (databaseUrl) {
     if (isTestEnv) {
-      const derived = deriveTestDatabaseUrl(config.db.url);
+      const derived = deriveTestDatabaseUrl(databaseUrl);
       if (derived) {
         process.env.SEQUELIZE_TEST_DATABASE_URL = derived;
         return { ...base, use_env_variable: 'SEQUELIZE_TEST_DATABASE_URL' };
       }
     }
-    return { ...base, use_env_variable: 'DATABASE_URL' };
+    process.env.SEQUELIZE_DATABASE_URL = databaseUrl;
+    return { ...base, use_env_variable: 'SEQUELIZE_DATABASE_URL' };
   }
 
   return {
