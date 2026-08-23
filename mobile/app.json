@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "LifeOS",
+    "slug": "lifeos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/lifeos-icon.png",
+    "scheme": "lifeos",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "icon": "./assets/images/lifeos-icon.png"
+    },
+    "android": {
+      "package": "com.lifeos.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1220",
+        "foregroundImage": "./assets/images/lifeos-foreground.png",
+        "monochromeImage": "./assets/images/lifeos-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/lifeos-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0B1220",
+          "image": "./assets/images/lifeos-foreground.png",
+          "imageWidth": 110
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
