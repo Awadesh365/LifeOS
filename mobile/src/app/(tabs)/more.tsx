@@ -8,10 +8,13 @@ import { Screen } from '@/components/screen';
 import { Card, SectionTitle } from '@/components/ui';
 import { modules } from '@/config/modules';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme, type ThemePreference } from '@/theme/provider';
 
 export default function MoreScreen() {
   const router = useRouter();
+  const { colors, preference, setPreference } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const connection = useQuery({
     queryKey: ['health-check'],
     queryFn: ({ signal }) => api.healthCheck(signal),
@@ -20,6 +23,28 @@ export default function MoreScreen() {
 
   return (
     <Screen eyebrow="One coherent system" title="All modules">
+      <Card>
+        <SectionTitle detail="Saved on this device" title="Appearance" />
+        <View accessibilityRole="radiogroup" style={styles.themeOptions}>
+          {([
+            ['system', 'theme-light-dark', 'System'],
+            ['light', 'white-balance-sunny', 'Light'],
+            ['dark', 'moon-waning-crescent', 'Dark'],
+          ] as const).map(([value, icon, label]) => (
+            <Pressable
+              accessibilityRole="radio"
+              accessibilityState={{ checked: preference === value }}
+              key={value}
+              onPress={() => setPreference(value as ThemePreference)}
+              style={[styles.themeOption, preference === value && styles.themeOptionActive]}
+            >
+              <MaterialCommunityIcons color={preference === value ? colors.primary : colors.inkMuted} name={icon} size={20} />
+              <Text style={[styles.themeLabel, preference === value && styles.themeLabelActive]}>{label}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </Card>
+
       <Card>
         <View style={styles.systemRow}>
           <View style={[styles.statusDot, connection.data?.ok ? styles.online : styles.offline]} />
@@ -56,7 +81,12 @@ export default function MoreScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  themeOptions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
+  themeOption: { alignItems: 'center', borderColor: colors.border, borderRadius: radii.sm, borderWidth: 1, flex: 1, gap: spacing.xs, padding: spacing.md },
+  themeOptionActive: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
+  themeLabel: { color: colors.inkMuted, fontSize: 12, fontWeight: '700' },
+  themeLabelActive: { color: colors.primary },
   systemRow: { alignItems: 'center', flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
   statusDot: { borderRadius: radii.pill, height: 10, width: 10 },
   online: { backgroundColor: colors.success },

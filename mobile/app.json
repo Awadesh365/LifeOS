@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/lifeos-icon.png",
     "scheme": "lifeos",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/images/lifeos-icon.png"
     },

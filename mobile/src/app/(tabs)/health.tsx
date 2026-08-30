@@ -6,7 +6,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Screen } from '@/components/screen';
 import { Button, Card, SectionTitle, StateMessage } from '@/components/ui';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 import type { HealthLog } from '@/types/api';
 import { localIsoDate } from '@/utils/date';
 
@@ -42,6 +43,8 @@ const fields: { key: NumberField; label: string; suffix: string; max?: number }[
 ];
 
 export default function HealthScreen() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const health = useQuery({
     queryKey: ['health', today],
     queryFn: ({ signal }) => api.health(today, signal),
@@ -84,6 +87,8 @@ export default function HealthScreen() {
 }
 
 function HealthForm({ initialLog }: { initialLog: HealthLog | null }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft>(() => initialLog ? {
     gymMinutes: String(initialLog.gymMinutes ?? ''),
@@ -168,6 +173,8 @@ function HealthForm({ initialLog }: { initialLog: HealthLog | null }) {
 }
 
 function Average({ icon, label, value }: { icon: React.ComponentProps<typeof MaterialCommunityIcons>['name']; label: string; value: string }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.average}>
       <MaterialCommunityIcons color={colors.primary} name={icon} size={18} />
@@ -177,7 +184,7 @@ function Average({ icon, label, value }: { icon: React.ComponentProps<typeof Mat
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   averageRow: { flexDirection: 'row', gap: spacing.sm },
   average: { alignItems: 'center', backgroundColor: colors.primarySoft, borderRadius: radii.md, flex: 1, gap: 2, padding: spacing.md },
   averageValue: { color: colors.ink, fontSize: 18, fontWeight: '900' },

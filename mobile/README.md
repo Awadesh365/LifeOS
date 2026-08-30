@@ -42,6 +42,7 @@ npm run android
 
 ```env
 EXPO_PUBLIC_API_URL=http://192.168.1.20:5000/api
+EXPO_PUBLIC_LIFEOS_USER_ID=awadesh
 ```
 
 Use HTTPS outside local development. `EXPO_PUBLIC_*` values are embedded in the application and must never contain secrets.
@@ -84,3 +85,8 @@ The preview profile produces an installable APK. Production produces an Android 
 ## Production security gate
 
 The current shared backend has no user authentication or authorization. Do not expose it publicly or ship the production app until authentication, per-user data ownership, rate limiting, HTTPS, and production observability are implemented. Mobile configuration is intentionally not pretending that a public environment variable is a secret.
+
+The theme preference is namespaced by `EXPO_PUBLIC_LIFEOS_USER_ID` and shared
+with the web portal through the backend. This identifier provides preference
+separation for the current private deployment; it is not a substitute for
+authenticated user identity.

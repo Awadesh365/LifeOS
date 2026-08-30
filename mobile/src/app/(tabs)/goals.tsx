@@ -5,9 +5,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Screen } from '@/components/screen';
 import { Card, ProgressBar, StateMessage } from '@/components/ui';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 export default function GoalsScreen() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const queryClient = useQueryClient();
   const goals = useQuery({
     queryKey: ['goals'],
@@ -85,7 +88,7 @@ export default function GoalsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   goalHeading: { alignItems: 'center', flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
   goalIcon: { alignItems: 'center', backgroundColor: colors.accentSoft, borderRadius: radii.md, height: 48, justifyContent: 'center', width: 48 },
   goalEmoji: { fontSize: 22 },

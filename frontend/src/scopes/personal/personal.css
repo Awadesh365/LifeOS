@@ -2,8 +2,7 @@
 
 /* ============================================================
    Personal scope tokens — aligned to the LifeOS premium design
-   system (light, crimson + navy, Plus Jakarta Sans). One theme,
-   no dark mode, so the Personal scope matches every other section.
+   system (crimson + navy, Plus Jakarta Sans), with light and dark palettes.
    ============================================================ */
 .lifeos-personal-scope {
   /* Surfaces */
@@ -66,6 +65,45 @@
 
   --sidebar-width: 264px;
   --header-height: 64px;
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] {
+  color-scheme: dark;
+  --bg-primary: #0C111B;
+  --bg-secondary: #101824;
+  --bg-card: #141B27;
+  --bg-card-hover: #1A2432;
+  --bg-sidebar: linear-gradient(180deg, rgba(20, 27, 39, 0.98) 0%, rgba(12, 17, 27, 0.98) 100%);
+  --bg-header: rgba(12, 17, 27, 0.84);
+  --border: #2C394B;
+  --border-light: #3A495D;
+  --text-primary: #E8EDF5;
+  --text-secondary: #A9B5C5;
+  --text-muted: #768397;
+  --text-heading: #F4F7FB;
+  --accent: #F06A6A;
+  --accent-glow: rgba(240, 106, 106, 0.22);
+  --accent-light: #FF8A8A;
+  --navy: #E8EDF5;
+  --navy-elevated: #D8E0EA;
+  --navy-soft: rgba(232, 237, 245, 0.08);
+  --success: #58C891;
+  --success-glow: rgba(88, 200, 145, 0.12);
+  --warning: #F0B45B;
+  --warning-glow: rgba(240, 180, 91, 0.13);
+  --danger: #F06A6A;
+  --danger-glow: rgba(240, 106, 106, 0.12);
+  --info: #69B7FF;
+  --info-glow: rgba(105, 183, 255, 0.12);
+  --gradient-1: linear-gradient(135deg, #F06A6A 0%, #E55555 100%);
+  --gradient-2: linear-gradient(135deg, #263244 0%, #1A2331 100%);
+  --gradient-3: linear-gradient(135deg, #F06A6A 0%, #E55555 100%);
+  --gradient-fire: linear-gradient(135deg, #F06A6A 0%, #F0B45B 100%);
+  --gradient-card: linear-gradient(135deg, rgba(240, 106, 106, 0.06), rgba(105, 183, 255, 0.04));
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.52);
+  --shadow-lg: 0 18px 42px -16px rgba(0, 0, 0, 0.62);
+  --shadow-glow: 0 10px 28px -14px rgba(240, 106, 106, 0.28);
 }
 
 /* ============================================================
@@ -613,8 +651,7 @@
   .lifeos-personal-scope .nutrition-bar-chart { gap: 4px; }
 }
 
-/* Dark mode retired for UI consistency — the [data-personal-theme]
-   attribute now resolves to the single premium light theme above. */
+/* The resolved theme is set by ThemeModeProvider and follows live system changes. */
 
 .lifeos-personal-scope *,
 .lifeos-personal-scope *::before,
@@ -5401,4 +5438,103 @@
   .lifeos-personal-scope .article-content {
     padding: 20px 16px;
   }
+}
+
+/* Keep the final shared product layer theme-aware. This block intentionally
+   lives last because the product-shell rules above override legacy sections. */
+.lifeos-personal-scope[data-personal-theme='dark'] {
+  --product-bg: #0c111b;
+  --product-surface: #141b27;
+  --product-surface-soft: #1a2432;
+  --product-ink: #f4f7fb;
+  --product-muted: #a9b5c5;
+  --product-border: #2c394b;
+  --product-accent: #f06a6a;
+  background: var(--product-bg);
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.app-layout, .main-area) {
+  background: var(--product-bg);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell {
+  border-right-color: var(--product-border);
+  background: rgba(20, 27, 39, 0.98);
+  box-shadow: 10px 0 28px -30px rgba(0, 0, 0, 0.8);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-section-toggle {
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-section-toggle:hover {
+  background: var(--product-surface-soft);
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell .MuiListItemButton-root {
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell .MuiListItemButton-root:hover {
+  border-color: var(--product-border);
+  background: var(--product-surface-soft);
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell .MuiListItemIcon-root {
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .header {
+  border-bottom-color: var(--product-border);
+  background: rgba(20, 27, 39, 0.94);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.header-search, .header-search:hover) {
+  border-color: var(--product-border);
+  background: var(--product-surface-soft);
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.header-search-kbd, .header-avatar-pill) {
+  border-color: var(--product-border);
+  background: var(--product-surface);
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .header-avatar-name {
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .header-today {
+  border-left-color: var(--product-border);
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .header-today strong {
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .command-palette {
+  border-color: var(--product-border);
+  background: var(--product-surface);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.command-search-row, .command-footer) {
+  border-color: var(--product-border);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.command-search-row button, .command-footer) {
+  background: var(--product-surface-soft);
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .command-result:hover,
+  .command-result:focus-visible,
+  .command-result--active
+) {
+  background: var(--product-surface-soft);
 }

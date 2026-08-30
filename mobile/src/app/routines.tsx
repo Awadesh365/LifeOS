@@ -5,9 +5,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Screen } from '@/components/screen';
 import { Card, StateMessage } from '@/components/ui';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 export default function RoutinesScreen() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const [type, setType] = useState<'weekday' | 'weekend'>('weekday');
   const routines = useQuery({
     queryKey: ['routines'],
@@ -63,7 +66,7 @@ export default function RoutinesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   segment: { backgroundColor: colors.surfaceMuted, borderRadius: radii.pill, flexDirection: 'row', padding: spacing.xs },
   segmentButton: { alignItems: 'center', borderRadius: radii.pill, flex: 1, padding: spacing.md },
   segmentActive: { backgroundColor: colors.ink },

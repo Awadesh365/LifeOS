@@ -24,6 +24,7 @@ import NutritionPortal from "./nutrition/NutritionPortal";
 import Training from "./pages/Training";
 import "./personal.css";
 import { getPersonalNavItem } from "./navigation";
+import { useThemeMode } from "../../theme/ThemeModeProvider";
 
 const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -57,6 +58,7 @@ const PersonalScope = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const currentNavItem = getPersonalNavItem(location.pathname);
+  const { resolvedTheme } = useThemeMode();
 
   useEffect(() => {
     document.title = "LifeOS — Personal workspace";
@@ -70,7 +72,7 @@ const PersonalScope = () => {
     <Box>
       <Box
         className="lifeos-personal-scope"
-        data-personal-theme="light"
+        data-personal-theme={resolvedTheme}
         sx={
           {
             "--lifeos-scopebar-height": "0px",

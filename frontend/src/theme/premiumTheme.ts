@@ -25,6 +25,27 @@ export const palette = {
   red: "#E55555",
 };
 
+export const darkPalette: typeof palette = {
+  primary: "#F06A6A",
+  primaryDark: "#E55555",
+  navy: "#E8EDF5",
+  navyElevated: "#D8E0EA",
+  background: "#0C111B",
+  surface: "#141B27",
+  surfaceAlt: "#1A2331",
+  surfaceElevated: "#222D3D",
+  foreground: "#F4F7FB",
+  muted: "#A9B5C5",
+  muted2: "#768397",
+  border: "#2C394B",
+  blue: "#69B7FF",
+  green: "#58C891",
+  yellow: "#F0B45B",
+  purple: "#B996FF",
+  teal: "#62C6F5",
+  red: "#F06A6A",
+};
+
 export const gradients = {
   primary: `linear-gradient(135deg, ${palette.primary} 0%, ${palette.primaryDark} 100%)`,
   navy: `linear-gradient(135deg, ${palette.navy} 0%, ${palette.navyElevated} 100%)`,
@@ -43,33 +64,42 @@ declare module "@mui/material/styles" {
   }
 }
 
-const themeOptions: ThemeOptions = {
+const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
+  const activePalette = mode === "dark" ? darkPalette : palette;
+  const activeGradients = {
+    primary: `linear-gradient(135deg, ${activePalette.primary} 0%, ${activePalette.primaryDark} 100%)`,
+    navy: `linear-gradient(135deg, ${activePalette.navy} 0%, ${activePalette.navyElevated} 100%)`,
+    surface: `linear-gradient(180deg, ${activePalette.surface} 0%, ${activePalette.surfaceAlt} 100%)`,
+    card: `linear-gradient(180deg, ${activePalette.surface} 0%, ${activePalette.surfaceAlt} 100%)`,
+  };
+
+  return {
   palette: {
-    mode: "light",
+    mode,
     primary: {
-      main: palette.primary,
-      dark: palette.primaryDark,
+      main: activePalette.primary,
+      dark: activePalette.primaryDark,
       contrastText: "#ffffff",
     },
     secondary: {
-      main: palette.navy,
-      dark: palette.navyElevated,
-      contrastText: "#ffffff",
+      main: activePalette.navy,
+      dark: activePalette.navyElevated,
+      contrastText: mode === "dark" ? "#111827" : "#ffffff",
     },
     background: {
-      default: palette.background,
-      paper: palette.surface,
+      default: activePalette.background,
+      paper: activePalette.surface,
     },
     text: {
-      primary: palette.foreground,
-      secondary: palette.muted,
-      disabled: palette.muted2,
+      primary: activePalette.foreground,
+      secondary: activePalette.muted,
+      disabled: activePalette.muted2,
     },
-    divider: palette.border,
-    error:   { main: palette.red },
-    success: { main: palette.green },
-    warning: { main: palette.yellow },
-    info:    { main: palette.blue },
+    divider: activePalette.border,
+    error:   { main: activePalette.red },
+    success: { main: activePalette.green },
+    warning: { main: activePalette.yellow },
+    info:    { main: activePalette.blue },
   },
   typography: {
     fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
@@ -120,12 +150,12 @@ const themeOptions: ThemeOptions = {
     MuiCssBaseline: {
       styleOverrides: {
         html: {
-          backgroundColor: palette.background,
+          backgroundColor: activePalette.background,
         },
         body: {
           fontFamily: '"Plus Jakarta Sans", "DM Sans", system-ui, sans-serif',
-          backgroundColor: palette.background,
-          color: palette.foreground,
+          backgroundColor: activePalette.background,
+          color: activePalette.foreground,
         },
         "::selection": {
           backgroundColor: "rgba(229, 85, 85, 0.18)",
@@ -157,8 +187,8 @@ const themeOptions: ThemeOptions = {
           "&:hover": { transform: "translateY(-1px)" },
         },
         outlined: {
-          borderColor: palette.border,
-          backgroundColor: palette.surface,
+          borderColor: activePalette.border,
+          backgroundColor: activePalette.surface,
         },
       },
     },
@@ -166,7 +196,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           backgroundImage: "none",
-          border: `1px solid ${palette.border}`,
+          border: `1px solid ${activePalette.border}`,
           boxShadow: "0 14px 32px -28px rgba(16,24,40,0.32)",
           borderRadius: "16px",
           overflow: "hidden",
@@ -196,7 +226,7 @@ const themeOptions: ThemeOptions = {
         root: {
           minHeight: 42,
           borderRadius: 10,
-          backgroundColor: palette.surface,
+          backgroundColor: activePalette.surface,
           transition: "box-shadow 0.18s ease, background-color 0.18s ease",
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#B7C2D0",
@@ -209,7 +239,7 @@ const themeOptions: ThemeOptions = {
           },
         },
         notchedOutline: {
-          borderColor: palette.border,
+          borderColor: activePalette.border,
         },
         input: {
           fontSize: "0.875rem",
@@ -220,7 +250,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           fontSize: "0.875rem",
-          color: palette.muted,
+          color: activePalette.muted,
         },
       },
     },
@@ -268,8 +298,8 @@ const themeOptions: ThemeOptions = {
     MuiTableCell: {
       styleOverrides: {
         head: {
-          color: palette.muted,
-          backgroundColor: palette.surfaceAlt,
+          color: activePalette.muted,
+          backgroundColor: activePalette.surfaceAlt,
           fontSize: "0.72rem",
           fontWeight: 700,
           letterSpacing: "0.04em",
@@ -292,14 +322,15 @@ const themeOptions: ThemeOptions = {
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: palette.navy,
+          backgroundColor: activePalette.navy,
+          color: mode === "dark" ? "#111827" : "#ffffff",
           fontSize: "0.75rem",
           fontWeight: 500,
           borderRadius: "8px",
           padding: "6px 10px",
         },
         arrow: {
-          color: palette.navy,
+          color: activePalette.navy,
         },
       },
     },
@@ -308,7 +339,7 @@ const themeOptions: ThemeOptions = {
         root: {
           borderRadius: "9999px",
           height: 6,
-          backgroundColor: palette.border,
+          backgroundColor: activePalette.border,
         },
         bar: {
           borderRadius: "9999px",
@@ -316,8 +347,12 @@ const themeOptions: ThemeOptions = {
       },
     },
   },
-  gradients,
-  palette_ext: palette,
+  gradients: activeGradients,
+  palette_ext: activePalette,
+  };
 };
 
-export const premiumTheme = createTheme(themeOptions);
+export const createPremiumTheme = (mode: "light" | "dark") =>
+  createTheme(createThemeOptions(mode));
+
+export const premiumTheme = createPremiumTheme("light");

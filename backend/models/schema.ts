@@ -4,6 +4,7 @@ import { DataTypes } from 'sequelize';
 export type LifeTrackerModel = ModelStatic<Model<any, any>>;
 
 export type LifeTrackerModels = {
+  UserPreference: LifeTrackerModel;
   Habit: LifeTrackerModel;
   HabitLog: LifeTrackerModel;
   Routine: LifeTrackerModel;
@@ -44,6 +45,17 @@ const baseOptions = {
 };
 
 export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels => {
+  const UserPreference = sequelize.define('UserPreference', {
+    userId: { type: DataTypes.STRING, primaryKey: true, field: 'user_id' },
+    theme: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'system',
+      validate: { isIn: [['system', 'light', 'dark']] },
+    },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'user_preferences' });
+
   const Habit = sequelize.define('Habit', {
     id: { type: DataTypes.STRING, primaryKey: true },
     name: { type: DataTypes.STRING, allowNull: false },
@@ -417,6 +429,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
   PerformedSet.belongsTo(Exercise, { foreignKey: 'exerciseId', as: 'exercise' });
 
   return {
+    UserPreference,
     Habit,
     HabitLog,
     Routine,

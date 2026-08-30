@@ -61,6 +61,11 @@ startup is disabled and the configured database must already be available.
 
 The health endpoint is `GET /api/health-check`.
 
+Per-user appearance preferences use `GET /api/preferences/:userId/theme` and
+`PUT /api/preferences/:userId/theme`. The current private clients default to the
+`awadesh` user id; authentication must replace this client-provided identity
+before a multi-user deployment.
+
 ## Verification
 
 ```bash

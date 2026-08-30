@@ -2,7 +2,8 @@ import type { PropsWithChildren, ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
+import { spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 interface ScreenProps extends PropsWithChildren {
   title: string;
@@ -20,6 +21,8 @@ export function Screen({
   refreshing = false,
   onRefresh,
 }: ScreenProps) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView
@@ -49,7 +52,7 @@ export function Screen({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, paddingBottom: 120, gap: spacing.lg },
   header: {

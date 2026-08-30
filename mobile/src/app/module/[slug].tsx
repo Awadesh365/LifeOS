@@ -6,7 +6,8 @@ import { Screen } from '@/components/screen';
 import { Card, StateMessage } from '@/components/ui';
 import { findModule } from '@/config/modules';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 import type { GenericRecord } from '@/types/api';
 
 export default function ModuleScreen() {
@@ -59,6 +60,8 @@ function RecordCard({
   primaryKeys: string[];
   secondaryKeys: string[];
 }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const titleEntry = primaryKeys.find((key) => hasValue(record[key]));
   const title = titleEntry ? formatValue(record[titleEntry]) : 'Untitled entry';
   const details = secondaryKeys
@@ -102,7 +105,7 @@ function humanize(value: string): string {
   return value.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase());
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   title: { color: colors.ink, fontSize: 18, fontWeight: '800', lineHeight: 24 },
   details: { borderTopColor: colors.border, borderTopWidth: 1, gap: spacing.md, marginTop: spacing.md, paddingTop: spacing.md },
   detailRow: { alignItems: 'flex-start', flexDirection: 'row', gap: spacing.md },

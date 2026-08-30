@@ -25,6 +25,7 @@ import relationshipsRoutes from '../routes/api_routes/relationships.routes.js';
 import routinesRoutes from '../routes/api_routes/routines.routes.js';
 import wealthRoutes from '../routes/api_routes/wealth.routes.js';
 import trainingRoutes from '../routes/api_routes/training.routes.js';
+import preferencesRoutes from '../routes/api_routes/preferences.routes.js';
 
 const app = express();
 
@@ -63,6 +64,7 @@ app.use('/api/career', careerRoutes);
 app.use('/api/articles', articlesRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/training', trainingRoutes);
+app.use('/api/preferences', preferencesRoutes);
 
 app.get('/api/health-check', (_req, res) => res.json({ ok: true }));
 

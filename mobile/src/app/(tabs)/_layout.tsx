@@ -3,7 +3,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
 
-import { colors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 const icon = (name: ComponentProps<typeof MaterialCommunityIcons>['name']) =>
   function TabIcon({ color, size }: { color: ColorValue; size: number }) {
@@ -11,6 +11,7 @@ const icon = (name: ComponentProps<typeof MaterialCommunityIcons>['name']) =>
   };
 
 export default function TabsLayout() {
+  const { colors } = useLifeOSTheme();
   return (
     <Tabs
       screenOptions={{

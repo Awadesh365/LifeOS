@@ -1,4 +1,40 @@
 .lifeos-personal-scope .nutrition-portal { min-height: calc(100vh - 76px); background: #f7f9fb; }
+.lifeos-personal-scope[data-personal-theme='dark'] .nutrition-portal { background: var(--bg-primary); }
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .nutrition-scroll-button,
+  .portal-secondary,
+  .portal-card,
+  .nutrition-portal-empty,
+  .insight-navigation a,
+  .nutrition-filter-bar label,
+  .food-card,
+  .portal-form-card,
+  .planner-grid,
+  .portal-dialog,
+  .portal-dialog-head > button,
+  .meal-picker-list button,
+  .coverage-summary > div,
+  .coverage-date,
+  .target-profile-card,
+  .portal-list > button,
+  .settings-layout > nav,
+  .setting-row select
+) { background: var(--bg-card); }
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .portal-form-grid input,
+  .portal-form-grid select,
+  .portal-form-grid textarea,
+  .planner-cell > button,
+  .planner-day
+) { background: var(--bg-secondary); color: var(--text-heading); }
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .portal-primary,
+  .insight-navigation a.active,
+  .settings-layout > nav a.active
+) { color: #111827; }
 .lifeos-personal-scope .header--with-navigation .header-left { flex: 0 0 clamp(220px, 20vw, 340px); }
 .lifeos-personal-scope .header--navigation-only .header-navigation { margin-left: 0; }
 .lifeos-personal-scope .header-avatar-pill--compact { width: 42px; padding: 0 5px; }

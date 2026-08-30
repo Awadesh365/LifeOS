@@ -6,10 +6,13 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Screen } from '@/components/screen';
 import { Card, ProgressBar, SectionTitle, StateMessage } from '@/components/ui';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 import { friendlyDate } from '@/utils/date';
 
 export default function TodayScreen() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const summary = useQuery({
     queryKey: ['dashboard'],
     queryFn: ({ signal }) => api.dashboard(signal),
@@ -111,6 +114,8 @@ export default function TodayScreen() {
 }
 
 function Metric({ icon, label, value }: { icon: React.ComponentProps<typeof MaterialCommunityIcons>['name']; label: string; value: number }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.metric}>
       <MaterialCommunityIcons color={colors.primary} name={icon} size={20} />
@@ -120,7 +125,7 @@ function Metric({ icon, label, value }: { icon: React.ComponentProps<typeof Mate
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   heroTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.lg },
   heroLabel: { color: colors.inkMuted, fontSize: 11, fontWeight: '800', letterSpacing: 1 },
   heroValue: { color: colors.ink, fontSize: 38, fontWeight: '900', letterSpacing: -1.5, marginTop: spacing.xs },

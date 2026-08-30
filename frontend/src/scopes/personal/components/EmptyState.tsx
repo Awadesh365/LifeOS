@@ -30,7 +30,7 @@ export default function EmptyState({
         border: '1px dashed',
         borderColor: 'divider',
         borderRadius: 3,
-        bgcolor: '#F9FAFC',
+        bgcolor: 'background.paper',
         textAlign: 'center',
       }}
     >
@@ -42,7 +42,7 @@ export default function EmptyState({
           mb: 2,
           placeItems: 'center',
           borderRadius: 2.5,
-          bgcolor: 'white',
+          bgcolor: 'action.hover',
           color: 'text.secondary',
           border: '1px solid',
           borderColor: 'divider',

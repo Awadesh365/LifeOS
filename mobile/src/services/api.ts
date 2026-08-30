@@ -28,6 +28,8 @@ export class ApiError extends Error {
 }
 
 type RequestOptions = Omit<RequestInit, 'body'> & { body?: unknown };
+type ThemePreference = 'system' | 'light' | 'dark';
+const LIFEOS_USER_ID = process.env.EXPO_PUBLIC_LIFEOS_USER_ID ?? 'awadesh';
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -56,6 +58,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 const dateQuery = (date: string) => `?date=${encodeURIComponent(date)}`;
 
 export const api = {
+  themePreference: (signal?: AbortSignal) =>
+    request<{ userId: string; theme: ThemePreference | null }>(
+      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/theme`,
+      { signal },
+    ),
+  saveThemePreference: (theme: ThemePreference) =>
+    request<{ userId: string; theme: ThemePreference }>(
+      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/theme`,
+      { method: 'PUT', body: { theme } },
+    ),
   dashboard: (signal?: AbortSignal) =>
     request<DashboardSummary>('/dashboard', { signal }),
   habits: (date: string, signal?: AbortSignal) =>

@@ -8,13 +8,18 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { colors, radii, shadows, spacing } from '@/theme';
+import { radii, shadows, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 export function Card({ children }: PropsWithChildren) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return <View style={styles.card}>{children}</View>;
 }
 
 export function SectionTitle({ title, detail }: { title: string; detail?: string }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.sectionTitle}>
       <Text style={styles.sectionHeading}>{title}</Text>
@@ -23,7 +28,10 @@ export function SectionTitle({ title, detail }: { title: string; detail?: string
   );
 }
 
-export function ProgressBar({ value, color = colors.primary }: { value: number; color?: string }) {
+export function ProgressBar({ value, color }: { value: number; color?: string }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
+  const progressColor = color ?? colors.primary;
   const percentage = Math.max(0, Math.min(100, value));
   return (
     <View
@@ -31,7 +39,7 @@ export function ProgressBar({ value, color = colors.primary }: { value: number; 
       accessibilityRole="progressbar"
       style={styles.progressTrack}
     >
-      <View style={[styles.progressValue, { backgroundColor: color, width: `${percentage}%` }]} />
+      <View style={[styles.progressValue, { backgroundColor: progressColor, width: `${percentage}%` }]} />
     </View>
   );
 }
@@ -49,6 +57,8 @@ export function StateMessage({
   loading?: boolean;
   action?: ReactNode;
 }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <Card>
       <View style={styles.state}>
@@ -76,6 +86,8 @@ export function Button({
   variant?: 'primary' | 'secondary' | 'danger';
   disabled?: boolean;
 }) {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <Pressable
       accessibilityRole="button"
@@ -93,7 +105,7 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

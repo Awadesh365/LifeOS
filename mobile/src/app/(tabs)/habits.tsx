@@ -14,13 +14,16 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Screen } from '@/components/screen';
 import { Button, Card, ProgressBar, StateMessage } from '@/components/ui';
 import { api } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 import type { Habit } from '@/types/api';
 import { localIsoDate } from '@/utils/date';
 
 const today = localIsoDate();
 
 export default function HabitsScreen() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [name, setName] = useState('');
@@ -161,7 +164,7 @@ export default function HabitsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   addButton: { alignItems: 'center', backgroundColor: colors.primary, borderRadius: radii.pill, height: 46, justifyContent: 'center', width: 46 },
   progressHeading: { alignItems: 'baseline', flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md },
   progressTitle: { color: colors.ink, fontSize: 25, fontWeight: '900' },

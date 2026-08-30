@@ -1,4 +1,4 @@
-export const colors = {
+export const lightColors = {
   background: '#F4F7F9',
   surface: '#FFFFFF',
   surfaceMuted: '#EDF2F5',
@@ -15,6 +15,29 @@ export const colors = {
   white: '#FFFFFF',
   tabBar: '#0B1220',
 } as const;
+
+export type ThemeColors = { [Key in keyof typeof lightColors]: string };
+
+export const darkColors: ThemeColors = {
+  background: '#0C111B',
+  surface: '#141B27',
+  surfaceMuted: '#1A2432',
+  ink: '#F4F7FB',
+  inkMuted: '#A9B5C5',
+  border: '#2C394B',
+  primary: '#5ED6C9',
+  primarySoft: '#183A39',
+  accent: '#F0A84E',
+  accentSoft: '#3B2B18',
+  success: '#58C891',
+  danger: '#F07171',
+  dangerSoft: '#3D2023',
+  white: '#FFFFFF',
+  tabBar: '#080D15',
+};
+
+// Kept as the default palette for code that does not render UI.
+export const colors = lightColors;
 
 export const spacing = {
   xs: 4,

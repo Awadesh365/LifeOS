@@ -2,9 +2,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { API_BASE_URL } from '@/services/api';
-import { colors, radii, spacing } from '@/theme';
+import { radii, spacing, type ThemeColors } from '@/theme';
+import { useLifeOSTheme } from '@/theme/provider';
 
 export function ConnectionBanner() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.banner}>
       <MaterialCommunityIcons color={colors.inkMuted} name="server-network" size={16} />
@@ -13,7 +16,7 @@ export function ConnectionBanner() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   banner: {
     alignItems: 'center',
     alignSelf: 'flex-start',
