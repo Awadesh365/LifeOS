@@ -27,6 +27,7 @@
   .portal-form-grid select,
   .portal-form-grid textarea,
   .planner-cell > button,
+  .planner-corner,
   .planner-day
 ) { background: var(--bg-secondary); color: var(--text-heading); }
 
@@ -34,7 +35,7 @@
   .portal-primary,
   .insight-navigation a.active,
   .settings-layout > nav a.active
-) { color: #111827; }
+) { color: #fff; }
 .lifeos-personal-scope .header--with-navigation .header-left { flex: 0 0 clamp(220px, 20vw, 340px); }
 .lifeos-personal-scope .header--navigation-only .header-navigation { margin-left: 0; }
 .lifeos-personal-scope .header-avatar-pill--compact { width: 42px; padding: 0 5px; }

@@ -8,3 +8,11 @@ export const getThemePreference = asyncHandler(async (req, res) => {
 export const setThemePreference = asyncHandler(async (req, res) => {
   res.json(await preferencesService.setThemePreference(req.params.userId, req.body?.theme));
 });
+
+export const getAppearancePreference = asyncHandler(async (req, res) => {
+  res.json(await preferencesService.getAppearancePreference(req.params.userId));
+});
+
+export const setAppearancePreference = asyncHandler(async (req, res) => {
+  res.json(await preferencesService.setAppearancePreference(req.params.userId, req.body));
+});

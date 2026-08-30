@@ -8,11 +8,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import { getPersonalNavItem, PERSONAL_NAV_GROUPS, type PersonalNavGroup } from '../navigation';
-import { useThemeMode, type ThemePreference } from '../../../theme/ThemeModeProvider';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -139,66 +135,10 @@ function SidebarNav({ items, scopedPath, isCollapsed, onNavClick }: SidebarNavPr
 }
 
 function SidebarProfile({ isCollapsed }: { isCollapsed: boolean }) {
-  const { preference, setPreference } = useThemeMode();
-  const options: { value: ThemePreference; label: string; icon: React.ReactNode }[] = [
-    { value: 'system', label: 'System', icon: <BrightnessAutoIcon fontSize="small" /> },
-    { value: 'light', label: 'Light', icon: <LightModeOutlinedIcon fontSize="small" /> },
-    { value: 'dark', label: 'Dark', icon: <DarkModeOutlinedIcon fontSize="small" /> },
-  ];
-
-  if (isCollapsed) {
-    const currentIndex = options.findIndex((option) => option.value === preference);
-    const next = options[(currentIndex + 1) % options.length];
-    return (
-      <Box sx={{ display: 'grid', placeItems: 'center', py: 1.25, borderTop: 1, borderColor: 'divider' }}>
-        <Tooltip title={`Theme: ${preference}. Switch to ${next.label}`} placement="right" arrow>
-          <IconButton aria-label={`Theme: ${preference}. Switch to ${next.label}`} onClick={() => setPreference(next.value)}>
-            {options[currentIndex].icon}
-          </IconButton>
-        </Tooltip>
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>Appearance</Typography>
-      <Box role="radiogroup" aria-label="Appearance" sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 0.75, mb: 2 }}>
-        {options.map((option) => (
-          <Box
-            component="button"
-            type="button"
-            role="radio"
-            aria-checked={preference === option.value}
-            aria-label={`${option.label} theme`}
-            key={option.value}
-            onClick={() => setPreference(option.value)}
-            sx={{
-              display: 'grid',
-              minWidth: 0,
-              minHeight: 54,
-              placeItems: 'center',
-              gap: 0.25,
-              p: 0.5,
-              border: 1,
-              borderColor: preference === option.value ? 'secondary.main' : 'divider',
-              borderRadius: 1.25,
-              backgroundColor: preference === option.value ? 'secondary.main' : 'transparent',
-              color: preference === option.value ? 'secondary.contrastText' : 'text.secondary',
-              cursor: 'pointer',
-              font: 'inherit',
-              '&:hover': { borderColor: 'text.secondary', backgroundColor: preference === option.value ? 'secondary.dark' : 'action.hover' },
-              '&:focus-visible': { outline: '3px solid rgba(229, 85, 85, 0.22)', outlineOffset: 1 },
-            }}
-          >
-            {option.icon}
-            <Typography component="span" sx={{ color: 'inherit', fontSize: '0.62rem', fontWeight: 700, lineHeight: 1.2 }}>
-              {option.label}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
+    <Box sx={{ p: isCollapsed ? 1.25 : 2, borderTop: 1, borderColor: 'divider' }}>
+      <Tooltip title={isCollapsed ? 'Awadesh · Personal OS' : ''} placement="right" arrow>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
         <Avatar sx={{ width: 32, height: 32, bgcolor: 'grey.300', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>A</Avatar>
         {!isCollapsed && (
           <Box>
@@ -206,7 +146,8 @@ function SidebarProfile({ isCollapsed }: { isCollapsed: boolean }) {
             <Typography variant="caption" color="text.secondary">Personal OS</Typography>
           </Box>
         )}
-      </Box>
+        </Box>
+      </Tooltip>
     </Box>
   );
 }

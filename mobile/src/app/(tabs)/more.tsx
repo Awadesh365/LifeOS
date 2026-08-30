@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
+import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -9,11 +9,11 @@ import { Card, SectionTitle } from '@/components/ui';
 import { modules } from '@/config/modules';
 import { api } from '@/services/api';
 import { radii, spacing, type ThemeColors } from '@/theme';
-import { useLifeOSTheme, type ThemePreference } from '@/theme/provider';
+import { useLifeOSTheme } from '@/theme/provider';
 
 export default function MoreScreen() {
   const router = useRouter();
-  const { colors, preference, setPreference } = useLifeOSTheme();
+  const { colors } = useLifeOSTheme();
   const styles = createStyles(colors);
   const connection = useQuery({
     queryKey: ['health-check'],
@@ -23,27 +23,24 @@ export default function MoreScreen() {
 
   return (
     <Screen eyebrow="One coherent system" title="All modules">
-      <Card>
-        <SectionTitle detail="Saved on this device" title="Appearance" />
-        <View accessibilityRole="radiogroup" style={styles.themeOptions}>
-          {([
-            ['system', 'theme-light-dark', 'System'],
-            ['light', 'white-balance-sunny', 'Light'],
-            ['dark', 'moon-waning-crescent', 'Dark'],
-          ] as const).map(([value, icon, label]) => (
-            <Pressable
-              accessibilityRole="radio"
-              accessibilityState={{ checked: preference === value }}
-              key={value}
-              onPress={() => setPreference(value as ThemePreference)}
-              style={[styles.themeOption, preference === value && styles.themeOptionActive]}
-            >
-              <MaterialCommunityIcons color={preference === value ? colors.primary : colors.inkMuted} name={icon} size={20} />
-              <Text style={[styles.themeLabel, preference === value && styles.themeLabelActive]}>{label}</Text>
-            </Pressable>
-          ))}
-        </View>
-      </Card>
+      <View style={styles.section}>
+        <SectionTitle detail="Personalize LifeOS" title="Settings" />
+        <Pressable
+          accessibilityHint="Opens theme and display settings"
+          accessibilityRole="button"
+          onPress={() => router.push('/appearance' as Href)}
+          style={({ pressed }) => [styles.settingLink, pressed && styles.pressed]}
+        >
+          <View style={styles.icon}>
+            <MaterialCommunityIcons color={colors.primary} name="palette-outline" size={22} />
+          </View>
+          <View style={styles.settingCopy}>
+            <Text style={styles.settingTitle}>Appearance</Text>
+            <Text style={styles.settingDescription}>Theme and display</Text>
+          </View>
+          <MaterialCommunityIcons color={colors.inkMuted} name="chevron-right" size={24} />
+        </Pressable>
+      </View>
 
       <Card>
         <View style={styles.systemRow}>
@@ -82,11 +79,10 @@ export default function MoreScreen() {
 }
 
 const createStyles = (colors: ThemeColors) => StyleSheet.create({
-  themeOptions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
-  themeOption: { alignItems: 'center', borderColor: colors.border, borderRadius: radii.sm, borderWidth: 1, flex: 1, gap: spacing.xs, padding: spacing.md },
-  themeOptionActive: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
-  themeLabel: { color: colors.inkMuted, fontSize: 12, fontWeight: '700' },
-  themeLabelActive: { color: colors.primary },
+  settingLink: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, borderWidth: 1, flexDirection: 'row', gap: spacing.md, padding: spacing.lg },
+  settingCopy: { flex: 1, gap: 3 },
+  settingTitle: { color: colors.ink, fontSize: 16, fontWeight: '800' },
+  settingDescription: { color: colors.inkMuted, fontSize: 12 },
   systemRow: { alignItems: 'center', flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
   statusDot: { borderRadius: radii.pill, height: 10, width: 10 },
   online: { backgroundColor: colors.success },

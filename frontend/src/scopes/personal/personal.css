@@ -84,9 +84,9 @@
   --accent: #F06A6A;
   --accent-glow: rgba(240, 106, 106, 0.22);
   --accent-light: #FF8A8A;
-  --navy: #E8EDF5;
-  --navy-elevated: #D8E0EA;
-  --navy-soft: rgba(232, 237, 245, 0.08);
+  --navy: #34465E;
+  --navy-elevated: #405671;
+  --navy-soft: rgba(105, 183, 255, 0.10);
   --success: #58C891;
   --success-glow: rgba(88, 200, 145, 0.12);
   --warning: #F0B45B;
@@ -5537,4 +5537,119 @@
   .command-result--active
 ) {
   background: var(--product-surface-soft);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .nutrition-tabs,
+  .meal-pattern-grid > div,
+  .adequacy-row > i
+) {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .nutrition-tabs button.active,
+  .nutrition-date-control,
+  .overview-metric-card,
+  .overview-empty-chart button,
+  .overview-actions,
+  .chart-target-line span
+) {
+  border-color: var(--border);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .overview-metric-card > em,
+  .meal-pattern-grid > div
+) {
+  border-color: var(--border);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .philosophy-summary-card,
+  .philosophy-quote,
+  .philosophy-principle-card,
+  .philosophy-standard-card
+) {
+  border-color: var(--product-border);
+  background: var(--product-surface);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .philosophy-summary-card h2,
+  .philosophy-section > h2,
+  .philosophy-section > .philosophy-lead,
+  .philosophy-quote blockquote,
+  .philosophy-principle-card h3,
+  .philosophy-standard-card h2
+) {
+  color: var(--product-ink);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .philosophy-summary-card p,
+  .philosophy-section > p,
+  .philosophy-principle-card p,
+  .philosophy-standard-intro,
+  .philosophy-standard-card li p,
+  .philosophy-standard-footer p
+) {
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .philosophy-section,
+  .philosophy-standard-card li
+) {
+  border-color: var(--product-border);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .philosophy-standard-footer {
+  background: var(--product-surface-soft);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .MuiTableCell-head,
+.lifeos-personal-scope[data-personal-theme='dark'] :is(.job-table th, .set-table-head) {
+  border-color: var(--product-border);
+  background: var(--product-surface-soft);
+  color: var(--product-muted);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .MuiTableCell-root {
+  border-color: var(--product-border);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .nutrition-secondary-button,
+  .recent-meal-card:hover,
+  .recent-meal-icon,
+  .icon-button,
+  .nutrition-modal,
+  .nutrition-modal-header > button,
+  .week-day,
+  .review-empty-state,
+  .review-footnote
+) {
+  border-color: var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .logged-meal,
+  .meal-form-grid input,
+  .meal-form-grid select,
+  .meal-form-grid textarea
+) {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell .MuiListItemButton-root.active {
+  border-color: #526984;
+  background: linear-gradient(135deg, #34465e 0%, #263548 100%);
+  color: #fff;
 }

@@ -22,6 +22,7 @@ import Career from "./pages/Career";
 import FuturePlans from "./pages/FuturePlans";
 import NutritionPortal from "./nutrition/NutritionPortal";
 import Training from "./pages/Training";
+import Appearance from "./pages/Appearance";
 import "./personal.css";
 import { getPersonalNavItem } from "./navigation";
 import { useThemeMode } from "../../theme/ThemeModeProvider";
@@ -142,6 +143,7 @@ const PersonalScope = () => {
               />
               <Route path="diet/*" element={<NutritionPortal isMobile={isMobile} />} />
               <Route path="training" element={<Training isMobile={isMobile} />} />
+              <Route path="settings/appearance" element={<Appearance />} />
               <Route path="*" element={<Navigate to="/app" replace />} />
             </Routes>
           </Box>

@@ -42,6 +42,7 @@ function ThemedStack() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="routines" options={{ title: 'My routine' }} />
+        <Stack.Screen name="appearance" options={{ title: 'Appearance' }} />
         <Stack.Screen name="module/[slug]" options={{ title: 'LifeOS' }} />
       </Stack>
     </>

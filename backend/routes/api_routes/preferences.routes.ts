@@ -6,5 +6,7 @@ const router = Router();
 
 router.get('/:userId/theme', preferencesController.getThemePreference);
 router.put('/:userId/theme', preferencesController.setThemePreference);
+router.get('/:userId/appearance', preferencesController.getAppearancePreference);
+router.put('/:userId/appearance', preferencesController.setAppearancePreference);
 
 export default router;

@@ -28,8 +28,8 @@ export const palette = {
 export const darkPalette: typeof palette = {
   primary: "#F06A6A",
   primaryDark: "#E55555",
-  navy: "#E8EDF5",
-  navyElevated: "#D8E0EA",
+  navy: "#34465E",
+  navyElevated: "#405671",
   background: "#0C111B",
   surface: "#141B27",
   surfaceAlt: "#1A2331",
@@ -84,7 +84,7 @@ const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
     secondary: {
       main: activePalette.navy,
       dark: activePalette.navyElevated,
-      contrastText: mode === "dark" ? "#111827" : "#ffffff",
+      contrastText: "#ffffff",
     },
     background: {
       default: activePalette.background,
@@ -306,7 +306,7 @@ const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
           textTransform: "uppercase",
         },
         root: {
-          borderColor: "#E8EDF3",
+          borderColor: activePalette.border,
         },
       },
     },

@@ -53,6 +53,8 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
       defaultValue: 'system',
       validate: { isIn: [['system', 'light', 'dark']] },
     },
+    primaryColor: { type: DataTypes.STRING(7), allowNull: false, defaultValue: '#E55555', field: 'primary_color' },
+    secondaryColor: { type: DataTypes.STRING(7), allowNull: false, defaultValue: '#1E2530', field: 'secondary_color' },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
   }, { ...baseOptions, tableName: 'user_preferences' });
 

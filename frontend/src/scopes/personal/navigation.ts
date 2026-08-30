@@ -65,6 +65,12 @@ export const PERSONAL_NAV_GROUPS: PersonalNavGroup[] = [
       { path: '/philosophy', icon: 'psychology', label: 'Core Philosophy' },
     ],
   },
+  {
+    section: 'Settings',
+    items: [
+      { path: '/settings/appearance', icon: 'palette', label: 'Appearance' },
+    ],
+  },
 ];
 
 export const PERSONAL_NAV_ITEMS = PERSONAL_NAV_GROUPS.flatMap((group) =>

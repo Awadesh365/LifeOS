@@ -315,3 +315,75 @@
   .lifeos-personal-scope .training-settings-grid { grid-template-columns: 1fr; }
   .lifeos-personal-scope .training-settings-modal { padding: 19px; }
 }
+
+/* The theme switcher controls every training surface, including buttons,
+   table-like rows, filters, drawers, and settings dialogs. */
+.lifeos-personal-scope[data-personal-theme='dark'] .training-tabs {
+  background: var(--bg-secondary);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .training-tabs button.active,
+  .training-date-nav,
+  .training-settings-button,
+  .training-empty-state,
+  .workout-plan-card,
+  .workout-plan-list button,
+  .execution-queue,
+  .set-logger-card,
+  .exercise-tools button,
+  .swap-panel button,
+  .progression-callout em,
+  .program-sidebar,
+  .program-week,
+  .program-day > div > button,
+  .library-filters label,
+  .library-filters input,
+  .library-filters select,
+  .exercise-card,
+  .adherence-ring::before,
+  .progress-metrics article,
+  .muscle-exposure-card,
+  .association-note,
+  .exercise-drawer,
+  .exercise-drawer header button,
+  .training-settings-modal,
+  .training-settings-modal header button,
+  .equipment-selector button,
+  .training-settings-modal > footer button
+) {
+  border-color: var(--border);
+  background: var(--bg-card);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .queue-head,
+  .swap-panel,
+  .set-table-row input,
+  .set-table-row select,
+  .pain-panel,
+  .program-day header,
+  .training-settings-grid input,
+  .training-settings-grid select
+) {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-heading);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] :is(
+  .workout-plan-list,
+  .workout-plan-list button,
+  .set-table-head,
+  .set-table-row,
+  .program-day > div > button,
+  .exercise-card footer,
+  .fault-row,
+  .alternative-row
+) {
+  border-color: var(--border);
+}
+
+.lifeos-personal-scope[data-personal-theme='dark'] .set-table-head {
+  background: var(--bg-secondary);
+}

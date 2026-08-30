@@ -19,5 +19,6 @@ describe('personal navigation', () => {
   it('resolves top-level and nested workspace routes for mobile context', () => {
     expect(getPersonalNavItem('/app')?.label).toBe('Dashboard');
     expect(getPersonalNavItem('/app/diet/history')?.label).toBe('Diet & Nutrition');
+    expect(getPersonalNavItem('/app/settings/appearance')?.section).toBe('Settings');
   });
 });
