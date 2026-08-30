@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -7,19 +8,28 @@ import {
   type PropsWithChildren,
 } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { createPremiumTheme } from "./premiumTheme";
-import { loadThemePreference, saveThemePreference } from "./themePreferenceApi";
+import { createPremiumTheme } from './premiumTheme';
+import { DEFAULT_BRAND_COLORS } from './brandColors';
+import { loadAppearancePreference, saveAppearancePreference } from './themePreferenceApi';
 
 export type ThemePreference = "system" | "light" | "dark";
 export type ResolvedTheme = Exclude<ThemePreference, "system">;
+export interface BrandColors {
+  primaryColor: string;
+  secondaryColor: string;
+}
 
 interface ThemeModeContextValue {
   preference: ThemePreference;
   resolvedTheme: ResolvedTheme;
+  brandColors: BrandColors;
   setPreference: (preference: ThemePreference) => void;
+  setBrandColors: (colors: Partial<BrandColors>) => void;
+  resetBrandColors: () => void;
 }
 
 const STORAGE_KEY = "lifeos-theme";
+const BRAND_STORAGE_KEY = 'lifeos-brand-colors';
 const ThemeModeContext = createContext<ThemeModeContextValue | null>(null);
 
 const getSystemTheme = (): ResolvedTheme =>
@@ -32,8 +42,21 @@ const readPreference = (): ThemePreference => {
     : "system";
 };
 
+const readBrandColors = (): BrandColors => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(BRAND_STORAGE_KEY) ?? '{}') as Partial<BrandColors>;
+    return {
+      primaryColor: /^#[0-9a-f]{6}$/i.test(stored.primaryColor ?? '') ? stored.primaryColor! : DEFAULT_BRAND_COLORS.primaryColor,
+      secondaryColor: /^#[0-9a-f]{6}$/i.test(stored.secondaryColor ?? '') ? stored.secondaryColor! : DEFAULT_BRAND_COLORS.secondaryColor,
+    };
+  } catch {
+    return { ...DEFAULT_BRAND_COLORS };
+  }
+};
+
 export function ThemeModeProvider({ children }: PropsWithChildren) {
   const [preference, setPreferenceState] = useState<ThemePreference>(readPreference);
+  const [brandColors, setBrandColorsState] = useState<BrandColors>(readBrandColors);
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
   const resolvedTheme = preference === "system" ? systemTheme : preference;
 
@@ -46,20 +69,19 @@ export function ThemeModeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let active = true;
-    void loadThemePreference()
+    void loadAppearancePreference()
       .then((remotePreference) => {
         if (!active) return;
-        if (remotePreference) {
-          localStorage.setItem(STORAGE_KEY, remotePreference);
-          setPreferenceState(remotePreference);
-          return;
-        }
-        return saveThemePreference(preference);
+        localStorage.setItem(STORAGE_KEY, remotePreference.theme);
+        localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(remotePreference));
+        setPreferenceState(remotePreference.theme);
+        setBrandColorsState({
+          primaryColor: remotePreference.primaryColor,
+          secondaryColor: remotePreference.secondaryColor,
+        });
       })
       .catch(() => undefined);
     return () => { active = false; };
-    // The initial local value bootstraps a new backend preference exactly once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -70,14 +92,25 @@ export function ThemeModeProvider({ children }: PropsWithChildren) {
   const setPreference = (next: ThemePreference) => {
     localStorage.setItem(STORAGE_KEY, next);
     setPreferenceState(next);
-    void saveThemePreference(next).catch(() => undefined);
+    void saveAppearancePreference({ theme: next }).catch(() => undefined);
   };
 
+  const setBrandColors = useCallback((next: Partial<BrandColors>) => {
+    setBrandColorsState((current) => {
+      const updated = { ...current, ...next };
+      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(updated));
+      void saveAppearancePreference(updated).catch(() => undefined);
+      return updated;
+    });
+  }, []);
+
+  const resetBrandColors = useCallback(() => setBrandColors({ ...DEFAULT_BRAND_COLORS }), [setBrandColors]);
+
   const contextValue = useMemo(
-    () => ({ preference, resolvedTheme, setPreference }),
-    [preference, resolvedTheme],
+    () => ({ preference, resolvedTheme, brandColors, setPreference, setBrandColors, resetBrandColors }),
+    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors],
   );
-  const theme = useMemo(() => createPremiumTheme(resolvedTheme), [resolvedTheme]);
+  const theme = useMemo(() => createPremiumTheme(resolvedTheme, brandColors), [resolvedTheme, brandColors]);
 
   return (
     <ThemeModeContext.Provider value={contextValue}>

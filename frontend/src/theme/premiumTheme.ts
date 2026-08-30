@@ -1,4 +1,6 @@
 import { createTheme, ThemeOptions } from "@mui/material/styles";
+import type { BrandColors } from './ThemeModeProvider';
+import { contrastText, DEFAULT_BRAND_COLORS, shadeHex } from './brandColors';
 
 // Design system colour palette (matches CSS custom properties)
 export const palette = {
@@ -64,8 +66,15 @@ declare module "@mui/material/styles" {
   }
 }
 
-const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
-  const activePalette = mode === "dark" ? darkPalette : palette;
+const createThemeOptions = (mode: "light" | "dark", brandColors: BrandColors): ThemeOptions => {
+  const modePalette = mode === "dark" ? darkPalette : palette;
+  const activePalette = {
+    ...modePalette,
+    primary: brandColors.primaryColor,
+    primaryDark: shadeHex(brandColors.primaryColor, mode === 'dark' ? 0.16 : -0.16),
+    navy: brandColors.secondaryColor,
+    navyElevated: shadeHex(brandColors.secondaryColor, mode === 'dark' ? 0.18 : -0.14),
+  };
   const activeGradients = {
     primary: `linear-gradient(135deg, ${activePalette.primary} 0%, ${activePalette.primaryDark} 100%)`,
     navy: `linear-gradient(135deg, ${activePalette.navy} 0%, ${activePalette.navyElevated} 100%)`,
@@ -79,12 +88,12 @@ const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
     primary: {
       main: activePalette.primary,
       dark: activePalette.primaryDark,
-      contrastText: "#ffffff",
+      contrastText: contrastText(activePalette.primary),
     },
     secondary: {
       main: activePalette.navy,
       dark: activePalette.navyElevated,
-      contrastText: "#ffffff",
+      contrastText: contrastText(activePalette.navy),
     },
     background: {
       default: activePalette.background,
@@ -298,8 +307,8 @@ const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
     MuiTableCell: {
       styleOverrides: {
         head: {
-          color: activePalette.muted,
-          backgroundColor: activePalette.surfaceAlt,
+          color: contrastText(activePalette.navy),
+          backgroundColor: activePalette.navy,
           fontSize: "0.72rem",
           fontWeight: 700,
           letterSpacing: "0.04em",
@@ -352,7 +361,7 @@ const createThemeOptions = (mode: "light" | "dark"): ThemeOptions => {
   };
 };
 
-export const createPremiumTheme = (mode: "light" | "dark") =>
-  createTheme(createThemeOptions(mode));
+export const createPremiumTheme = (mode: "light" | "dark", brandColors: BrandColors = DEFAULT_BRAND_COLORS) =>
+  createTheme(createThemeOptions(mode, brandColors));
 
 export const premiumTheme = createPremiumTheme("light");

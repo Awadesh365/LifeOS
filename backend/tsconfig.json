@@ -11,5 +11,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["config", "controllers", "middleware", "models", "routes", "schemas", "scripts", "services", "src", "utils"]
+  "include": ["config", "controllers", "middleware", "models", "routes", "schemas", "scripts", "services", "src", "types", "utils"]
 }

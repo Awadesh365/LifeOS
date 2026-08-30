@@ -5621,6 +5621,22 @@
   border-color: var(--product-border);
 }
 
+.lifeos-personal-scope :is(.MuiTableCell-head, .job-table th, .set-table-head) {
+  background: var(--navy);
+  color: var(--secondary-contrast);
+}
+
+.lifeos-personal-scope :is(
+  .nutrition-primary-button,
+  .review-empty-state button,
+  .training-primary-action,
+  .complete-set-button,
+  .program-detail-hero > button,
+  .training-settings-modal > footer button:last-child
+) {
+  color: var(--primary-contrast);
+}
+
 .lifeos-personal-scope[data-personal-theme='dark'] :is(
   .nutrition-secondary-button,
   .recent-meal-card:hover,
@@ -5649,7 +5665,17 @@
 }
 
 .lifeos-personal-scope[data-personal-theme='dark'] .sidebar-shell .MuiListItemButton-root.active {
-  border-color: #526984;
-  background: linear-gradient(135deg, #34465e 0%, #263548 100%);
-  color: #fff;
+  border-color: var(--navy);
+  background: var(--gradient-2);
+  color: var(--secondary-contrast);
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root.active {
+  border-color: var(--navy);
+  background: var(--gradient-2);
+  color: var(--secondary-contrast);
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root.active .MuiListItemIcon-root {
+  color: var(--secondary-contrast);
 }

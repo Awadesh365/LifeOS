@@ -100,7 +100,7 @@ export function Button({
         disabled && styles.buttonDisabled,
       ]}
     >
-      <Text style={[styles.buttonText, variant !== 'primary' && styles.buttonTextDark]}>{label}</Text>
+      <Text style={[styles.buttonText, variant === 'primary' ? { color: colors.primaryContrast } : styles.buttonTextDark]}>{label}</Text>
     </Pressable>
   );
 }

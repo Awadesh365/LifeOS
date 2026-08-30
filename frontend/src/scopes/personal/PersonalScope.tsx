@@ -26,6 +26,7 @@ import Appearance from "./pages/Appearance";
 import "./personal.css";
 import { getPersonalNavItem } from "./navigation";
 import { useThemeMode } from "../../theme/ThemeModeProvider";
+import { contrastText, hexToRgba, shadeHex } from "../../theme/brandColors";
 
 const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -59,7 +60,7 @@ const PersonalScope = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const currentNavItem = getPersonalNavItem(location.pathname);
-  const { resolvedTheme } = useThemeMode();
+  const { resolvedTheme, brandColors } = useThemeMode();
 
   useEffect(() => {
     document.title = "LifeOS — Personal workspace";
@@ -74,9 +75,21 @@ const PersonalScope = () => {
       <Box
         className="lifeos-personal-scope"
         data-personal-theme={resolvedTheme}
-        sx={
+        style={
           {
             "--lifeos-scopebar-height": "0px",
+            "--accent": brandColors.primaryColor,
+            "--accent-light": shadeHex(brandColors.primaryColor, resolvedTheme === 'dark' ? 0.18 : -0.16),
+            "--accent-glow": hexToRgba(brandColors.primaryColor, 0.22),
+            "--navy": brandColors.secondaryColor,
+            "--navy-elevated": shadeHex(brandColors.secondaryColor, resolvedTheme === 'dark' ? 0.18 : -0.14),
+            "--navy-soft": hexToRgba(brandColors.secondaryColor, 0.1),
+            "--gradient-1": `linear-gradient(135deg, ${brandColors.primaryColor} 0%, ${shadeHex(brandColors.primaryColor, -0.16)} 100%)`,
+            "--gradient-2": `linear-gradient(135deg, ${brandColors.secondaryColor} 0%, ${shadeHex(brandColors.secondaryColor, -0.14)} 100%)`,
+            "--gradient-3": `linear-gradient(135deg, ${brandColors.primaryColor} 0%, ${shadeHex(brandColors.primaryColor, -0.16)} 100%)`,
+            "--product-accent": brandColors.primaryColor,
+            "--primary-contrast": contrastText(brandColors.primaryColor),
+            "--secondary-contrast": contrastText(brandColors.secondaryColor),
           } as CSSProperties
         }
       >

@@ -29,6 +29,12 @@ export class ApiError extends Error {
 
 type RequestOptions = Omit<RequestInit, 'body'> & { body?: unknown };
 type ThemePreference = 'system' | 'light' | 'dark';
+type AppearancePreference = {
+  userId: string;
+  theme: ThemePreference;
+  primaryColor: string;
+  secondaryColor: string;
+};
 const LIFEOS_USER_ID = process.env.EXPO_PUBLIC_LIFEOS_USER_ID ?? 'awadesh';
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -67,6 +73,16 @@ export const api = {
     request<{ userId: string; theme: ThemePreference }>(
       `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/theme`,
       { method: 'PUT', body: { theme } },
+    ),
+  appearancePreference: (signal?: AbortSignal) =>
+    request<AppearancePreference>(
+      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/appearance`,
+      { signal },
+    ),
+  saveAppearancePreference: (preference: Partial<Omit<AppearancePreference, 'userId'>>) =>
+    request<AppearancePreference>(
+      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/appearance`,
+      { method: 'PUT', body: preference },
     ),
   dashboard: (signal?: AbortSignal) =>
     request<DashboardSummary>('/dashboard', { signal }),

@@ -1,29 +1,34 @@
-import type { ThemePreference } from "./ThemeModeProvider";
+import type { BrandColors, ThemePreference } from './ThemeModeProvider';
 
 const API_BASE = import.meta.env.VITE_PERSONAL_API_URL || "http://localhost:5000/api";
 const USER_ID = import.meta.env.VITE_LIFEOS_USER_ID || "awadesh";
-const endpoint = `${API_BASE}/preferences/${encodeURIComponent(USER_ID)}/theme`;
+const endpoint = `${API_BASE}/preferences/${encodeURIComponent(USER_ID)}/appearance`;
 
-interface ThemePreferenceResponse {
+export interface AppearancePreferenceResponse extends BrandColors {
   userId: string;
-  theme: ThemePreference | null;
+  theme: ThemePreference;
 }
 
 const isThemePreference = (value: unknown): value is ThemePreference =>
   value === "system" || value === "light" || value === "dark";
+const isHexColor = (value: unknown): value is string =>
+  typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 
-export async function loadThemePreference(): Promise<ThemePreference | null> {
+export async function loadAppearancePreference(): Promise<AppearancePreferenceResponse> {
   const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
-  if (!response.ok) throw new Error("Could not load theme preference");
-  const body = await response.json() as ThemePreferenceResponse;
-  return isThemePreference(body.theme) ? body.theme : null;
+  if (!response.ok) throw new Error('Could not load appearance preference');
+  const body = await response.json() as AppearancePreferenceResponse;
+  if (!isThemePreference(body.theme) || !isHexColor(body.primaryColor) || !isHexColor(body.secondaryColor)) {
+    throw new Error('Invalid appearance preference');
+  }
+  return body;
 }
 
-export async function saveThemePreference(theme: ThemePreference) {
+export async function saveAppearancePreference(preference: Partial<BrandColors> & { theme?: ThemePreference }) {
   const response = await fetch(endpoint, {
     method: "PUT",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
-    body: JSON.stringify({ theme }),
+    body: JSON.stringify(preference),
   });
-  if (!response.ok) throw new Error("Could not save theme preference");
+  if (!response.ok) throw new Error('Could not save appearance preference');
 }

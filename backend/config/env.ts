@@ -25,6 +25,10 @@ const config = {
     origins: parseCorsOrigins(process.env.CORS_ORIGINS),
     localDevOrigin: /^http:\/\/(localhost|127\.0\.0\.1):\d+$/,
   },
+  session: {
+    secret: process.env.SESSION_SECRET || 'development-only-change-this-session-secret',
+    maxAgeMs: numberFromEnv(process.env.SESSION_MAX_AGE_MS, 7 * 24 * 60 * 60 * 1000),
+  },
   db: {
     url: process.env.DATABASE_URL || null,
     directUrl: process.env.DATABASE_DIRECT_URL || null,
@@ -42,5 +46,9 @@ const config = {
     },
   },
 };
+
+if (config.env === 'production' && config.session.secret.length < 32) {
+  throw new Error('SESSION_SECRET must be at least 32 characters in production');
+}
 
 export default config;

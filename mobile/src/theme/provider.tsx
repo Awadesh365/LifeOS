@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -14,39 +15,82 @@ import { api } from '@/services/api';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 export type ResolvedTheme = Exclude<ThemePreference, 'system'>;
+export interface BrandColors {
+  primaryColor: string;
+  secondaryColor: string;
+}
 
 interface ThemeContextValue {
   colors: ThemeColors;
   preference: ThemePreference;
   resolvedTheme: ResolvedTheme;
+  brandColors: BrandColors;
   setPreference: (preference: ThemePreference) => void;
+  setBrandColors: (colors: Partial<BrandColors>) => void;
+  resetBrandColors: () => void;
 }
 
 const STORAGE_KEY = 'lifeos-theme';
+const BRAND_STORAGE_KEY = 'lifeos-brand-colors';
+export const DEFAULT_BRAND_COLORS: BrandColors = {
+  primaryColor: '#E55555',
+  secondaryColor: '#1E2530',
+};
 const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+const contrastText = (hex: string) => {
+  const value = Number.parseInt(hex.slice(1), 16);
+  const luminance = (0.299 * ((value >> 16) & 255)) + (0.587 * ((value >> 8) & 255)) + (0.114 * (value & 255));
+  return luminance > 165 ? '#111827' : '#FFFFFF';
+};
+
+const applyBrandColors = (colors: ThemeColors, brand: BrandColors): ThemeColors => ({
+  ...colors,
+  primary: brand.primaryColor,
+  primarySoft: `${brand.primaryColor}22`,
+  primaryContrast: contrastText(brand.primaryColor),
+  secondary: brand.secondaryColor,
+  secondarySoft: `${brand.secondaryColor}22`,
+  secondaryContrast: contrastText(brand.secondaryColor),
+  tabBar: brand.secondaryColor,
+});
 
 export function LifeOSThemeProvider({ children }: PropsWithChildren) {
   const systemTheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const [preference, setPreferenceState] = useState<ThemePreference>('system');
+  const [brandColors, setBrandColorsState] = useState<BrandColors>(DEFAULT_BRAND_COLORS);
   const resolvedTheme = preference === 'system' ? systemTheme : preference;
 
   useEffect(() => {
     let active = true;
     void (async () => {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      const storedBrand = await AsyncStorage.getItem(BRAND_STORAGE_KEY);
       const localPreference: ThemePreference =
         stored === 'system' || stored === 'light' || stored === 'dark' ? stored : 'system';
+      let localBrand = DEFAULT_BRAND_COLORS;
       try {
-        const remote = await api.themePreference();
+        const parsed = JSON.parse(storedBrand ?? '{}') as Partial<BrandColors>;
+        if (/^#[0-9a-f]{6}$/i.test(parsed.primaryColor ?? '') && /^#[0-9a-f]{6}$/i.test(parsed.secondaryColor ?? '')) {
+          localBrand = parsed as BrandColors;
+        }
+      } catch {
+        // Keep defaults when a local preference is malformed.
+      }
+      try {
+        const remote = await api.appearancePreference();
         const hydratedPreference = remote.theme ?? localPreference;
+        const hydratedBrand = { primaryColor: remote.primaryColor, secondaryColor: remote.secondaryColor };
         if (!active) return;
         setPreferenceState(hydratedPreference);
+        setBrandColorsState(hydratedBrand);
         Appearance.setColorScheme(hydratedPreference === 'system' ? 'unspecified' : hydratedPreference);
         await AsyncStorage.setItem(STORAGE_KEY, hydratedPreference);
-        if (remote.theme === null) await api.saveThemePreference(hydratedPreference);
+        await AsyncStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(hydratedBrand));
       } catch {
         if (!active) return;
         setPreferenceState(localPreference);
+        setBrandColorsState(localBrand);
         Appearance.setColorScheme(localPreference === 'system' ? 'unspecified' : localPreference);
       }
     })();
@@ -57,17 +101,31 @@ export function LifeOSThemeProvider({ children }: PropsWithChildren) {
     setPreferenceState(next);
     Appearance.setColorScheme(next === 'system' ? 'unspecified' : next);
     void AsyncStorage.setItem(STORAGE_KEY, next);
-    void api.saveThemePreference(next).catch(() => undefined);
+    void api.saveAppearancePreference({ theme: next }).catch(() => undefined);
   };
+
+  const setBrandColors = useCallback((next: Partial<BrandColors>) => {
+    setBrandColorsState((current) => {
+      const updated = { ...current, ...next };
+      void AsyncStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(updated));
+      void api.saveAppearancePreference(updated).catch(() => undefined);
+      return updated;
+    });
+  }, []);
+
+  const resetBrandColors = useCallback(() => setBrandColors(DEFAULT_BRAND_COLORS), [setBrandColors]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
-      colors: resolvedTheme === 'dark' ? darkColors : lightColors,
+      colors: applyBrandColors(resolvedTheme === 'dark' ? darkColors : lightColors, brandColors),
       preference,
       resolvedTheme,
+      brandColors,
       setPreference,
+      setBrandColors,
+      resetBrandColors,
     }),
-    [preference, resolvedTheme],
+    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
