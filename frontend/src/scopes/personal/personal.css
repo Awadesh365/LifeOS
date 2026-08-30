@@ -3636,6 +3636,34 @@
   color: var(--text-heading);
 }
 
+.lifeos-personal-scope .mobile-header-context {
+  min-width: 0;
+  text-align: center;
+}
+
+.lifeos-personal-scope .mobile-header-section {
+  display: block;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lifeos-personal-scope .mobile-header-context .mobile-header-title {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .lifeos-personal-scope .mobile-theme-btn {
   background: transparent;
   border: none;
@@ -4029,6 +4057,11 @@
 
 .lifeos-personal-scope .sidebar-shell .MuiListItemButton-root:hover {
   color: #111827;
+}
+
+.lifeos-personal-scope .sidebar-shell .MuiListItemButton-root:focus-visible {
+  outline: 3px solid rgba(229, 85, 85, 0.2);
+  outline-offset: 1px;
 }
 
 .lifeos-personal-scope .sidebar-shell .MuiListItemButton-root.active {
@@ -4758,6 +4791,49 @@
   scrollbar-gutter: stable;
 }
 
+.lifeos-personal-scope .sidebar-section-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+  padding: 6px 11px 4px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #7a8595;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.lifeos-personal-scope .sidebar-section-toggle span {
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+
+.lifeos-personal-scope .sidebar-section-toggle:hover {
+  background: #f7f8fa;
+  color: #2f3a49;
+}
+
+.lifeos-personal-scope .sidebar-section-toggle:focus-visible {
+  outline: 3px solid rgba(229, 85, 85, 0.18);
+  outline-offset: 1px;
+}
+
+.lifeos-personal-scope .sidebar-section-chevron {
+  flex: 0 0 auto;
+  transition: transform 0.18s ease;
+}
+
+.lifeos-personal-scope .sidebar-section-toggle[aria-expanded='true'] .sidebar-section-chevron {
+  transform: rotate(180deg);
+}
+
 .lifeos-personal-scope .sidebar-shell .MuiListItemButton-root {
   min-height: 42px;
   border: 1px solid transparent;
@@ -4989,7 +5065,8 @@
 }
 
 .lifeos-personal-scope .command-result:hover,
-.lifeos-personal-scope .command-result:focus-visible {
+.lifeos-personal-scope .command-result:focus-visible,
+.lifeos-personal-scope .command-result--active {
   outline: 0;
   background: #f4f6f9;
   color: var(--product-accent);

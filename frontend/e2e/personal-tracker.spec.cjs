@@ -17,6 +17,10 @@ test.describe("LifeOS experience", () => {
   test("keeps workspace navigation scoped under app", async ({ page }) => {
     await page.goto("/app");
 
+    const financeSection = page.getByRole("button", { name: "Finance" });
+    await expect(financeSection).toHaveAttribute("aria-expanded", "false");
+    await financeSection.click();
+    await expect(financeSection).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("link", { name: "Debt Tracker" })).toHaveAttribute(
       "href",
       "/app/debts",

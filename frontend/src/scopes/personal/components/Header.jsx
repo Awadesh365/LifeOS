@@ -3,33 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { PERSONAL_NAV_ITEMS } from '../navigation';
 
-const destinations = [
-  ['Dashboard', '/app', 'Overview'],
-  ['Daily Tracker', '/app/habits', 'Daily'],
-  ['My Routine', '/app/routine', 'Daily'],
-  ['Health', '/app/health', 'Daily'],
-  ['Gym & Training', '/app/training', 'Daily'],
-  ['Diet & Nutrition', '/app/diet', 'Daily'],
-  ['Wealth Management', '/app/wealth', 'Finance'],
-  ['Debt Tracker', '/app/debts', 'Finance'],
-  ['Emergency Fund', '/app/funds', 'Finance'],
-  ['Learning Paths', '/app/learning', 'Growth'],
-  ['Job Tracker', '/app/jobs', 'Growth'],
-  ['Career Development', '/app/career', 'Growth'],
-  ['Networking', '/app/networking', 'People'],
-  ['All Projects', '/app/projects', 'Projects'],
-  ['The Manifesto', '/app/articles', 'Knowledge'],
-  ['Goals & Dreams', '/app/goals', 'Vision'],
-  ['Future Plans', '/app/future-plans', 'Vision'],
-  ['Core Philosophy', '/app/philosophy', 'Vision'],
-];
+const destinations = PERSONAL_NAV_ITEMS.map(({ label, path, section }) => [
+  label,
+  path === '/' ? '/app' : `/app${path}`,
+  section,
+]);
 
 export default function Header({ title, subtitle, navigation, hideSearch = false, compactAvatar = false }) {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [activeResult, setActiveResult] = useState(0);
 
   const matches = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -55,6 +42,10 @@ export default function Header({ title, subtitle, navigation, hideSearch = false
     if (searchOpen) window.setTimeout(() => inputRef.current?.focus(), 0);
     else setQuery('');
   }, [searchOpen]);
+
+  useEffect(() => {
+    setActiveResult(0);
+  }, [query]);
 
   const goTo = (path) => {
     setSearchOpen(false);
@@ -106,7 +97,17 @@ export default function Header({ title, subtitle, navigation, hideSearch = false
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter' && matches[0]) goTo(matches[0][1]);
+                  if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setActiveResult((current) => Math.min(current + 1, Math.max(matches.length - 1, 0)));
+                  }
+                  if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    setActiveResult((current) => Math.max(current - 1, 0));
+                  }
+                  if (event.key === 'Enter' && matches[activeResult]) {
+                    goTo(matches[activeResult][1]);
+                  }
                 }}
                 placeholder="Search pages and tools…"
                 aria-label="Search pages and tools"
@@ -117,8 +118,14 @@ export default function Header({ title, subtitle, navigation, hideSearch = false
             </div>
             <div className="command-results">
               <p className="command-label">{query ? 'Search results' : 'Quick navigation'}</p>
-              {matches.length > 0 ? matches.map(([label, path, group]) => (
-                <button type="button" className="command-result" key={path} onClick={() => goTo(path)}>
+              {matches.length > 0 ? matches.map(([label, path, group], index) => (
+                <button
+                  type="button"
+                  className={`command-result ${index === activeResult ? 'command-result--active' : ''}`}
+                  key={path}
+                  onMouseEnter={() => setActiveResult(index)}
+                  onClick={() => goTo(path)}
+                >
                   <span><strong>{label}</strong><small>{group}</small></span>
                   <ArrowForwardIcon sx={{ fontSize: 17 }} />
                 </button>

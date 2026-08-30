@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Habits from "./pages/Habits";
@@ -23,6 +23,7 @@ import FuturePlans from "./pages/FuturePlans";
 import NutritionPortal from "./nutrition/NutritionPortal";
 import Training from "./pages/Training";
 import "./personal.css";
+import { getPersonalNavItem } from "./navigation";
 
 const usePersonalLocalStorage = <T,>(key: string, initialValue: T) => {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -52,8 +53,10 @@ const PersonalScope = () => {
     false,
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const currentNavItem = getPersonalNavItem(location.pathname);
 
   useEffect(() => {
     document.title = "LifeOS — Personal workspace";
@@ -98,9 +101,14 @@ const PersonalScope = () => {
                 >
                   <MenuIcon sx={{ fontSize: 20 }} />
                 </Button>
-                <Typography className="mobile-header-title" variant="body2">
-                  LifeOS Personal
-                </Typography>
+                <Box className="mobile-header-context">
+                  <Typography className="mobile-header-section" variant="caption">
+                    {currentNavItem?.section ?? "LifeOS"}
+                  </Typography>
+                  <Typography className="mobile-header-title" variant="body2">
+                    {currentNavItem?.label ?? "Personal workspace"}
+                  </Typography>
+                </Box>
                 <Box sx={{ width: 32 }} aria-hidden="true" />
               </Box>
             )}
