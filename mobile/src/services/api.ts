@@ -56,6 +56,24 @@ export function setApiCsrfToken(value: string | null) {
   csrfToken = value;
 }
 
+export interface MobileMaintenanceItem {
+  id: string;
+  name: string;
+  durationMinutes: number;
+  needState: 'can_wait' | 'approaching' | 'due' | 'needs_attention' | 'overdue' | 'backlog' | 'paused';
+  needReason: string;
+  area?: { name: string };
+}
+
+export interface MobileMaintenanceSummary {
+  counts: { needsAttention: number; hardDeadlines: number; openRepairs: number; waiting: number; backlog: number; assets: number };
+  attention: MobileMaintenanceItem[];
+  upcoming: MobileMaintenanceItem[];
+  areas: { id: string; name: string; icon: string; itemCount: number }[];
+  repairs: { id: string; title: string; state: string; nextAction?: string }[];
+  plan: { capacityMinutes: number; selectedItems: { itemId: string; priority: string }[] };
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const method = (options.method ?? 'GET').toUpperCase();
   const nativeCookie = Platform.OS === 'web' ? null : await SecureStore.getItemAsync(SESSION_COOKIE_KEY);
@@ -151,6 +169,10 @@ export const api = {
     request<HealthLog>('/health', { method: 'POST', body: input }),
   module: (endpoint: string, signal?: AbortSignal) =>
     request<GenericRecord[]>(endpoint, { signal }),
+  maintenanceSummary: (signal?: AbortSignal) =>
+    request<MobileMaintenanceSummary>('/maintenance/summary', { signal }),
+  completeMaintenanceItem: (id: string) =>
+    request<{ item: MobileMaintenanceItem }>(`/maintenance/items/${id}/complete`, { method: 'POST', body: {} }),
   healthCheck: (signal?: AbortSignal) =>
     request<{ ok: boolean }>('/health-check', { signal }),
 };

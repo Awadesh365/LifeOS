@@ -27,6 +27,7 @@ const legacyWorkspacePaths = [
   "future-plans",
   "diet",
   "training",
+  "maintenance",
 ];
 
 export default function Router() {

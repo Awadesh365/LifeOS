@@ -38,6 +38,12 @@ export type LifeTrackerModels = {
   ProgramExercise: LifeTrackerModel;
   WorkoutSession: LifeTrackerModel;
   PerformedSet: LifeTrackerModel;
+  MaintenanceArea: LifeTrackerModel;
+  MaintenanceItem: LifeTrackerModel;
+  MaintenanceOccurrence: LifeTrackerModel;
+  MaintenanceAsset: LifeTrackerModel;
+  RepairCase: LifeTrackerModel;
+  WeeklyMaintenancePlan: LifeTrackerModel;
 };
 
 const baseOptions = {
@@ -422,6 +428,103 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     completedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'completed_at' },
   }, { ...baseOptions, tableName: 'performed_sets' });
 
+  const MaintenanceArea = sequelize.define('MaintenanceArea', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    parentAreaId: { type: DataTypes.STRING, field: 'parent_area_id' },
+    name: { type: DataTypes.STRING(100), allowNull: false },
+    type: { type: DataTypes.STRING(40), allowNull: false },
+    icon: { type: DataTypes.STRING(40), allowNull: false, defaultValue: 'home_repair_service' },
+    standard: { type: DataTypes.TEXT },
+    active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    isDefault: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false, field: 'is_default' },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+  }, { ...baseOptions, tableName: 'maintenance_areas' });
+
+  const MaintenanceAsset = sequelize.define('MaintenanceAsset', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    areaId: { type: DataTypes.STRING, field: 'area_id' },
+    name: { type: DataTypes.STRING(140), allowNull: false },
+    category: { type: DataTypes.STRING(60), allowNull: false, defaultValue: 'other' },
+    brand: { type: DataTypes.STRING(100) },
+    model: { type: DataTypes.STRING(100) },
+    serialNumber: { type: DataTypes.STRING(160), field: 'serial_number' },
+    purchaseDate: { type: DataTypes.STRING(10), field: 'purchase_date' },
+    purchaseCost: { type: DataTypes.DECIMAL(12, 2), field: 'purchase_cost' },
+    warrantyEndsAt: { type: DataTypes.STRING(10), field: 'warranty_ends_at' },
+    location: { type: DataTypes.STRING(140) },
+    status: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'active' },
+    notes: { type: DataTypes.TEXT },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+  }, { ...baseOptions, tableName: 'maintenance_assets' });
+
+  const MaintenanceItem = sequelize.define('MaintenanceItem', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    areaId: { type: DataTypes.STRING, allowNull: false, field: 'area_id' },
+    assetId: { type: DataTypes.STRING, field: 'asset_id' },
+    name: { type: DataTypes.STRING(160), allowNull: false },
+    scheduleType: { type: DataTypes.STRING(40), allowNull: false, field: 'schedule_type' },
+    status: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'active' },
+    intervalDays: { type: DataTypes.INTEGER, field: 'interval_days' },
+    windowStartDays: { type: DataTypes.INTEGER, field: 'window_start_days' },
+    windowEndDays: { type: DataTypes.INTEGER, field: 'window_end_days' },
+    nextDate: { type: DataTypes.STRING(10), field: 'next_date' },
+    lastCompletedAt: { type: DataTypes.DATE, field: 'last_completed_at' },
+    conditionState: { type: DataTypes.STRING(30), field: 'condition_state' },
+    effort: { type: DataTypes.STRING(20), allowNull: false, defaultValue: 'light' },
+    durationMinutes: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 30, field: 'duration_minutes' },
+    priority: { type: DataTypes.STRING(20), allowNull: false, defaultValue: 'should' },
+    notes: { type: DataTypes.TEXT },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'maintenance_items' });
+
+  const MaintenanceOccurrence = sequelize.define('MaintenanceOccurrence', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    itemId: { type: DataTypes.STRING, allowNull: false, field: 'item_id' },
+    action: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'completed' },
+    plannedDate: { type: DataTypes.STRING(10), field: 'planned_date' },
+    completedAt: { type: DataTypes.DATE, field: 'completed_at' },
+    deferredUntil: { type: DataTypes.STRING(10), field: 'deferred_until' },
+    durationMinutes: { type: DataTypes.INTEGER, field: 'duration_minutes' },
+    cost: { type: DataTypes.DECIMAL(12, 2) },
+    notes: { type: DataTypes.TEXT },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+  }, { ...baseOptions, tableName: 'maintenance_occurrences' });
+
+  const RepairCase = sequelize.define('RepairCase', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    assetId: { type: DataTypes.STRING, field: 'asset_id' },
+    areaId: { type: DataTypes.STRING, field: 'area_id' },
+    title: { type: DataTypes.STRING(160), allowNull: false },
+    issue: { type: DataTypes.TEXT, allowNull: false },
+    state: { type: DataTypes.STRING(40), allowNull: false, defaultValue: 'reported' },
+    nextAction: { type: DataTypes.TEXT, field: 'next_action' },
+    waitingOn: { type: DataTypes.STRING(140), field: 'waiting_on' },
+    followUpDate: { type: DataTypes.STRING(10), field: 'follow_up_date' },
+    openedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'opened_at' },
+    closedAt: { type: DataTypes.DATE, field: 'closed_at' },
+    outcome: { type: DataTypes.TEXT },
+    cost: { type: DataTypes.DECIMAL(12, 2) },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'repair_cases' });
+
+  const WeeklyMaintenancePlan = sequelize.define('WeeklyMaintenancePlan', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    weekStart: { type: DataTypes.STRING(10), allowNull: false, field: 'week_start' },
+    capacityMinutes: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 240, field: 'capacity_minutes' },
+    selectedItems: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'selected_items' },
+    status: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'draft' },
+    notes: { type: DataTypes.TEXT },
+    committedAt: { type: DataTypes.DATE, field: 'committed_at' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'weekly_maintenance_plans' });
+
   Habit.hasMany(HabitLog, { foreignKey: 'habitId' });
   HabitLog.belongsTo(Habit, { foreignKey: 'habitId' });
   LearningSection.hasMany(LearningItem, { foreignKey: 'sectionId' });
@@ -442,6 +545,14 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
   WorkoutSession.hasMany(PerformedSet, { foreignKey: 'workoutSessionId', as: 'sets' });
   PerformedSet.belongsTo(WorkoutSession, { foreignKey: 'workoutSessionId', as: 'session' });
   PerformedSet.belongsTo(Exercise, { foreignKey: 'exerciseId', as: 'exercise' });
+  MaintenanceArea.hasMany(MaintenanceItem, { foreignKey: 'areaId', as: 'items' });
+  MaintenanceItem.belongsTo(MaintenanceArea, { foreignKey: 'areaId', as: 'area' });
+  MaintenanceAsset.hasMany(MaintenanceItem, { foreignKey: 'assetId', as: 'maintenanceItems' });
+  MaintenanceItem.belongsTo(MaintenanceAsset, { foreignKey: 'assetId', as: 'asset' });
+  MaintenanceItem.hasMany(MaintenanceOccurrence, { foreignKey: 'itemId', as: 'occurrences' });
+  MaintenanceOccurrence.belongsTo(MaintenanceItem, { foreignKey: 'itemId', as: 'item' });
+  MaintenanceAsset.hasMany(RepairCase, { foreignKey: 'assetId', as: 'repairCases' });
+  RepairCase.belongsTo(MaintenanceAsset, { foreignKey: 'assetId', as: 'asset' });
 
   return {
     User,
@@ -478,5 +589,11 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     ProgramExercise,
     WorkoutSession,
     PerformedSet,
+    MaintenanceArea,
+    MaintenanceItem,
+    MaintenanceOccurrence,
+    MaintenanceAsset,
+    RepairCase,
+    WeeklyMaintenancePlan,
   };
 };
