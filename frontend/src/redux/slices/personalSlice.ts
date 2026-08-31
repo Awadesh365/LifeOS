@@ -6,6 +6,7 @@ import type {
   Relationship, Relative, FuturePlan, DietLog, Supplement, CareerEntry,
 } from '../../scopes/personal/types';
 import { api } from '../../scopes/personal/api/client';
+import { secureFetch } from '../../auth/authApi';
 
 // ─── State Shape ──────────────────────────────────────────────
 
@@ -412,8 +413,8 @@ export const fetchHealth = createAsyncThunk(
   async (date: string, { rejectWithValue }) => {
     try {
       const [healthRes, weekRes] = await Promise.all([
-        fetch(`${HEALTH_API}/health?date=${date}`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/health/weekly`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/health?date=${date}`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/health/weekly`).then((r) => r.json()),
       ]);
       return { log: healthRes as HealthLog, weekly: weekRes as HealthLog[] };
     } catch (err: any) {
@@ -426,7 +427,7 @@ export const saveHealth = createAsyncThunk(
   'personal/saveHealth',
   async (data: Omit<HealthLog, 'id'>, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/health`, {
+      await secureFetch(`${HEALTH_API}/health`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -444,9 +445,9 @@ export const fetchWealth = createAsyncThunk(
   async ({ month, year }: { month: number; year: number }, { rejectWithValue }) => {
     try {
       const [entriesRes, invRes, sumRes] = await Promise.all([
-        fetch(`${HEALTH_API}/wealth/entries?month=${month}&year=${year}`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/wealth/investments`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/wealth/summary?month=${month}&year=${year}`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/wealth/entries?month=${month}&year=${year}`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/wealth/investments`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/wealth/summary?month=${month}&year=${year}`).then((r) => r.json()),
       ]);
       return {
         entries: entriesRes as WealthEntry[],
@@ -463,7 +464,7 @@ export const addWealthEntry = createAsyncThunk(
   'personal/addWealthEntry',
   async (entry: Omit<WealthEntry, 'id'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/wealth/entries`, {
+      const res = await secureFetch(`${HEALTH_API}/wealth/entries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(entry),
@@ -479,7 +480,7 @@ export const deleteWealthEntry = createAsyncThunk(
   'personal/deleteWealthEntry',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/wealth/entries/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/wealth/entries/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete wealth entry');
@@ -491,7 +492,7 @@ export const addInvestment = createAsyncThunk(
   'personal/addInvestment',
   async (inv: Omit<Investment, 'id'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/wealth/investments`, {
+      const res = await secureFetch(`${HEALTH_API}/wealth/investments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inv),
@@ -508,7 +509,7 @@ export const fetchDebts = createAsyncThunk(
   'personal/fetchDebts',
   async (_, { rejectWithValue }) => {
     try {
-      return await fetch(`${HEALTH_API}/debts`).then((r) => r.json()) as Debt[];
+      return await secureFetch(`${HEALTH_API}/debts`).then((r) => r.json()) as Debt[];
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to load debts');
     }
@@ -519,7 +520,7 @@ export const addDebt = createAsyncThunk(
   'personal/addDebt',
   async (debt: { personName: string; totalAmount: number; targetMonth: string; notes: string }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/debts`, {
+      const res = await secureFetch(`${HEALTH_API}/debts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(debt),
@@ -535,7 +536,7 @@ export const payDebt = createAsyncThunk(
   'personal/payDebt',
   async ({ id, amount }: { id: string; amount: number }, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/debts/${id}/pay`, {
+      await secureFetch(`${HEALTH_API}/debts/${id}/pay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
@@ -551,7 +552,7 @@ export const deleteDebt = createAsyncThunk(
   'personal/deleteDebt',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/debts/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/debts/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete debt');
@@ -565,8 +566,8 @@ export const fetchFunds = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const [fundsRes, sumRes] = await Promise.all([
-        fetch(`${HEALTH_API}/funds`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/funds/summary`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/funds`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/funds/summary`).then((r) => r.json()),
       ]);
       return { items: fundsRes as EmergencyFund[], summary: sumRes as FundSummary };
     } catch (err: any) {
@@ -579,7 +580,7 @@ export const addFund = createAsyncThunk(
   'personal/addFund',
   async (fund: { bankName: string; amount: number; targetAmount: number; type: string; notes: string }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/funds`, {
+      const res = await secureFetch(`${HEALTH_API}/funds`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fund),
@@ -595,7 +596,7 @@ export const depositFund = createAsyncThunk(
   'personal/depositFund',
   async ({ id, amount }: { id: string; amount: number }, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/funds/${id}/deposit`, {
+      await secureFetch(`${HEALTH_API}/funds/${id}/deposit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
@@ -612,7 +613,7 @@ export const fetchContacts = createAsyncThunk(
   'personal/fetchContacts',
   async (_, { rejectWithValue }) => {
     try {
-      return await fetch(`${HEALTH_API}/contacts`).then((r) => r.json()) as Contact[];
+      return await secureFetch(`${HEALTH_API}/contacts`).then((r) => r.json()) as Contact[];
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to load contacts');
     }
@@ -623,7 +624,7 @@ export const addContact = createAsyncThunk(
   'personal/addContact',
   async (contact: Omit<Contact, 'id' | 'lastContactDate'> & { lastContactDate?: string }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/contacts`, {
+      const res = await secureFetch(`${HEALTH_API}/contacts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -642,7 +643,7 @@ export const updateContact = createAsyncThunk(
   'personal/updateContact',
   async ({ id, updates }: { id: string; updates: Partial<Contact> }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/contacts/${id}`, {
+      const res = await secureFetch(`${HEALTH_API}/contacts/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -658,7 +659,7 @@ export const deleteContact = createAsyncThunk(
   'personal/deleteContact',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/contacts/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/contacts/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete contact');
@@ -671,7 +672,7 @@ export const fetchProjects = createAsyncThunk(
   'personal/fetchProjects',
   async () => {
     try {
-      const res = await fetch(`${HEALTH_API}/projects`);
+      const res = await secureFetch(`${HEALTH_API}/projects`);
       if (!res.ok) return [] as Project[];
       return await res.json() as Project[];
     } catch {
@@ -684,7 +685,7 @@ export const addProject = createAsyncThunk(
   'personal/addProject',
   async (project: Omit<Project, 'id'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/projects`, {
+      const res = await secureFetch(`${HEALTH_API}/projects`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(project),
@@ -700,7 +701,7 @@ export const updateProject = createAsyncThunk(
   'personal/updateProject',
   async ({ id, data }: { id: string; data: Partial<Project> }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/projects/${id}`, {
+      const res = await secureFetch(`${HEALTH_API}/projects/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -716,7 +717,7 @@ export const deleteProject = createAsyncThunk(
   'personal/deleteProject',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/projects/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/projects/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete project');
@@ -729,7 +730,7 @@ export const fetchRelationships = createAsyncThunk(
   'personal/fetchRelationships',
   async () => {
     try {
-      const res = await fetch(`${HEALTH_API}/relationships`);
+      const res = await secureFetch(`${HEALTH_API}/relationships`);
       if (!res.ok) return { relationship: null, relatives: [] };
       return await res.json() as { relationship: Relationship | null; relatives: Relative[] };
     } catch {
@@ -742,7 +743,7 @@ export const updateRelationship = createAsyncThunk(
   'personal/updateRelationship',
   async (data: Partial<Relationship>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/relationships`, {
+      const res = await secureFetch(`${HEALTH_API}/relationships`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -758,7 +759,7 @@ export const addRelative = createAsyncThunk(
   'personal/addRelative',
   async (relative: Omit<Relative, 'id'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/relationships/relatives`, {
+      const res = await secureFetch(`${HEALTH_API}/relationships/relatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(relative),
@@ -774,7 +775,7 @@ export const deleteRelative = createAsyncThunk(
   'personal/deleteRelative',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/relationships/relatives/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/relationships/relatives/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete relative');
@@ -787,7 +788,7 @@ export const fetchFuturePlans = createAsyncThunk(
   'personal/fetchFuturePlans',
   async (_, { rejectWithValue }) => {
     try {
-      return await fetch(`${HEALTH_API}/future-plans`).then((r) => r.json()) as FuturePlan[];
+      return await secureFetch(`${HEALTH_API}/future-plans`).then((r) => r.json()) as FuturePlan[];
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to load future plans');
     }
@@ -798,7 +799,7 @@ export const addFuturePlan = createAsyncThunk(
   'personal/addFuturePlan',
   async (plan: Omit<FuturePlan, 'id'> & { status?: FuturePlan['status'] }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/future-plans`, {
+      const res = await secureFetch(`${HEALTH_API}/future-plans`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...plan, status: plan.status || 'planned' }),
@@ -814,7 +815,7 @@ export const updateFuturePlan = createAsyncThunk(
   'personal/updateFuturePlan',
   async ({ id, updates }: { id: string; updates: Partial<FuturePlan> }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/future-plans/${id}`, {
+      const res = await secureFetch(`${HEALTH_API}/future-plans/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -830,7 +831,7 @@ export const deleteFuturePlan = createAsyncThunk(
   'personal/deleteFuturePlan',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/future-plans/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/future-plans/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete future plan');
@@ -844,9 +845,9 @@ export const fetchDiet = createAsyncThunk(
   async (date: string, { rejectWithValue }) => {
     try {
       const [logsRes, historyRes, suppRes] = await Promise.all([
-        fetch(`${HEALTH_API}/diet/logs?date=${date}`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/diet/logs`).then((r) => r.json()),
-        fetch(`${HEALTH_API}/diet/supplements`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/diet/logs?date=${date}`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/diet/logs`).then((r) => r.json()),
+        secureFetch(`${HEALTH_API}/diet/supplements`).then((r) => r.json()),
       ]);
       return {
         logs: logsRes as DietLog[],
@@ -863,7 +864,7 @@ export const addDietLog = createAsyncThunk(
   'personal/addDietLog',
   async (log: Omit<DietLog, 'id'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/diet/logs`, {
+      const res = await secureFetch(`${HEALTH_API}/diet/logs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(log),
@@ -879,7 +880,7 @@ export const deleteDietLog = createAsyncThunk(
   'personal/deleteDietLog',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/diet/logs/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/diet/logs/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete diet log');
@@ -891,7 +892,7 @@ export const addSupplement = createAsyncThunk(
   'personal/addSupplement',
   async (supp: Omit<Supplement, 'id' | 'remainingDays'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/diet/supplements`, {
+      const res = await secureFetch(`${HEALTH_API}/diet/supplements`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(supp),
@@ -907,7 +908,7 @@ export const consumeSupplement = createAsyncThunk(
   'personal/consumeSupplement',
   async ({ id, amount }: { id: string; amount: number }, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/diet/supplements/${id}/consume`, {
+      await secureFetch(`${HEALTH_API}/diet/supplements/${id}/consume`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount }),
@@ -924,7 +925,7 @@ export const fetchCareer = createAsyncThunk(
   'personal/fetchCareer',
   async (_, { rejectWithValue }) => {
     try {
-      return await fetch(`${HEALTH_API}/career`).then((r) => r.json()) as CareerEntry[];
+      return await secureFetch(`${HEALTH_API}/career`).then((r) => r.json()) as CareerEntry[];
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to load career entries');
     }
@@ -935,7 +936,7 @@ export const addCareerEntry = createAsyncThunk(
   'personal/addCareerEntry',
   async (entry: Omit<CareerEntry, 'id' | 'startDate'>, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/career`, {
+      const res = await secureFetch(`${HEALTH_API}/career`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...entry, startDate: new Date().toISOString().slice(0, 10) }),
@@ -951,7 +952,7 @@ export const updateCareerEntry = createAsyncThunk(
   'personal/updateCareerEntry',
   async ({ id, updates }: { id: string; updates: Partial<CareerEntry> }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${HEALTH_API}/career/${id}`, {
+      const res = await secureFetch(`${HEALTH_API}/career/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -967,7 +968,7 @@ export const deleteCareerEntry = createAsyncThunk(
   'personal/deleteCareerEntry',
   async (id: string, { rejectWithValue }) => {
     try {
-      await fetch(`${HEALTH_API}/career/${id}`, { method: 'DELETE' });
+      await secureFetch(`${HEALTH_API}/career/${id}`, { method: 'DELETE' });
       return id;
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to delete career entry');

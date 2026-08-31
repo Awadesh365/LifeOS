@@ -1,9 +1,10 @@
 import type { Exercise, ProgressionDecision, TodayTraining, TrainingProfile, TrainingProgram, TrainingReview, WorkoutSession } from './types';
+import { secureFetch } from '../../../auth/authApi';
 
 const BASE = `${import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:5000/api'}/training`;
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${BASE}${path}`, {
+  const response = await secureFetch(`${BASE}${path}`, {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init.headers },
   });

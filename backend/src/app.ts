@@ -10,6 +10,7 @@ import errorHandler from '../middleware/errorHandler.js';
 import notFound from '../middleware/notFound.js';
 import { requireAuth, requireCsrf } from '../middleware/auth.js';
 import { verifyRequestOrigin } from '../middleware/origin.js';
+import { createHttpError } from '../utils/httpError.js';
 
 import articlesRoutes from '../routes/api_routes/articles.routes.js';
 import careerRoutes from '../routes/api_routes/career.routes.js';
@@ -57,7 +58,7 @@ app.use(cors({
       callback(null, true);
       return;
     }
-    callback(new Error('Not allowed by CORS'));
+    callback(createHttpError(403, 'Request origin is not allowed'));
   },
 }));
 app.use(express.json({ limit: '256kb', type: 'application/json' }));

@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { z } from 'zod';
+import * as SecureStore from 'expo-secure-store';
 
 import type {
   DashboardSummary,
@@ -35,18 +36,56 @@ type AppearancePreference = {
   primaryColor: string;
   secondaryColor: string;
 };
-const LIFEOS_USER_ID = process.env.EXPO_PUBLIC_LIFEOS_USER_ID ?? 'awadesh';
+let csrfToken: string | null = null;
+const SESSION_COOKIE_KEY = 'lifeos-server-session-cookie';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName: string;
+}
+
+export interface AuthSession {
+  authenticated: boolean;
+  registrationOpen: boolean;
+  user?: AuthUser;
+  csrfToken?: string;
+}
+
+export function setApiCsrfToken(value: string | null) {
+  csrfToken = value;
+}
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const method = (options.method ?? 'GET').toUpperCase();
+  const nativeCookie = Platform.OS === 'web' ? null : await SecureStore.getItemAsync(SESSION_COOKIE_KEY);
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
+    credentials: 'include',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       ...options.headers,
+      ...(!['GET', 'HEAD', 'OPTIONS'].includes(method) && csrfToken
+        ? { 'X-CSRF-Token': csrfToken }
+        : {}),
+      ...(nativeCookie ? { Cookie: nativeCookie } : {}),
     },
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
+
+  if (Platform.OS !== 'web') {
+    const setCookie = response.headers.get('set-cookie');
+    const sessionCookie = setCookie?.split(';', 1)[0];
+    if (sessionCookie && /=.+/.test(sessionCookie)) {
+      await SecureStore.setItemAsync(SESSION_COOKIE_KEY, sessionCookie, {
+        keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+      });
+    }
+    if (response.status === 401 || path === '/auth/logout') {
+      await SecureStore.deleteItemAsync(SESSION_COOKIE_KEY);
+    }
+  }
 
   if (!response.ok) {
     const rawError: unknown = await response.json().catch(() => undefined);
@@ -64,24 +103,30 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 const dateQuery = (date: string) => `?date=${encodeURIComponent(date)}`;
 
 export const api = {
+  authSession: (signal?: AbortSignal) => request<AuthSession>('/auth/session', { signal }),
+  login: (email: string, password: string) =>
+    request<AuthSession>('/auth/login', { method: 'POST', body: { email, password } }),
+  register: (displayName: string, email: string, password: string) =>
+    request<AuthSession>('/auth/register', { method: 'POST', body: { displayName, email, password } }),
+  logout: () => request<void>('/auth/logout', { method: 'POST' }),
   themePreference: (signal?: AbortSignal) =>
     request<{ userId: string; theme: ThemePreference | null }>(
-      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/theme`,
+      '/preferences/me/theme',
       { signal },
     ),
   saveThemePreference: (theme: ThemePreference) =>
     request<{ userId: string; theme: ThemePreference }>(
-      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/theme`,
+      '/preferences/me/theme',
       { method: 'PUT', body: { theme } },
     ),
   appearancePreference: (signal?: AbortSignal) =>
     request<AppearancePreference>(
-      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/appearance`,
+      '/preferences/me/appearance',
       { signal },
     ),
   saveAppearancePreference: (preference: Partial<Omit<AppearancePreference, 'userId'>>) =>
     request<AppearancePreference>(
-      `/preferences/${encodeURIComponent(LIFEOS_USER_ID)}/appearance`,
+      '/preferences/me/appearance',
       { method: 'PUT', body: preference },
     ),
   dashboard: (signal?: AbortSignal) =>

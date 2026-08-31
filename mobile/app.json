@@ -32,7 +32,8 @@
           "image": "./assets/images/lifeos-foreground.png",
           "imageWidth": 110
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

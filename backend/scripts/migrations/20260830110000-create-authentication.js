@@ -3,12 +3,15 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
-      id: { type: Sequelize.STRING(64), primaryKey: true },
-      email: { type: Sequelize.STRING(254), allowNull: false, unique: true },
-      display_name: { type: Sequelize.STRING(80), allowNull: false },
+      id: { type: Sequelize.UUID, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
+      email: { type: Sequelize.STRING(255), allowNull: false, unique: true },
+      name: { type: Sequelize.STRING(255), allowNull: false },
       password_hash: { type: Sequelize.TEXT, allowNull: false },
+      role: { type: Sequelize.STRING(32), allowNull: false, defaultValue: 'admin' },
+      is_verified: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
+      is_active: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
       created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
-      last_login_at: { type: Sequelize.DATE, allowNull: true },
+      updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
     });
 
     await queryInterface.createTable('user_sessions', {
@@ -21,6 +24,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.dropTable('user_sessions');
-    await queryInterface.dropTable('users');
+    // Keep users: some LifeOS databases already had the owner table before
+    // session authentication was introduced, so dropping it would destroy accounts.
   },
 };

@@ -8,7 +8,9 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { getPersonalNavItem, PERSONAL_NAV_GROUPS, type PersonalNavGroup } from '../navigation';
+import { useAuth } from '../../../auth/AuthProvider';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -135,16 +137,22 @@ function SidebarNav({ items, scopedPath, isCollapsed, onNavClick }: SidebarNavPr
 }
 
 function SidebarProfile({ isCollapsed }: { isCollapsed: boolean }) {
+  const { user, logout } = useAuth();
   return (
     <Box sx={{ p: isCollapsed ? 1.25 : 2, borderTop: 1, borderColor: 'divider' }}>
-      <Tooltip title={isCollapsed ? 'Awadesh · Personal OS' : ''} placement="right" arrow>
+      <Tooltip title={isCollapsed ? `${user?.displayName ?? 'LifeOS'} · Personal OS` : ''} placement="right" arrow>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
-        <Avatar sx={{ width: 32, height: 32, bgcolor: 'grey.300', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>A</Avatar>
+        <Avatar sx={{ width: 32, height: 32, bgcolor: 'grey.300', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>{user?.displayName?.slice(0, 1).toUpperCase() ?? 'L'}</Avatar>
         {!isCollapsed && (
           <Box>
-            <Typography variant="body2" fontWeight={600}>Awadesh</Typography>
+            <Typography variant="body2" fontWeight={600}>{user?.displayName}</Typography>
             <Typography variant="caption" color="text.secondary">Personal OS</Typography>
           </Box>
+        )}
+        {!isCollapsed && (
+          <IconButton sx={{ ml: 'auto' }} size="small" aria-label="Sign out" title="Sign out" onClick={() => void logout()}>
+            <LogoutOutlinedIcon fontSize="small" />
+          </IconButton>
         )}
         </Box>
       </Tooltip>

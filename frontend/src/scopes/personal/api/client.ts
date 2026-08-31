@@ -32,6 +32,7 @@ import type {
   CareerEntry,
   QueryParams,
 } from '../types/index';
+import { secureFetch } from '../../../auth/authApi';
 
 const API_BASE = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:5000/api';
 
@@ -47,7 +48,7 @@ function withQuery(path: string, params: QueryParams = {}): string {
 }
 
 async function request<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await secureFetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });

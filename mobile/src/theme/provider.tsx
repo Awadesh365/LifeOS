@@ -55,13 +55,14 @@ const applyBrandColors = (colors: ThemeColors, brand: BrandColors): ThemeColors 
   tabBar: brand.secondaryColor,
 });
 
-export function LifeOSThemeProvider({ children }: PropsWithChildren) {
+export function LifeOSThemeProvider({ children, syncEnabled = true }: PropsWithChildren<{ syncEnabled?: boolean }>) {
   const systemTheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const [preference, setPreferenceState] = useState<ThemePreference>('system');
   const [brandColors, setBrandColorsState] = useState<BrandColors>(DEFAULT_BRAND_COLORS);
   const resolvedTheme = preference === 'system' ? systemTheme : preference;
 
   useEffect(() => {
+    if (!syncEnabled) return;
     let active = true;
     void (async () => {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
@@ -95,23 +96,23 @@ export function LifeOSThemeProvider({ children }: PropsWithChildren) {
       }
     })();
     return () => { active = false; };
-  }, []);
+  }, [syncEnabled]);
 
-  const setPreference = (next: ThemePreference) => {
+  const setPreference = useCallback((next: ThemePreference) => {
     setPreferenceState(next);
     Appearance.setColorScheme(next === 'system' ? 'unspecified' : next);
     void AsyncStorage.setItem(STORAGE_KEY, next);
-    void api.saveAppearancePreference({ theme: next }).catch(() => undefined);
-  };
+    if (syncEnabled) void api.saveAppearancePreference({ theme: next }).catch(() => undefined);
+  }, [syncEnabled]);
 
   const setBrandColors = useCallback((next: Partial<BrandColors>) => {
     setBrandColorsState((current) => {
       const updated = { ...current, ...next };
       void AsyncStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(updated));
-      void api.saveAppearancePreference(updated).catch(() => undefined);
+      if (syncEnabled) void api.saveAppearancePreference(updated).catch(() => undefined);
       return updated;
     });
-  }, []);
+  }, [syncEnabled]);
 
   const resetBrandColors = useCallback(() => setBrandColors(DEFAULT_BRAND_COLORS), [setBrandColors]);
 
@@ -125,7 +126,7 @@ export function LifeOSThemeProvider({ children }: PropsWithChildren) {
       setBrandColors,
       resetBrandColors,
     }),
-    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors],
+    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors, setPreference],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

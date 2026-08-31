@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
+import { randomBytes } from 'node:crypto';
 
 // Load backend/.env in both source (config/) and compiled (dist/config/) runs.
 [
@@ -17,6 +18,7 @@ const numberFromEnv = (value: string | undefined, fallback: number) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
 };
+const configuredSessionSecret = process.env.SESSION_SECRET;
 
 const config = {
   env: process.env.NODE_ENV || 'development',
@@ -26,7 +28,7 @@ const config = {
     localDevOrigin: /^http:\/\/(localhost|127\.0\.0\.1):\d+$/,
   },
   session: {
-    secret: process.env.SESSION_SECRET || 'development-only-change-this-session-secret',
+    secret: configuredSessionSecret || randomBytes(32).toString('hex'),
     maxAgeMs: numberFromEnv(process.env.SESSION_MAX_AGE_MS, 7 * 24 * 60 * 60 * 1000),
   },
   db: {
@@ -47,7 +49,7 @@ const config = {
   },
 };
 
-if (config.env === 'production' && config.session.secret.length < 32) {
+if (config.env === 'production' && (!configuredSessionSecret || configuredSessionSecret.length < 32)) {
   throw new Error('SESSION_SECRET must be at least 32 characters in production');
 }
 

@@ -1,6 +1,8 @@
 import { lazy } from "react";
 import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import Loadable from "../components/ui/Loadable";
+import LoginPage from '../auth/LoginPage';
+import RequireAuth from '../auth/RequireAuth';
 
 const Home = Loadable(lazy(() => import("../scopes/home/HomePage")));
 const PersonalTracker = Loadable(
@@ -35,8 +37,9 @@ export default function Router() {
     },
     {
       path: "/app/*",
-      element: <PersonalTracker />,
+      element: <RequireAuth><PersonalTracker /></RequireAuth>,
     },
+    { path: '/login', element: <LoginPage /> },
     ...legacyWorkspacePaths.map((path) => ({
       path: `/${path}`,
       element: <Navigate to={`/app/${path}`} replace />,

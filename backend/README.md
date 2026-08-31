@@ -34,6 +34,8 @@ The local configuration follows this precedence:
 - `DATABASE_DIRECT_URL` is preferred by migrations and database administration commands.
 - When neither URL is enabled, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` are used.
 - `DB_POOL_*` variables configure the Sequelize runtime and migration connection pools.
+- `SESSION_SECRET` must be a random value of at least 32 characters in production.
+- `SESSION_MAX_AGE_MS` controls the rolling server-side session lifetime.
 
 The bundled project-local PostgreSQL cluster uses `127.0.0.1:5433` so it does
 not conflict with a system PostgreSQL server commonly running on port `5432`.
@@ -59,12 +61,14 @@ npm run db:stop
 If `DB_HOST` or `DATABASE_URL` points to a remote host, automatic database
 startup is disabled and the configured database must already be available.
 
-The health endpoint is `GET /api/health-check`.
+The health endpoint is `GET /api/health-check`. All other feature endpoints
+require an authenticated server-side session and a CSRF header for mutations.
 
-Per-user appearance preferences use `GET /api/preferences/:userId/theme` and
-`PUT /api/preferences/:userId/theme`. The current private clients default to the
-`awadesh` user id; authentication must replace this client-provided identity
-before a multi-user deployment.
+Open `/login` in the web portal or the mobile sign-in screen to create the first
+owner account. Registration closes automatically afterward. Session identifiers
+are opaque, stored in PostgreSQL, and sent to the browser only through a Secure,
+HttpOnly, SameSite cookie. The server derives the preference owner from that
+session and ignores client-provided user identity.
 
 ## Verification
 

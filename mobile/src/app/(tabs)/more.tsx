@@ -10,10 +10,12 @@ import { modules } from '@/config/modules';
 import { api } from '@/services/api';
 import { radii, spacing, type ThemeColors } from '@/theme';
 import { useLifeOSTheme } from '@/theme/provider';
+import { useAuth } from '@/auth/provider';
 
 export default function MoreScreen() {
   const router = useRouter();
   const { colors } = useLifeOSTheme();
+  const { user, logout } = useAuth();
   const styles = createStyles(colors);
   const connection = useQuery({
     queryKey: ['health-check'],
@@ -41,6 +43,15 @@ export default function MoreScreen() {
           <MaterialCommunityIcons color={colors.inkMuted} name="chevron-right" size={24} />
         </Pressable>
       </View>
+
+      <Pressable accessibilityRole="button" onPress={() => void logout()} style={({ pressed }) => [styles.signOut, pressed && styles.pressed]}>
+        <View style={styles.settingCopy}>
+          <Text style={styles.settingTitle}>{user?.displayName}</Text>
+          <Text style={styles.settingDescription}>{user?.email}</Text>
+        </View>
+        <MaterialCommunityIcons color={colors.danger} name="logout" size={22} />
+        <Text style={styles.signOutText}>Sign out</Text>
+      </Pressable>
 
       <Card>
         <View style={styles.systemRow}>
@@ -83,6 +94,8 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   settingCopy: { flex: 1, gap: 3 },
   settingTitle: { color: colors.ink, fontSize: 16, fontWeight: '800' },
   settingDescription: { color: colors.inkMuted, fontSize: 12 },
+  signOut: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, borderWidth: 1, flexDirection: 'row', gap: spacing.sm, padding: spacing.lg },
+  signOutText: { color: colors.danger, fontSize: 13, fontWeight: '800' },
   systemRow: { alignItems: 'center', flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg },
   statusDot: { borderRadius: radii.pill, height: 10, width: 10 },
   online: { backgroundColor: colors.success },

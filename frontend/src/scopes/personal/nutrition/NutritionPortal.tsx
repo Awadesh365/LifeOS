@@ -12,6 +12,7 @@ import Header from '../components/Header';
 import Diet from '../pages/Diet';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { addDietLog, fetchDiet } from '../../../redux/slices/personalSlice';
+import { secureFetch } from '../../../auth/authApi';
 import '../nutrition-portal.css';
 
 type NutritionValue = number | null;
@@ -79,11 +80,11 @@ function useLocalState<T>(key: string, initial: T) {
       try {
         const pending = localStorage.getItem(pendingKey);
         if (pending !== null) {
-          const response = await fetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(pending) }) });
+          const response = await secureFetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(pending) }) });
           if (response.ok) localStorage.removeItem(pendingKey);
           return;
         }
-        const response = await fetch(endpoint);
+        const response = await secureFetch(endpoint);
         if (!response.ok) return;
         const record = await response.json() as { value: T | null };
         if (record.value !== null && active) {
@@ -91,7 +92,7 @@ function useLocalState<T>(key: string, initial: T) {
           localStorage.setItem(key, JSON.stringify(record.value));
         } else if (record.value === null) {
           const local = localStorage.getItem(key);
-          if (local !== null) await fetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(local) }) });
+          if (local !== null) await secureFetch(endpoint, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: JSON.parse(local) }) });
         }
       } catch {
         // Local data remains available and mutations stay queued for the next mount.
@@ -105,7 +106,7 @@ function useLocalState<T>(key: string, initial: T) {
     localStorage.setItem(key, JSON.stringify(result));
     const pendingKey = `${key}--pending`;
     localStorage.setItem(pendingKey, JSON.stringify(result));
-    void fetch(`${NUTRITION_API}/diet/records/${encodeURIComponent(key)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: result }) })
+    void secureFetch(`${NUTRITION_API}/diet/records/${encodeURIComponent(key)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: result }) })
       .then((response) => { if (response.ok && localStorage.getItem(pendingKey) === JSON.stringify(result)) localStorage.removeItem(pendingKey); })
       .catch(() => undefined);
     return result;

@@ -43,6 +43,16 @@ interface LearningProps {
 const STATUS_CYCLE = ['not_started', 'in_progress', 'completed'] as const;
 type LearningStatus = (typeof STATUS_CYCLE)[number];
 
+const safeExternalUrl = (value?: string) => {
+  if (!value || value === '#') return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : null;
+  } catch {
+    return null;
+  }
+};
+
 const STATUS_CONFIG: Record<
   LearningStatus,
   { label: string; icon: string; action: string; color: 'default' | 'info' | 'success' }
@@ -655,11 +665,11 @@ export default function Learning({ isMobile = false }: LearningProps) {
                       {focusItem.date ? ` · ${focusItem.date}` : ''}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                      {focusItem.source && focusItem.source !== '#' && (
+                      {safeExternalUrl(focusItem.source) && (
                         <Button
                           variant="outlined"
                           size="small"
-                          href={focusItem.source}
+                          href={safeExternalUrl(focusItem.source)!}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -1027,11 +1037,11 @@ export default function Learning({ isMobile = false }: LearningProps) {
                           flexShrink: 0,
                         }}
                       >
-                        {item.source && item.source !== '#' && (
+                        {safeExternalUrl(item.source) && (
                           <Button
                             size="small"
                             variant="outlined"
-                            href={item.source}
+                            href={safeExternalUrl(item.source)!}
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{ minWidth: 0, px: 1, fontSize: '0.75rem' }}

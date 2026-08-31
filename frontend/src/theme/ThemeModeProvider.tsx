@@ -54,7 +54,7 @@ const readBrandColors = (): BrandColors => {
   }
 };
 
-export function ThemeModeProvider({ children }: PropsWithChildren) {
+export function ThemeModeProvider({ children, syncEnabled = true }: PropsWithChildren<{ syncEnabled?: boolean }>) {
   const [preference, setPreferenceState] = useState<ThemePreference>(readPreference);
   const [brandColors, setBrandColorsState] = useState<BrandColors>(readBrandColors);
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
@@ -68,6 +68,7 @@ export function ThemeModeProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
+    if (!syncEnabled) return;
     let active = true;
     void loadAppearancePreference()
       .then((remotePreference) => {
@@ -82,33 +83,33 @@ export function ThemeModeProvider({ children }: PropsWithChildren) {
       })
       .catch(() => undefined);
     return () => { active = false; };
-  }, []);
+  }, [syncEnabled]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = resolvedTheme;
     document.documentElement.style.colorScheme = resolvedTheme;
   }, [resolvedTheme]);
 
-  const setPreference = (next: ThemePreference) => {
+  const setPreference = useCallback((next: ThemePreference) => {
     localStorage.setItem(STORAGE_KEY, next);
     setPreferenceState(next);
-    void saveAppearancePreference({ theme: next }).catch(() => undefined);
-  };
+    if (syncEnabled) void saveAppearancePreference({ theme: next }).catch(() => undefined);
+  }, [syncEnabled]);
 
   const setBrandColors = useCallback((next: Partial<BrandColors>) => {
     setBrandColorsState((current) => {
       const updated = { ...current, ...next };
       localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(updated));
-      void saveAppearancePreference(updated).catch(() => undefined);
+      if (syncEnabled) void saveAppearancePreference(updated).catch(() => undefined);
       return updated;
     });
-  }, []);
+  }, [syncEnabled]);
 
   const resetBrandColors = useCallback(() => setBrandColors({ ...DEFAULT_BRAND_COLORS }), [setBrandColors]);
 
   const contextValue = useMemo(
     () => ({ preference, resolvedTheme, brandColors, setPreference, setBrandColors, resetBrandColors }),
-    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors],
+    [preference, resolvedTheme, brandColors, resetBrandColors, setBrandColors, setPreference],
   );
   const theme = useMemo(() => createPremiumTheme(resolvedTheme, brandColors), [resolvedTheme, brandColors]);
 

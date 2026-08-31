@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import DOMPurify from 'dompurify';
 
 // Simple markdown parser (handles basic formatting)
 function parseMarkdown(md) {
@@ -21,7 +22,7 @@ function parseMarkdown(md) {
   html = html.replace(/`(.+?)`/g, '<code>$1</code>');
   
   // Links
-  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>');
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
   
   // Horizontal rule
   html = html.replace(/^---$/gm, '<hr style="border: none; border-top: 1px solid var(--border); margin: 32px 0;" />');
@@ -50,9 +51,16 @@ function parseMarkdown(md) {
   return html;
 }
 
+export function sanitizeMarkdown(md) {
+  return DOMPurify.sanitize(parseMarkdown(md), {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target', 'rel'],
+  });
+}
+
 export default function ArticleReader({ article, onBack, prevArticle, nextArticle, onNavigate }) {
   const renderedContent = useMemo(() => {
-    return parseMarkdown(article.content);
+    return sanitizeMarkdown(article.content);
   }, [article.content]);
 
   // Extract first line as potential title if no heading found

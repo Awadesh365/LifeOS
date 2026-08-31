@@ -14,7 +14,7 @@ The native LifeOS client for Android, built with Expo SDK 57, React Native, Type
 
 ## Requirements
 
-- Node.js 22.13 or newer (required by Expo SDK 57)
+- Node.js 24.3 or newer (required by this Expo SDK 57 project)
 - Android Studio and an Android emulator, or an Android device
 - The LifeOS backend and PostgreSQL database running
 
@@ -42,7 +42,6 @@ npm run android
 
 ```env
 EXPO_PUBLIC_API_URL=http://192.168.1.20:5000/api
-EXPO_PUBLIC_LIFEOS_USER_ID=awadesh
 ```
 
 Use HTTPS outside local development. `EXPO_PUBLIC_*` values are embedded in the application and must never contain secrets.
@@ -82,11 +81,10 @@ npx eas-cli build --platform android --profile production
 
 The preview profile produces an installable APK. Production produces an Android App Bundle for Google Play.
 
-## Production security gate
+## Authentication and release security
 
-The current shared backend has no user authentication or authorization. Do not expose it publicly or ship the production app until authentication, per-user data ownership, rate limiting, HTTPS, and production observability are implemented. Mobile configuration is intentionally not pretending that a public environment variable is a secret.
-
-The theme preference is namespaced by `EXPO_PUBLIC_LIFEOS_USER_ID` and shared
-with the web portal through the backend. This identifier provides preference
-separation for the current private deployment; it is not a substitute for
-authenticated user identity.
+The mobile routes are protected by the same server-side session used by the web
+portal. Native platforms keep the opaque session cookie in Expo SecureStore
+(Android Keystore/iOS Keychain); no JWT or password is persisted. Use HTTPS in
+production so credentials and cookies are encrypted in transit. The server—not
+an `EXPO_PUBLIC_*` variable—determines the authenticated preference owner.
