@@ -15,60 +15,74 @@ export interface PersonalNavGroup {
  */
 export const PERSONAL_NAV_GROUPS: PersonalNavGroup[] = [
   {
-    section: 'Overview',
-    items: [{ path: '/', icon: 'space_dashboard', label: 'Dashboard' }],
+    section: "Overview",
+    items: [{ path: "/", icon: "space_dashboard", label: "Dashboard" }],
   },
   {
-    section: 'Daily',
+    section: "Daily",
     items: [
-      { path: '/habits', icon: 'task_alt', label: 'Daily Tracker' },
-      { path: '/routine', icon: 'schedule', label: 'My Routine' },
+      { path: "/habits", icon: "task_alt", label: "Daily Tracker" },
+      { path: "/routine", icon: "schedule", label: "My Routine" },
     ],
   },
   {
-    section: 'Health & Nutrition',
+    section: "Health & Nutrition",
     items: [
-      { path: '/health', icon: 'favorite', label: 'Health' },
-      { path: '/diet', icon: 'restaurant', label: 'Diet & Nutrition' },
-      { path: '/training', icon: 'exercise', label: 'Gym & Training' },
+      { path: "/health", icon: "favorite", label: "Health" },
+      { path: "/diet", icon: "restaurant", label: "Diet & Nutrition" },
+      { path: "/training", icon: "exercise", label: "Gym & Training" },
     ],
   },
   {
-    section: 'Plans & Growth',
+    section: "Operations",
     items: [
-      { path: '/goals', icon: 'flag', label: 'Goals & Dreams' },
-      { path: '/future-plans', icon: 'auto_awesome', label: 'Future Plans' },
-      { path: '/projects', icon: 'rocket_launch', label: 'All Projects' },
-      { path: '/learning', icon: 'menu_book', label: 'Learning Paths' },
+      {
+        path: "/maintenance",
+        icon: "home_repair_service",
+        label: "Maintenance",
+      },
     ],
   },
   {
-    section: 'Career & People',
+    section: "Plans & Growth",
     items: [
-      { path: '/career', icon: 'trending_up', label: 'Career Development' },
-      { path: '/jobs', icon: 'work', label: 'Job Tracker' },
-      { path: '/networking', icon: 'handshake', label: 'Networking' },
+      { path: "/goals", icon: "flag", label: "Goals & Dreams" },
+      { path: "/future-plans", icon: "auto_awesome", label: "Future Plans" },
+      { path: "/projects", icon: "rocket_launch", label: "All Projects" },
+      { path: "/learning", icon: "menu_book", label: "Learning Paths" },
     ],
   },
   {
-    section: 'Finance',
+    section: "Career & People",
     items: [
-      { path: '/wealth', icon: 'account_balance_wallet', label: 'Wealth Management' },
-      { path: '/debts', icon: 'trending_down', label: 'Debt Tracker' },
-      { path: '/funds', icon: 'savings', label: 'Emergency Fund' },
+      { path: "/career", icon: "trending_up", label: "Career Development" },
+      { path: "/jobs", icon: "work", label: "Job Tracker" },
+      { path: "/networking", icon: "handshake", label: "Networking" },
     ],
   },
   {
-    section: 'Ideas & Direction',
+    section: "Finance",
     items: [
-      { path: '/articles', icon: 'history_edu', label: 'The Manifesto' },
-      { path: '/philosophy', icon: 'psychology', label: 'Core Philosophy' },
+      {
+        path: "/wealth",
+        icon: "account_balance_wallet",
+        label: "Wealth Management",
+      },
+      { path: "/debts", icon: "trending_down", label: "Debt Tracker" },
+      { path: "/funds", icon: "savings", label: "Emergency Fund" },
     ],
   },
   {
-    section: 'Settings',
+    section: "Ideas & Direction",
     items: [
-      { path: '/settings/appearance', icon: 'palette', label: 'Appearance' },
+      { path: "/articles", icon: "history_edu", label: "The Manifesto" },
+      { path: "/philosophy", icon: "psychology", label: "Core Philosophy" },
+    ],
+  },
+  {
+    section: "Settings",
+    items: [
+      { path: "/settings/appearance", icon: "palette", label: "Appearance" },
     ],
   },
 ];
@@ -78,11 +92,12 @@ export const PERSONAL_NAV_ITEMS = PERSONAL_NAV_GROUPS.flatMap((group) =>
 );
 
 export function getPersonalNavItem(pathname: string) {
-  const workspacePath = pathname.replace(/^\/app/, '') || '/';
+  const workspacePath = pathname.replace(/^\/app/, "") || "/";
 
   return PERSONAL_NAV_ITEMS.find((item) =>
-    item.path === '/'
-      ? workspacePath === '/'
-      : workspacePath === item.path || workspacePath.startsWith(`${item.path}/`),
+    item.path === "/"
+      ? workspacePath === "/"
+      : workspacePath === item.path ||
+        workspacePath.startsWith(`${item.path}/`),
   );
 }
