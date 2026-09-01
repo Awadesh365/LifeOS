@@ -1,0 +1,25 @@
+.money-shell { padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 20px; }
+.money-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--border); }
+.money-loading { min-height: 360px; display: grid; place-items: center; }
+.money-hero { padding: 28px; border-radius: 22px; color: var(--primary-contrast); background: linear-gradient(135deg, var(--accent), var(--navy)); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.money-hero .MuiTypography-root { color: inherit; }
+.money-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.money-kpi { padding: 18px; border-top: 3px solid var(--accent); }
+.money-kpi--liability { border-top-color: #d15a54; }
+.money-kpi--investment { border-top-color: #ba7b18; }
+.money-kpi--cash { border-top-color: #268b72; }
+.money-kpi .MuiTypography-h4 { font-size: clamp(1.2rem, 2vw, 1.8rem); margin-top: 6px; }
+.money-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr); gap: 18px; }
+.money-panel { overflow: hidden; }
+.money-panel__header { padding: 16px 20px; }
+.money-panel .MuiCardContent-root { padding: 20px; }
+.money-cashflow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-bottom: 16px; }
+.money-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+.money-filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.money-filters .MuiTextField-root:first-child { flex: 1; min-width: 260px; }
+.money-transaction-row { cursor: pointer; }
+.money-type--transfer, .money-type--deposit_funding, .money-type--investment_contribution, .money-type--debt_payment { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.money-type--income, .money-type--refund { background: rgba(38, 139, 114, .14); }
+.money-type--expense, .money-type--fee { background: rgba(209, 90, 84, .12); }
+@media (max-width: 1000px) { .money-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .money-grid { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .money-shell { padding: 14px; } .money-toolbar { align-items: stretch; flex-direction: column; padding-bottom: 12px; } .money-toolbar > .MuiStack-root { justify-content: flex-end; } .money-kpis { grid-template-columns: 1fr 1fr; } .money-hero { align-items: flex-start; flex-direction: column; } }

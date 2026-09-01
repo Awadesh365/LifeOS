@@ -64,12 +64,10 @@ export const PERSONAL_NAV_GROUPS: PersonalNavGroup[] = [
     section: "Finance",
     items: [
       {
-        path: "/wealth",
+        path: "/money",
         icon: "account_balance_wallet",
-        label: "Wealth Management",
+        label: "Money",
       },
-      { path: "/debts", icon: "trending_down", label: "Debt Tracker" },
-      { path: "/funds", icon: "savings", label: "Emergency Fund" },
     ],
   },
   {

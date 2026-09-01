@@ -9,6 +9,9 @@ import type {
   Habit,
   HealthLog,
   RoutineGroup,
+  MoneyAccount,
+  MoneyOverview,
+  MoneyTransaction,
 } from '@/types/api';
 
 const fallbackHost = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
@@ -173,6 +176,12 @@ export const api = {
     request<MobileMaintenanceSummary>('/maintenance/summary', { signal }),
   completeMaintenanceItem: (id: string) =>
     request<{ item: MobileMaintenanceItem }>(`/maintenance/items/${id}/complete`, { method: 'POST', body: {} }),
+  moneyOverview: (signal?: AbortSignal) => request<MoneyOverview>('/money/overview', { signal }),
+  moneyAccounts: (signal?: AbortSignal) => request<MoneyAccount[]>('/money/accounts', { signal }),
+  createMoneyAccount: (input: Record<string, unknown>) =>
+    request<MoneyAccount>('/money/accounts', { method: 'POST', body: input }),
+  createMoneyTransaction: (input: Record<string, unknown>) =>
+    request<MoneyTransaction>('/money/transactions', { method: 'POST', body: input }),
   healthCheck: (signal?: AbortSignal) =>
     request<{ ok: boolean }>('/health-check', { signal }),
 };

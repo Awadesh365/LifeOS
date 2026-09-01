@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const id = { type: Sequelize.STRING, primaryKey: true };
     const userId = {
-      type: Sequelize.STRING(64), allowNull: false, references: { model: 'users', key: 'id' }, onDelete: 'CASCADE',
+      type: Sequelize.UUID, allowNull: false, references: { model: 'users', key: 'id' }, onDelete: 'CASCADE',
     };
     const createdAt = { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') };
 

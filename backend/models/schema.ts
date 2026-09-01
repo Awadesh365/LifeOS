@@ -44,6 +44,9 @@ export type LifeTrackerModels = {
   MaintenanceAsset: LifeTrackerModel;
   RepairCase: LifeTrackerModel;
   WeeklyMaintenancePlan: LifeTrackerModel;
+  FinancialAccount: LifeTrackerModel;
+  MoneyTransaction: LifeTrackerModel;
+  LedgerPosting: LifeTrackerModel;
 };
 
 const baseOptions = {
@@ -430,7 +433,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const MaintenanceArea = sequelize.define('MaintenanceArea', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     parentAreaId: { type: DataTypes.STRING, field: 'parent_area_id' },
     name: { type: DataTypes.STRING(100), allowNull: false },
     type: { type: DataTypes.STRING(40), allowNull: false },
@@ -443,7 +446,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const MaintenanceAsset = sequelize.define('MaintenanceAsset', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     areaId: { type: DataTypes.STRING, field: 'area_id' },
     name: { type: DataTypes.STRING(140), allowNull: false },
     category: { type: DataTypes.STRING(60), allowNull: false, defaultValue: 'other' },
@@ -461,7 +464,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const MaintenanceItem = sequelize.define('MaintenanceItem', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     areaId: { type: DataTypes.STRING, allowNull: false, field: 'area_id' },
     assetId: { type: DataTypes.STRING, field: 'asset_id' },
     name: { type: DataTypes.STRING(160), allowNull: false },
@@ -483,7 +486,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const MaintenanceOccurrence = sequelize.define('MaintenanceOccurrence', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     itemId: { type: DataTypes.STRING, allowNull: false, field: 'item_id' },
     action: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'completed' },
     plannedDate: { type: DataTypes.STRING(10), field: 'planned_date' },
@@ -497,7 +500,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const RepairCase = sequelize.define('RepairCase', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     assetId: { type: DataTypes.STRING, field: 'asset_id' },
     areaId: { type: DataTypes.STRING, field: 'area_id' },
     title: { type: DataTypes.STRING(160), allowNull: false },
@@ -515,7 +518,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
 
   const WeeklyMaintenancePlan = sequelize.define('WeeklyMaintenancePlan', {
     id: { type: DataTypes.STRING, primaryKey: true },
-    userId: { type: DataTypes.STRING(64), allowNull: false, field: 'user_id' },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
     weekStart: { type: DataTypes.STRING(10), allowNull: false, field: 'week_start' },
     capacityMinutes: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 240, field: 'capacity_minutes' },
     selectedItems: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'selected_items' },
@@ -524,6 +527,48 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     committedAt: { type: DataTypes.DATE, field: 'committed_at' },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
   }, { ...baseOptions, tableName: 'weekly_maintenance_plans' });
+
+  const FinancialAccount = sequelize.define('FinancialAccount', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+    name: { type: DataTypes.STRING(140), allowNull: false },
+    type: { type: DataTypes.STRING(32), allowNull: false },
+    institution: { type: DataTypes.STRING(140) },
+    currency: { type: DataTypes.STRING(3), allowNull: false, defaultValue: 'INR' },
+    includeInNetWorth: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true, field: 'include_in_net_worth' },
+    status: { type: DataTypes.STRING(24), allowNull: false, defaultValue: 'active' },
+    valuationAsOf: { type: DataTypes.STRING(10), field: 'valuation_as_of' },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'financial_accounts' });
+
+  const MoneyTransaction = sequelize.define('MoneyTransaction', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+    semanticType: { type: DataTypes.STRING(40), allowNull: false, field: 'semantic_type' },
+    occurredOn: { type: DataTypes.STRING(10), allowNull: false, field: 'occurred_on' },
+    amount: { type: DataTypes.DECIMAL(18, 2), allowNull: false },
+    currency: { type: DataTypes.STRING(3), allowNull: false, defaultValue: 'INR' },
+    description: { type: DataTypes.STRING(180), allowNull: false },
+    merchant: { type: DataTypes.STRING(180) },
+    category: { type: DataTypes.STRING(100) },
+    notes: { type: DataTypes.TEXT },
+    source: { type: DataTypes.STRING(24), allowNull: false, defaultValue: 'manual' },
+    rawNarration: { type: DataTypes.TEXT, field: 'raw_narration' },
+    reconciliationStatus: { type: DataTypes.STRING(30), allowNull: false, defaultValue: 'unreconciled', field: 'reconciliation_status' },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  }, { ...baseOptions, tableName: 'money_transactions' });
+
+  const LedgerPosting = sequelize.define('LedgerPosting', {
+    id: { type: DataTypes.STRING, primaryKey: true },
+    userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+    transactionId: { type: DataTypes.STRING, allowNull: false, field: 'transaction_id' },
+    accountId: { type: DataTypes.STRING, allowNull: false, field: 'account_id' },
+    amount: { type: DataTypes.DECIMAL(18, 2), allowNull: false },
+    role: { type: DataTypes.STRING(40), allowNull: false },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
+  }, { ...baseOptions, tableName: 'ledger_postings' });
 
   Habit.hasMany(HabitLog, { foreignKey: 'habitId' });
   HabitLog.belongsTo(Habit, { foreignKey: 'habitId' });
@@ -553,6 +598,10 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
   MaintenanceOccurrence.belongsTo(MaintenanceItem, { foreignKey: 'itemId', as: 'item' });
   MaintenanceAsset.hasMany(RepairCase, { foreignKey: 'assetId', as: 'repairCases' });
   RepairCase.belongsTo(MaintenanceAsset, { foreignKey: 'assetId', as: 'asset' });
+  FinancialAccount.hasMany(LedgerPosting, { foreignKey: 'accountId', as: 'postings' });
+  LedgerPosting.belongsTo(FinancialAccount, { foreignKey: 'accountId', as: 'account' });
+  MoneyTransaction.hasMany(LedgerPosting, { foreignKey: 'transactionId', as: 'postings' });
+  LedgerPosting.belongsTo(MoneyTransaction, { foreignKey: 'transactionId', as: 'transaction' });
 
   return {
     User,
@@ -595,5 +644,8 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     MaintenanceAsset,
     RepairCase,
     WeeklyMaintenancePlan,
+    FinancialAccount,
+    MoneyTransaction,
+    LedgerPosting,
   };
 };

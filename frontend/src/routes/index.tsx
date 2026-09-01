@@ -20,6 +20,7 @@ const legacyWorkspacePaths = [
   "articles",
   "health",
   "wealth",
+  "money",
   "debts",
   "funds",
   "networking",

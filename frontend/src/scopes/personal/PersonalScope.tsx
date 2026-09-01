@@ -20,9 +20,7 @@ import Philosophy from "./pages/Philosophy";
 import Articles from "./pages/Articles";
 import Projects from "./pages/Projects";
 import Health from "./pages/Health";
-import Wealth from "./pages/Wealth";
-import Debts from "./pages/Debts";
-import Funds from "./pages/Funds";
+import MoneyPortal from "./money/MoneyPortal";
 import Networking from "./pages/Networking";
 import Career from "./pages/Career";
 import FuturePlans from "./pages/FuturePlans";
@@ -167,9 +165,10 @@ const PersonalScope = () => {
                 element={<Articles isMobile={isMobile} />}
               />
               <Route path="health" element={<Health isMobile={isMobile} />} />
-              <Route path="wealth" element={<Wealth isMobile={isMobile} />} />
-              <Route path="debts" element={<Debts isMobile={isMobile} />} />
-              <Route path="funds" element={<Funds isMobile={isMobile} />} />
+              <Route path="money/*" element={<MoneyPortal />} />
+              <Route path="wealth" element={<Navigate to="/app/money" replace />} />
+              <Route path="debts" element={<Navigate to="/app/money" replace />} />
+              <Route path="funds" element={<Navigate to="/app/money" replace />} />
               <Route
                 path="networking"
                 element={<Networking isMobile={isMobile} />}

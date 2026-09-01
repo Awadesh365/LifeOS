@@ -29,6 +29,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Today', tabBarIcon: icon('view-dashboard-outline') }} />
+      <Tabs.Screen name="money" options={{ title: 'Money', tabBarIcon: icon('wallet-outline') }} />
       <Tabs.Screen name="habits" options={{ title: 'Habits', tabBarIcon: icon('check-circle-outline') }} />
       <Tabs.Screen name="goals" options={{ title: 'Goals', tabBarIcon: icon('target') }} />
       <Tabs.Screen name="health" options={{ title: 'Health', tabBarIcon: icon('heart-pulse') }} />
