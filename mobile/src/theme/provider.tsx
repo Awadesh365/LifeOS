@@ -8,7 +8,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react';
-import { Appearance, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 import { darkColors, lightColors, type ThemeColors } from '@/theme';
 import { api } from '@/services/api';
@@ -85,14 +85,12 @@ export function LifeOSThemeProvider({ children, syncEnabled = true }: PropsWithC
         if (!active) return;
         setPreferenceState(hydratedPreference);
         setBrandColorsState(hydratedBrand);
-        Appearance.setColorScheme(hydratedPreference === 'system' ? 'unspecified' : hydratedPreference);
         await AsyncStorage.setItem(STORAGE_KEY, hydratedPreference);
         await AsyncStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(hydratedBrand));
       } catch {
         if (!active) return;
         setPreferenceState(localPreference);
         setBrandColorsState(localBrand);
-        Appearance.setColorScheme(localPreference === 'system' ? 'unspecified' : localPreference);
       }
     })();
     return () => { active = false; };
@@ -100,7 +98,6 @@ export function LifeOSThemeProvider({ children, syncEnabled = true }: PropsWithC
 
   const setPreference = useCallback((next: ThemePreference) => {
     setPreferenceState(next);
-    Appearance.setColorScheme(next === 'system' ? 'unspecified' : next);
     void AsyncStorage.setItem(STORAGE_KEY, next);
     if (syncEnabled) void api.saveAppearancePreference({ theme: next }).catch(() => undefined);
   }, [syncEnabled]);
