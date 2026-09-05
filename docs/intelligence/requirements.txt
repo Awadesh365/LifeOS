@@ -1,0 +1,418 @@
+WHOLESIGNAL — INTELLIGENCE
+Intelligence & MLDeep Research + Product Requirements Document
+Data → Analytics → Projection → Prediction → Recommendation → Agent
+First-class intelligence architecture across Money, Productivity, Learning, Maintenance, Fitness and future WholeSignal domains.
+
+1. Product Thesis
+WholeSignal Intelligence is the cross-domain layer that converts historical system-of-record data into increasingly higher levels of useful reasoning. The system must distinguish deterministic facts and projections from learned predictions, and learned predictions from recommendations and agent actions.
+Naming correction.  This product is WholeSignal Intelligence. 'Maintenance' is only one downstream domain that can supply data to and receive intelligence from this layer.
+
+2. Intelligence Hierarchy
+Level
+Question
+Mechanism
+Example
+L0 Data
+What happened?
+System of record / events
+Spent ₹19,300; workout completed.
+L1 Analytics
+What has been happening?
+Aggregation, statistics
+Food is 26% of spending.
+L2 Projection
+What if current assumptions continue?
+Deterministic formulas/simulation
+At current pace, course finishes in ~4 weeks.
+L3 Prediction
+What is likely to happen?
+ML with measurable target
+Task completion probability 0.61.
+L4 Recommendation
+What should I consider doing?
+Rules/optimization using facts + predictions
+Move two tasks to Tuesday.
+L5 Agent
+Plan/execute permitted actions
+LLM/tool orchestration with confirmation
+Rebuild tomorrow's plan.
+
+Non-negotiable separation.  The LLM may explain a numeric prediction, but must not invent the number. The Prediction Engine returns structured values, uncertainty, version and evidence metadata; the agent consumes that contract.
+
+3. Research Corrections to the Original Proposal
+Original direction
+Researched correction
+Train our own LifeOS model
+Use domain-specific models with explicit target/metric/version. Avoid one giant personal model.
+Use ML wherever historical data exists
+First ask whether deterministic analytics/projection solves the problem. ML requires a measurable outcome and evaluation plan.
+Prediction as one number
+Return uncertainty/readiness; suppress low-confidence predictions when data is insufficient.
+Random train/test may be acceptable
+Use temporal train/validation/test or time-series CV for time-dependent data to avoid future leakage.
+Collect current state
+Capture event/history and prediction-time snapshots so training can reconstruct what was known then.
+Agent predicts
+Agent orchestrates; deterministic/ML engines produce numerical outputs.
+Accuracy dashboard
+Use domain-appropriate metrics, calibration/coverage, and product success metrics—not a misleading universal '91% accuracy'.
+Retrain periodically
+Retrain only when data/monitoring policy warrants it; candidate must beat baseline/champion and pass validation.
+
+4. Problem Framing Contract
+Every predictive feature must define: user outcome, target/label, prediction horizon, eligible population, feature cutoff time, baseline, evaluation metric, product success metric and failure/safety behavior.
+If the future outcome cannot later be observed reliably, classify the feature as analytics/recommendation—not supervised prediction.
+Start with simple baselines and only increase model complexity when held-out temporal performance demonstrates value.
+5. Domain Model Portfolio
+Domain
+Deterministic first
+ML candidates
+Early boundary
+Money
+Cashflow, budget arithmetic, run-rate projection
+month-end spend forecast; category forecast; anomaly detection
+No investment advice or financial-product recommendation engine.
+Productivity
+planned vs actual, workload count, capacity projection
+task completion probability; duration estimate; overload risk
+Do not present probabilities as personal worth/productivity score.
+Learning
+pace projections, remaining-content simulation
+session completion; completion-date distribution; recall risk later
+No unsupported claims of mastery from weak signals.
+Maintenance
+interval/window calculation
+recurrence timing; likely postponement; repair-duration forecast later
+Deterministic due windows remain source of truth.
+Fitness
+training volume/trend; adherence projection
+workout adherence; session-duration estimate
+No disease/injury diagnosis or medical risk prediction.
+Cross-domain
+correlation/exploration
+carefully validated joint models after enough data
+Never imply causation from observational personal patterns.
+
+6. Event System / Historical State
+WholeSignal should implement Event Sourcing Lite: mutable domain state remains normal, but important transitions emit immutable historical events.
+Entity
+Required event examples
+Task
+CREATED, PLANNED, RESCHEDULED, STARTED, PAUSED, COMPLETED, CANCELLED
+Money
+TRANSACTION_RECORDED, CATEGORIZED, REFUNDED, RECURRING_MATCHED
+Learning
+SESSION_PLANNED, STARTED, COMPLETED, QUIZ_RECORDED, REVISION_DONE
+Maintenance
+ITEM_DUE_STATE_CHANGED, PLANNED, COMPLETED, DEFERRED
+Fitness
+WORKOUT_PLANNED, STARTED, COMPLETED, SET_LOGGED
+Prediction
+GENERATED, SHOWN, ACTED_ON, OUTCOME_RESOLVED, FEEDBACK_RECORDED
+
+7. Canonical Intelligence Data Objects
+Object
+Key fields
+LifeEvent
+id,userId,eventType,entityType,entityId,eventTime,recordedAt,attributes,schemaVersion
+FeatureSnapshot
+predictionId,featureTime,featureSetVersion,feature values/source timestamps
+PredictionDefinition
+type,target,horizon,eligibility,baseline,metrics,safety policy
+Prediction
+id,type,value/class,lower/upper bound,probability,generatedAt,horizon,modelVersion,dataThrough,readiness
+PredictionOutcome
+predictionId,actualValue,resolvedAt,error/calibration bucket
+ModelDefinition
+name,domain,target,algorithm family,feature schema,owner
+ModelVersion
+version,training window,data hash,metrics,validation status,createdAt
+Recommendation
+facts,predictions,rule/optimizer version,options,rationale,expiresAt
+IntelligenceConsent
+scope,data domains,processing purpose,enabledAt,revokedAt
+
+8. Point-in-Time Correctness & Leakage Prevention
+A training row may only use data whose event/source timestamp was available at the prediction cutoff.
+Store feature snapshots for materially important predictions or enough lineage to reproduce them.
+Separate eventTime (when reality occurred) from recordedAt (when WholeSignal learned it).
+Prevent label leakage from completion status, post-outcome notes, future balances or later-edited metadata.
+For time-dependent evaluation, use chronological holdout and/or time-series cross-validation with an optional gap.
+9. Model Readiness Gates
+Gate
+Behavior
+No history
+Show analytics/projection only; explain what data would enable prediction.
+Insufficient history
+Keep candidate in shadow/readiness mode; no user-facing probability.
+Sparse label coverage
+Do not train merely because events exist.
+Low temporal stability
+Prefer baseline or suppress prediction.
+Model below baseline
+Do not deploy.
+Poor calibration/coverage
+Do not expose probability/range as trustworthy.
+Stale model/data
+Display stale state and use deterministic fallback if possible.
+
+10. Evaluation & Uncertainty
+Prediction type
+Examples of evaluation
+Regression
+MAE/RMSE; interval coverage/width; error by horizon.
+Probability/classification
+Log loss/Brier; ROC/PR where appropriate; calibration/reliability.
+Forecast
+Temporal backtest; MAE/MASE/MAPE only where mathematically suitable; prediction interval coverage.
+Anomaly
+Precision from reviewed anomalies; alert burden; false-positive rate.
+Duration
+Median absolute error; under/over-estimation asymmetry.
+
+Avoid a universal accuracy score.  A ₹ expense forecast, 0/1 task prediction and anomaly detector cannot be meaningfully collapsed into one percentage. The UI should show domain-specific performance and plain-language reliability.
+
+11. Model Lifecycle
+Stage
+Required behavior
+Definition
+Target, features, horizon, metric, safety/readiness policy approved.
+Dataset build
+Point-in-time-correct snapshot; schema/data-quality report.
+Baseline
+Naive/statistical baseline established.
+Training
+Candidate models trained with recorded config/seed/code/data lineage.
+Temporal validation
+Candidate evaluated on later data and subgroups/time slices.
+Registration
+Model version + metadata + metrics stored.
+Shadow
+Predictions recorded but not shown where warranted.
+Promotion
+Champion alias switched only after gates pass.
+Monitoring
+Prediction quality, calibration, missing features, drift and outcome delay tracked.
+Rollback
+Reassign champion/serving version; keep prior version reproducible.
+Retirement
+Stop serving; retain required lineage while respecting user deletion policy.
+
+12. Recommendation Engine
+Recommendations should generally be a separate layer combining deterministic constraints, user preferences, priorities and optional predictions.
+Input
+Example
+Facts
+5 tasks, 4 available hours, hard appointment at 14:00.
+Projection
+Current workload requires 6.2h.
+Prediction
+Two evening coding tasks have low completion likelihood.
+Constraint
+Do not move hard-deadline task.
+Preference
+Morning deep work preferred.
+Output
+Move low-priority admin task; keep coding block in morning.
+
+13. Agent Integration Contract
+Tool
+Contract
+get_analytics
+Returns factual aggregates + data freshness.
+run_projection
+Inputs assumptions; returns deterministic scenario + formula/version.
+get_prediction
+Returns prediction, uncertainty, horizon, modelVersion, dataThrough, readiness, explanation factors.
+get_recommendations
+Returns ranked options + constraints + rationale; no autonomous write.
+apply_plan
+Domain tool performs approved mutation after user/permission policy.
+
+14. Explainability
+Show 'why this prediction' using interpretable feature contributions or rule explanations appropriate to the model.
+Never present feature importance as causation.
+Show model/data freshness, prediction horizon and uncertainty.
+Provide 'What would change this?' scenario controls where deterministic simulation is valid.
+If explanation quality is weak, say so rather than fabricate a narrative.
+15. Privacy, Consent & Safety
+Intelligence is opt-in by data domain/purpose where practical; disabling intelligence does not delete core system-of-record data unless user requests deletion.
+Minimize feature copies of sensitive source data; prefer derived numeric/categorical features with lineage.
+Do not use private health, relationship or location data for unrelated predictions without explicit scope.
+No disease diagnosis, mental-health inference, pregnancy inference, criminality, sexuality or similarly sensitive personal-trait inference.
+Predictions must never automatically trigger consequential financial, medical, employment or relationship actions.
+Support export, deletion, consent revocation and audit trail for model-generated records.
+16. Monitoring & Drift
+Monitor
+Examples
+Data quality
+missing features, schema changes, delayed events, duplicates
+Input drift
+feature distribution shift by period
+Prediction drift
+output distribution changes
+Performance
+resolved outcomes vs predictions
+Calibration
+probabilities vs observed frequency
+Interval quality
+coverage and interval width
+User response
+dismissal/feedback/action rate; not treated automatically as correctness
+Safety
+alert burden, harmful recommendations, unexpected sensitive-feature use
+
+17. MLOps Architecture
+Recommended evolution: WholeSignal domain services emit events → analytical store/feature pipeline builds point-in-time datasets → Python training jobs create candidate models → registry stores versions/lineage → prediction service serves champion models → Prediction records are written back through the Intelligence service → Agent calls Intelligence tools.
+Do not create infrastructure prematurely.  A dedicated feature store or heavyweight orchestration platform is optional until scale requires it. The interfaces should be feature-store-compatible, but V1 can use versioned SQL/Python feature pipelines over PostgreSQL/analytics storage.
+
+18. Initial Model Definitions
+ID
+Model
+Target
+Horizon
+Baseline
+FIN-01
+Month-end spend forecast
+final monthly eligible spend
+end of month
+run-rate / seasonal median
+FIN-02
+Transaction anomaly
+reviewed anomalous yes/no
+event time
+category/merchant robust thresholds
+PROD-01
+Task completion
+completed within planned window
+same day
+historical rate by task type/time
+PROD-02
+Task duration
+actual active duration
+task completion
+median similar-task duration
+LEARN-01
+Course completion date
+resolved completion date
+weeks
+pace projection
+MAINT-01
+Likely maintenance completion
+completed inside proposed week
+week
+recent completion rate
+FIT-01
+Workout adherence
+planned workout completed
+week
+recent rolling adherence
+
+19. Cross-Domain Intelligence
+Begin with descriptive cross-domain correlations and user-controlled comparisons.
+Only create predictive cross-domain models after sufficient data, explicit consent and demonstrated lift over single-domain baselines.
+Avoid statements like 'sleep causes productivity'. Prefer 'In your recorded data, task completion was higher on days with X; this is an association, not proof of cause.'
+20. Functional Requirements
+FR-01  Event ingestion and versioned schemas.
+FR-02  Prediction definitions with eligibility/readiness policies.
+FR-03  Deterministic projection service.
+FR-04  Feature generation with prediction-time cutoffs.
+FR-05  Training/evaluation pipeline with temporal validation.
+FR-06  Model registry abstraction and champion/candidate versioning.
+FR-07  Prediction service returning uncertainty and metadata.
+FR-08  Prediction history + outcome resolution.
+FR-09  Recommendation service separated from prediction.
+FR-10  Agent tool contracts with structured outputs.
+FR-11  User feedback/correction without treating feedback as ground truth automatically.
+FR-12  Consent, privacy, export/delete and audit.
+FR-13  Model/data readiness UI.
+FR-14  Monitoring/drift/performance telemetry.
+FR-15  Fallback behavior when prediction is unavailable.
+21. Non-Functional Requirements
+NFR-01  Deterministic projections reproducible for identical inputs/version.
+NFR-02  Prediction inference must never mutate domain state.
+NFR-03  Model and feature versions included in prediction lineage.
+NFR-04  Sensitive free text excluded from model features unless explicitly approved.
+NFR-05  All prediction timestamps timezone-safe; UTC storage + user-local display.
+NFR-06  Offline app shows cached predictions with freshness labels; no fabricated recomputation.
+NFR-07  Accessibility: confidence/state conveyed by text, not color only.
+NFR-08  Deletion requests propagate to derived intelligence artifacts per policy.
+NFR-09  Observability separates model errors from missing-data/readiness states.
+22. MVP / Phase Plan
+Phase
+Scope
+MVP
+Event system; analytics/projections; Intelligence Home; prediction definitions/readiness; Finance forecast baseline; prediction history/outcomes; privacy/consent; agent read tools.
+Phase 2
+Task completion/duration; Learning completion; Maintenance/Fitness adherence; explanations; recommendation engine; shadow/champion workflow; monitoring.
+Phase 3
+Cross-domain models; advanced personalization/cold start; optional on-device inference; richer feature store; automated retraining with gates; population/global models only after privacy/product maturity.
+
+23. Success Metrics
+Category
+Metrics
+Data foundation
+event completeness; label resolution rate; timestamp integrity
+Model
+baseline lift; temporal held-out performance; calibration/interval coverage
+Trust
+prediction detail opens; low correction rate; explanation helpfulness; stale/low-confidence suppression correctness
+Product
+recommendations accepted/edited; scenario usage; decision time reduction
+Safety
+false-alert burden; sensitive-scope violations = 0; rollback readiness
+
+24. Key Failure Modes
+Failure
+Required response
+Too little data
+Do not predict; show readiness and deterministic alternative.
+Leakage discovered
+Disable affected version; rebuild dataset; mark historical metrics invalid.
+Model degrades
+Fall back to baseline/previous champion.
+Feature unavailable
+Return unavailable/partial state, not a made-up value.
+Outcome delayed
+Keep unresolved; do not score prematurely.
+Prediction conflicts with hard rule
+Hard deterministic constraint wins.
+Agent paraphrase changes numeric meaning
+UI renders structured prediction card; LLM text is secondary.
+
+25. 12-Week Engineering Roadmap
+Week
+Capability
+1
+Event schemas + event ingestion + history policy
+2
+Analytics warehouse/views + data-quality checks
+3
+Projection service + scenario API
+4
+Prediction definitions/readiness + feature snapshot contract
+5
+Finance baseline forecast + temporal backtest
+6
+Prediction history/outcomes + trust UI
+7
+Model registry abstraction + candidate/champion/rollback
+8
+Task completion/duration shadow models
+9
+Recommendation engine + agent read integration
+10
+Monitoring/drift/calibration dashboards
+11
+Privacy/export/delete/audit hardening
+12
+Usability, failure injection, QA, launch gates
+
+26. Research References
+Google for Developers — Framing an ML problem: https://developers.google.com/machine-learning/problem-framing/ml-framing
+Google for Developers — Rules of Machine Learning: https://developers.google.com/machine-learning/guides/rules-of-ml
+scikit-learn — Lagged features for time series forecasting / temporal evaluation / quantile uncertainty: https://scikit-learn.org/stable/auto_examples/applications/plot_time_series_lagged_features.html
+scikit-learn — TimeSeriesSplit: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html
+MLflow — Model Registry: https://mlflow.org/docs/latest/ml/model-registry
+NIST — AI Risk Management Framework 1.0 and AIRC/Playbook: https://airc.nist.gov/airmf-resources/airmf/
+Attached LifeOS Intelligence/ML concept supplied by the user, used as product-thesis source context.

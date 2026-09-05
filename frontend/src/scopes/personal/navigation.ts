@@ -16,7 +16,7 @@ export interface PersonalNavGroup {
 export const PERSONAL_NAV_GROUPS: PersonalNavGroup[] = [
   {
     section: "Overview",
-    items: [{ path: "/", icon: "space_dashboard", label: "Dashboard" }],
+    items: [{ path: "/", icon: "space_dashboard", label: "Dashboard" }, { path: "/intelligence", icon: "insights", label: "Intelligence" }],
   },
   {
     section: "Daily",

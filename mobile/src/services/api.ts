@@ -77,7 +77,7 @@ export interface MobileMaintenanceSummary {
   plan: { capacityMinutes: number; selectedItems: { itemId: string; priority: string }[] };
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const method = (options.method ?? 'GET').toUpperCase();
   const nativeCookie = Platform.OS === 'web' ? null : await SecureStore.getItemAsync(SESSION_COOKIE_KEY);
   const response = await fetch(`${API_BASE_URL}${path}`, {

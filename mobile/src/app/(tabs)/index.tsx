@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'expo-router';
+import { Link, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -39,6 +39,10 @@ export default function TodayScreen() {
       refreshing={summary.isRefetching || routines.isRefetching}
       title="Your day, clearly."
     >
+      <Card>
+        <SectionTitle title="WholeSignal Intelligence" detail="Explore scenarios" />
+        <Link href={'/intelligence' as Href} style={{ color: colors.primary, fontWeight: '700', paddingVertical: 12 }}>Open projections, forecasts and readiness →</Link>
+      </Card>
       {summary.isPending ? (
         <StateMessage loading message="Bringing your system into focus." title="Loading today" />
       ) : summary.isError ? (

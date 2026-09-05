@@ -67,6 +67,11 @@ export default function MoreScreen() {
       <View style={styles.section}>
         <SectionTitle detail={`${modules.length + 5} connected areas`} title="Explore LifeOS" />
         <View style={styles.grid}>
+          <Pressable accessibilityRole="button" onPress={() => router.push('/intelligence' as Href)} style={styles.module}>
+            <View style={styles.icon}><MaterialCommunityIcons color={colors.primary} name="chart-timeline-variant" size={22} /></View>
+            <Text style={styles.moduleTitle}>Intelligence</Text>
+            <Text style={styles.moduleDescription}>Projections, forecasts, scenarios, and trust</Text>
+          </Pressable>
           <Pressable onPress={() => router.push('/maintenance' as Href)} style={styles.module}>
             <View style={styles.icon}><MaterialCommunityIcons color={colors.primary} name="toolbox-outline" size={22} /></View>
             <Text style={styles.moduleTitle}>Maintenance</Text>

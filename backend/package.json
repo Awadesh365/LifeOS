@@ -16,7 +16,9 @@
     "seed:check-safe": "node scripts/validate-seeders-safe.js",
     "db:seed": "npm run seed:check-safe && sequelize-cli db:seed:all",
     "seed:local": "bash scripts/with-nvm-node.sh tsx scripts/seed.ts",
-    "db:sync": "bash scripts/with-nvm-node.sh tsx scripts/push.ts"
+    "db:sync": "bash scripts/with-nvm-node.sh tsx scripts/push.ts",
+    "test:intelligence": "bash scripts/with-nvm-node.sh node --import tsx --test tests/intelligence/engine.test.ts",
+    "test:intelligence:db": "bash scripts/with-nvm-node.sh node --import tsx scripts/intelligence-test-db.ts"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.2.0",

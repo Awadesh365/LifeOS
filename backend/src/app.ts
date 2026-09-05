@@ -34,6 +34,7 @@ import wealthRoutes from '../routes/api_routes/wealth.routes.js';
 import trainingRoutes from '../routes/api_routes/training.routes.js';
 import preferencesRoutes from '../routes/api_routes/preferences.routes.js';
 import authRoutes from '../routes/api_routes/auth.routes.js';
+import intelligenceRoutes from '../routes/api_routes/intelligence.routes.js';
 import maintenanceRoutes from '../routes/api_routes/maintenance.routes.js';
 import moneyRoutes from '../routes/api_routes/money.routes.js';
 
@@ -115,6 +116,7 @@ app.use('/api/content', contentRoutes);
 app.use('/api/training', trainingRoutes);
 app.use('/api/preferences', preferencesRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/intelligence', intelligenceRoutes);
 app.use('/api/money', moneyRoutes);
 
 app.use(notFound);

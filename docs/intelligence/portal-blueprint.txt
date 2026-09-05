@@ -1,0 +1,1128 @@
+WHOLESIGNAL — WEB PORTAL
+IntelligenceComplete Web Portal Page Blueprint
+Analysis • scenarios • model/data quality • transparency • operations
+The portal is the strategic and diagnostic surface for WholeSignal Intelligence.
+
+1. Portal IA
+Section
+Pages
+Overview
+Intelligence Overview • Forecasts • Recommendations • Scenarios
+Domains
+Money • Productivity • Learning • Maintenance • Fitness • Cross-domain
+Trust
+Prediction History • Outcomes • Quality/Calibration • Readiness • Data Sources
+Models
+Model Catalog • Model Detail • Versions • Experiments/Backtests • Registry
+Operations
+Monitoring • Drift • Data Quality • Event Explorer • Feature Snapshots • Jobs
+System
+Agent Contracts • Notifications • Consent/Privacy • Export/Delete • Audit • Settings
+
+2. Portal Rules
+Portal may expose technical diagnostics, but user-facing and engineering/admin views must be visually separated.
+All forecasts display baseline, prediction horizon, generatedAt, dataThrough, uncertainty and model version where applicable.
+Every chart has accessible tabular equivalent.
+No model may be promoted from the portal without validation gates and audit record.
+P01 — Intelligence Overview
+Route: /intelligence
+Contract
+Specification
+Purpose
+Strategic cross-domain intelligence overview.
+Entry points
+Sidebar.
+Layout hierarchy
+Header → artifact counts/readiness → forecasts → recommendations → domains → quality/monitoring notices.
+Core components
+summary cards; forecast table; recommendation panel.
+Required data
+latest artifacts/readiness.
+Primary actions
+Open; scenario; agent.
+States
+no models; partial consent; stale.
+Analytics
+intelligence_portal_overview_viewed.
+Acceptance criteria
+Clearly separates projections from predictions.
+
+P02 — Forecasts Workspace
+Route: /intelligence/forecasts
+Contract
+Specification
+Purpose
+Analyze all projections/predictions.
+Entry points
+P01/sidebar.
+Layout hierarchy
+Filters → comparison table → trend/interval visualization → detail panel.
+Core components
+table; interval chart; type filters.
+Required data
+artifacts.
+Primary actions
+Filter; open; export.
+States
+empty; stale.
+Analytics
+intelligence_forecasts_portal_viewed.
+Acceptance criteria
+Sortable by domain/type/horizon/status.
+
+P03 — Prediction Detail
+Route: /intelligence/predictions/:id
+Contract
+Specification
+Purpose
+Full prediction lineage and outcome context.
+Entry points
+P02/history.
+Layout hierarchy
+Headline → interval/probability → baseline → factors → snapshot → model version → outcome/feedback.
+Core components
+detail tabs.
+Required data
+prediction graph.
+Primary actions
+Open feature snapshot/model/outcome.
+States
+low confidence; retired model.
+Analytics
+prediction_portal_detail_viewed.
+Acceptance criteria
+Exact stored payload visible.
+
+P04 — Projection Detail
+Route: /intelligence/projections/:id
+Contract
+Specification
+Purpose
+Inspect deterministic projection logic.
+Entry points
+P02.
+Layout hierarchy
+Result → assumptions → calculation/version → scenario comparison.
+Core components
+formula/assumption table.
+Required data
+projection.
+Primary actions
+Clone scenario; export.
+States
+missing source.
+Analytics
+projection_portal_detail_viewed.
+Acceptance criteria
+Reproducible with same inputs/version.
+
+P05 — Scenario Lab
+Route: /intelligence/scenarios
+Contract
+Specification
+Purpose
+Build and compare what-if scenarios.
+Entry points
+Sidebar/P04.
+Layout hierarchy
+Template/domain → assumptions grid → scenario A/B/C → outputs → save.
+Core components
+scenario builder; comparison table/charts.
+Required data
+current domain state.
+Primary actions
+Run; save; clone; send to agent.
+States
+invalid assumptions.
+Analytics
+intelligence_scenario_lab_used.
+Acceptance criteria
+Scenarios never mutate source records.
+
+P06 — Recommendations
+Route: /intelligence/recommendations
+Contract
+Specification
+Purpose
+Review ranked recommendations and rationale.
+Entry points
+Sidebar/P01.
+Layout hierarchy
+Filters → active/expired/dismissed → rationale → linked artifacts.
+Core components
+recommendation table.
+Required data
+recommendations.
+Primary actions
+Open; dismiss; send to agent.
+States
+expired.
+Analytics
+recommendations_portal_viewed.
+Acceptance criteria
+Recommendation state separate from prediction correctness.
+
+P07 — Recommendation Detail
+Route: /intelligence/recommendations/:id
+Contract
+Specification
+Purpose
+Inspect options/constraints before action.
+Entry points
+P06.
+Layout hierarchy
+Recommendation → options → predicted/projection inputs → constraints → expected tradeoffs → action proposal.
+Core components
+option comparison.
+Required data
+recommendation.
+Primary actions
+Propose apply; edit.
+States
+source stale.
+Analytics
+recommendation_portal_detail_viewed.
+Acceptance criteria
+Hard rules override model suggestion.
+
+P08 — Money Intelligence
+Route: /intelligence/domains/money
+Contract
+Specification
+Purpose
+Finance intelligence analysis.
+Entry points
+Domains.
+Layout hierarchy
+Analytics → run-rate projection → ML forecast → anomalies → backtests → scenarios.
+Core components
+forecast chart; anomaly table.
+Required data
+Money artifacts.
+Primary actions
+Drill down; scenario.
+States
+insufficient history.
+Analytics
+money_intelligence_portal_viewed.
+Acceptance criteria
+No investment advice.
+
+P09 — Productivity Intelligence
+Route: /intelligence/domains/productivity
+Contract
+Specification
+Purpose
+Task completion/duration/workload analysis.
+Entry points
+Domains.
+Layout hierarchy
+Completion model → duration model → overload → time/day slices → recommendations.
+Core components
+calibration chart; duration errors.
+Required data
+Productivity artifacts.
+Primary actions
+Drill; scenario.
+States
+sparse labels.
+Analytics
+productivity_intelligence_portal_viewed.
+Acceptance criteria
+No human-worth score.
+
+P10 — Learning Intelligence
+Route: /intelligence/domains/learning
+Contract
+Specification
+Purpose
+Learning pace/prediction analysis.
+Entry points
+Domains.
+Layout hierarchy
+Course projections → predictive ranges → session patterns → scenario planner.
+Core components
+timeline/chart.
+Required data
+Learning artifacts.
+Primary actions
+Open course; simulate.
+States
+insufficient sessions.
+Analytics
+learning_intelligence_portal_viewed.
+Acceptance criteria
+Projection/prediction labels explicit.
+
+P11 — Maintenance Intelligence
+Route: /intelligence/domains/maintenance
+Contract
+Specification
+Purpose
+Maintenance predictive analysis.
+Entry points
+Domains.
+Layout hierarchy
+Deterministic due windows → completion likelihood → postponement patterns → grouping recommendations.
+Core components
+item table.
+Required data
+Maintenance artifacts.
+Primary actions
+Open item/model.
+States
+deterministic-only.
+Analytics
+maintenance_intelligence_portal_viewed.
+Acceptance criteria
+Schedule engine remains truth.
+
+P12 — Fitness Intelligence
+Route: /intelligence/domains/fitness
+Contract
+Specification
+Purpose
+Behavioral training/adherence analysis.
+Entry points
+Domains.
+Layout hierarchy
+Adherence → session duration → week predictions → scenarios.
+Core components
+trend/calibration.
+Required data
+Fitness artifacts.
+Primary actions
+Drill; scenario.
+States
+health scope disabled.
+Analytics
+fitness_intelligence_portal_viewed.
+Acceptance criteria
+No diagnostic/medical predictions.
+
+P13 — Cross-Domain Intelligence
+Route: /intelligence/domains/cross-domain
+Contract
+Specification
+Purpose
+Explore approved cross-domain associations/models.
+Entry points
+Explicit consent.
+Layout hierarchy
+Association explorer → temporal overlap → model lift → caveats.
+Core components
+scatter/table; consent banner.
+Required data
+approved aggregates/models.
+Primary actions
+Filter; revoke scope.
+States
+insufficient overlap.
+Analytics
+cross_domain_portal_viewed.
+Acceptance criteria
+Association never labeled causal.
+
+P14 — Prediction History
+Route: /intelligence/history
+Contract
+Specification
+Purpose
+Audit predictions over time.
+Entry points
+Trust nav.
+Layout hierarchy
+Filters → predictions → outcome state → model version → error.
+Core components
+history table.
+Required data
+predictions/outcomes.
+Primary actions
+Open/export.
+States
+unresolved.
+Analytics
+prediction_history_portal_viewed.
+Acceptance criteria
+Unresolved excluded from performance aggregates.
+
+P15 — Outcome Resolution
+Route: /intelligence/outcomes
+Contract
+Specification
+Purpose
+Inspect target resolution pipeline.
+Entry points
+Trust/admin.
+Layout hierarchy
+Target type → unresolved/resolved → delays → errors.
+Core components
+outcome table.
+Required data
+outcome mappings.
+Primary actions
+Resolve allowed manual labels with audit; inspect.
+States
+late outcome.
+Analytics
+prediction_outcomes_viewed.
+Acceptance criteria
+Manual corrections marked distinctly.
+
+P16 — Quality Dashboard
+Route: /intelligence/quality
+Contract
+Specification
+Purpose
+User/product-level model quality.
+Entry points
+Trust.
+Layout hierarchy
+By model/domain → baseline lift → temporal performance → calibration/coverage → freshness.
+Core components
+metric cards; reliability plots.
+Required data
+evaluation snapshots.
+Primary actions
+Filter/open model.
+States
+too few outcomes.
+Analytics
+intelligence_quality_portal_viewed.
+Acceptance criteria
+No universal accuracy.
+
+P17 — Calibration & Uncertainty
+Route: /intelligence/quality/calibration
+Contract
+Specification
+Purpose
+Analyze probability/range reliability.
+Entry points
+P16.
+Layout hierarchy
+Model → reliability diagram / interval coverage → bins/time slices.
+Core components
+charts + table.
+Required data
+prediction/outcome samples.
+Primary actions
+Filter horizon/time.
+States
+insufficient samples.
+Analytics
+intelligence_calibration_viewed.
+Acceptance criteria
+Coverage and width both shown for intervals.
+
+P18 — Data Readiness
+Route: /intelligence/readiness
+Contract
+Specification
+Purpose
+See eligibility for each predictive feature.
+Entry points
+Trust.
+Layout hierarchy
+Definitions → event count → label count → history span → feature availability → status.
+Core components
+readiness table.
+Required data
+definition readiness.
+Primary actions
+Open requirements.
+States
+not ready.
+Analytics
+intelligence_readiness_portal_viewed.
+Acceptance criteria
+Thresholds transparent/versioned.
+
+P19 — Data Sources
+Route: /intelligence/data-sources
+Contract
+Specification
+Purpose
+Inspect domain-to-intelligence lineage.
+Entry points
+Trust.
+Layout hierarchy
+Source domain → events → derived features → models consuming them → freshness.
+Core components
+lineage table.
+Required data
+source metadata.
+Primary actions
+Open event/feature.
+States
+source disabled.
+Analytics
+intelligence_data_sources_portal_viewed.
+Acceptance criteria
+Respect consent scopes.
+
+P20 — Event Explorer
+Route: /intelligence/events
+Contract
+Specification
+Purpose
+Debug Event Sourcing Lite history.
+Entry points
+Operations/admin.
+Layout hierarchy
+Filter eventType/entity/time → event rows → payload/schema → linked predictions.
+Core components
+event table; JSON detail.
+Required data
+LifeEvents.
+Primary actions
+Filter/export approved metadata.
+States
+large volume.
+Analytics
+intelligence_event_explorer_viewed.
+Acceptance criteria
+Sensitive attributes redacted by role.
+
+P21 — Event Schema Registry
+Route: /intelligence/events/schemas
+Contract
+Specification
+Purpose
+Manage versioned event contracts.
+Entry points
+Operations/admin.
+Layout hierarchy
+Schema list → version → fields → producers/consumers → compatibility.
+Core components
+schema detail.
+Required data
+schema definitions.
+Primary actions
+Create version; deprecate.
+States
+breaking change.
+Analytics
+event_schema_registry_viewed.
+Acceptance criteria
+Breaking change cannot silently replace active schema.
+
+P22 — Feature Catalog
+Route: /intelligence/features
+Contract
+Specification
+Purpose
+Catalog engineered features.
+Entry points
+Models/Operations.
+Layout hierarchy
+Feature → type/source/cutoff semantics → models → version.
+Core components
+feature table.
+Required data
+feature definitions.
+Primary actions
+Open definition.
+States
+deprecated.
+Analytics
+feature_catalog_viewed.
+Acceptance criteria
+Every feature documents prediction-time availability.
+
+P23 — Feature Definition
+Route: /intelligence/features/:id
+Contract
+Specification
+Purpose
+Inspect one feature lineage.
+Entry points
+P22.
+Layout hierarchy
+Definition → source events → transform/version → freshness → leakage notes → consumers.
+Core components
+lineage graph/table.
+Required data
+feature metadata.
+Primary actions
+Open source/model.
+States
+invalid.
+Analytics
+feature_definition_viewed.
+Acceptance criteria
+Cutoff semantics mandatory.
+
+P24 — Feature Snapshot
+Route: /intelligence/predictions/:id/features
+Contract
+Specification
+Purpose
+Reproduce prediction-time input.
+Entry points
+P03.
+Layout hierarchy
+Snapshot time → feature values → source timestamps → missingness → schema version.
+Core components
+snapshot table.
+Required data
+feature snapshot.
+Primary actions
+Export debug view.
+States
+deleted/redacted feature.
+Analytics
+feature_snapshot_viewed.
+Acceptance criteria
+Only authorized roles see sensitive values.
+
+P25 — Model Catalog
+Route: /intelligence/models
+Contract
+Specification
+Purpose
+Inventory domain-specific models.
+Entry points
+Models.
+Layout hierarchy
+Model → target → horizon → champion → readiness → owner/status.
+Core components
+model table.
+Required data
+registry abstraction.
+Primary actions
+Open model; compare.
+States
+no deployed model.
+Analytics
+model_catalog_viewed.
+Acceptance criteria
+One giant LifeOS model is not default.
+
+P26 — Model Detail
+Route: /intelligence/models/:name
+Contract
+Specification
+Purpose
+Technical/product contract for model.
+Entry points
+P25.
+Layout hierarchy
+Purpose → target/labels → eligibility → baseline → champion → metrics → limitations → consumers.
+Core components
+tabs.
+Required data
+model definition + registry.
+Primary actions
+Open version/backtest.
+States
+retired.
+Analytics
+model_detail_portal_viewed.
+Acceptance criteria
+Product goal and evaluation metric both present.
+
+P27 — Model Versions
+Route: /intelligence/models/:name/versions
+Contract
+Specification
+Purpose
+Version history/aliases.
+Entry points
+P26.
+Layout hierarchy
+Version → training window → metrics → validation → aliases → deployed dates.
+Core components
+version table.
+Required data
+model versions.
+Primary actions
+Compare; rollback proposal.
+States
+failed version.
+Analytics
+model_versions_viewed.
+Acceptance criteria
+Champion alias change audited.
+
+P28 — Model Version Detail
+Route: /intelligence/models/:name/versions/:version
+Contract
+Specification
+Purpose
+Reproducibility and validation record.
+Entry points
+P27.
+Layout hierarchy
+Lineage → dataset window/hash → feature version → algorithm/config → metrics → artifacts → approval.
+Core components
+metadata panels.
+Required data
+version metadata.
+Primary actions
+Promote/retire if authorized.
+States
+artifact missing.
+Analytics
+model_version_detail_viewed.
+Acceptance criteria
+No promotion if required gates fail.
+
+P29 — Backtests / Temporal Validation
+Route: /intelligence/models/:name/backtests
+Contract
+Specification
+Purpose
+Inspect time-aware evaluation.
+Entry points
+P26.
+Layout hierarchy
+Fold windows → metrics by fold → baseline → error by horizon/time slice.
+Core components
+backtest chart/table.
+Required data
+validation runs.
+Primary actions
+Compare versions.
+States
+insufficient folds.
+Analytics
+model_backtests_viewed.
+Acceptance criteria
+No shuffled evaluation for temporal targets.
+
+P30 — Model Comparison
+Route: /intelligence/models/:name/compare
+Contract
+Specification
+Purpose
+Compare candidate vs champion/baseline.
+Entry points
+P27.
+Layout hierarchy
+Metrics → calibration/coverage → latency → failure slices → decision.
+Core components
+comparison matrix.
+Required data
+versions/evaluations.
+Primary actions
+Select promotion candidate.
+States
+incomparable definitions.
+Analytics
+model_comparison_viewed.
+Acceptance criteria
+Target/feature definition mismatch blocks naive comparison.
+
+P31 — Registry / Promotion
+Route: /intelligence/registry
+Contract
+Specification
+Purpose
+Controlled model promotion/rollback.
+Entry points
+Models/admin.
+Layout hierarchy
+Candidates → validation gates → aliases → deploy history → rollback.
+Core components
+registry table; gate checklist.
+Required data
+registry versions.
+Primary actions
+Promote; reassign champion; rollback.
+States
+gate failure.
+Analytics
+model_registry_action.
+Acceptance criteria
+Every action creates audit event.
+
+P32 — Monitoring Overview
+Route: /intelligence/monitoring
+Contract
+Specification
+Purpose
+Operational health of Intelligence.
+Entry points
+Operations.
+Layout hierarchy
+Serving health → stale models → missing features → drift → outcome resolution → incidents.
+Core components
+monitor cards.
+Required data
+monitoring signals.
+Primary actions
+Open incident/model.
+States
+all healthy.
+Analytics
+intelligence_monitoring_viewed.
+Acceptance criteria
+Unavailable model distinguished from bad prediction.
+
+P33 — Data Quality Monitor
+Route: /intelligence/monitoring/data-quality
+Contract
+Specification
+Purpose
+Detect broken data pipelines.
+Entry points
+P32.
+Layout hierarchy
+Schema/missing/delay/duplicates → affected models → timeline.
+Core components
+quality table.
+Required data
+DQ checks.
+Primary actions
+Acknowledge/investigate.
+States
+pipeline outage.
+Analytics
+intelligence_data_quality_viewed.
+Acceptance criteria
+Affected user predictions can be suppressed.
+
+P34 — Drift Monitor
+Route: /intelligence/monitoring/drift
+Contract
+Specification
+Purpose
+Track input/output drift.
+Entry points
+P32.
+Layout hierarchy
+Model → feature drift → prediction drift → time windows → action policy.
+Core components
+drift charts.
+Required data
+distributions.
+Primary actions
+Open feature/model; acknowledge.
+States
+low sample.
+Analytics
+intelligence_drift_viewed.
+Acceptance criteria
+Drift alone does not auto-retrain.
+
+P35 — Performance Monitor
+Route: /intelligence/monitoring/performance
+Contract
+Specification
+Purpose
+Track resolved outcome performance.
+Entry points
+P32.
+Layout hierarchy
+Model → rolling metrics → baseline → calibration → alert thresholds.
+Core components
+rolling metric charts.
+Required data
+outcomes.
+Primary actions
+Open slice.
+States
+outcome lag.
+Analytics
+intelligence_performance_monitor_viewed.
+Acceptance criteria
+Uses only resolved outcomes.
+
+P36 — Training Jobs
+Route: /intelligence/jobs/training
+Contract
+Specification
+Purpose
+Track training/evaluation runs.
+Entry points
+Operations.
+Layout hierarchy
+Job → definition/version → data window → status → metrics/artifacts.
+Core components
+job table.
+Required data
+training runs.
+Primary actions
+Open/cancel authorized pending job.
+States
+failed.
+Analytics
+training_jobs_viewed.
+Acceptance criteria
+Failed job never changes champion.
+
+P37 — Inference Diagnostics
+Route: /intelligence/diagnostics/inference
+Contract
+Specification
+Purpose
+Inspect serving latency/errors/readiness.
+Entry points
+Operations.
+Layout hierarchy
+Endpoint/model → request status → fallback reason → latency → feature missingness.
+Core components
+diagnostic table.
+Required data
+serving telemetry.
+Primary actions
+Filter/open trace.
+States
+privacy-redacted.
+Analytics
+inference_diagnostics_viewed.
+Acceptance criteria
+No sensitive payload in ordinary logs.
+
+P38 — Recommendation Engine
+Route: /intelligence/recommendation-engine
+Contract
+Specification
+Purpose
+Configure/test recommendation policies.
+Entry points
+Models/admin.
+Layout hierarchy
+Policy → inputs → hard constraints → ranking → version → test cases.
+Core components
+policy table.
+Required data
+recommendation definitions.
+Primary actions
+Open/test/version.
+States
+prediction unavailable.
+Analytics
+recommendation_engine_viewed.
+Acceptance criteria
+Prediction service cannot directly mutate plans.
+
+P39 — Agent Intelligence Contracts
+Route: /intelligence/agent-contracts
+Contract
+Specification
+Purpose
+Define structured tools exposed to agent.
+Entry points
+System/admin.
+Layout hierarchy
+Tool → schema → permissions → freshness requirements → confirmation policy.
+Core components
+contract table.
+Required data
+tool schemas.
+Primary actions
+Test read-only call; version.
+States
+schema mismatch.
+Analytics
+agent_intelligence_contracts_viewed.
+Acceptance criteria
+Agent numeric outputs come from tool payload.
+
+P40 — Agent Trace Review
+Route: /intelligence/agent-traces
+Contract
+Specification
+Purpose
+Audit agent use of intelligence artifacts.
+Entry points
+System/admin.
+Layout hierarchy
+Conversation/run → artifact IDs → tool calls → recommendation → confirmed writes.
+Core components
+trace table.
+Required data
+agent traces.
+Primary actions
+Open trace.
+States
+redacted.
+Analytics
+agent_intelligence_trace_viewed.
+Acceptance criteria
+Sensitive conversation text minimized by policy.
+
+P41 — Notifications
+Route: /intelligence/notifications
+Contract
+Specification
+Purpose
+Configure material intelligence alerts.
+Entry points
+System.
+Layout hierarchy
+Rule type → domain → threshold/material change → quiet hours → last fired.
+Core components
+rule table.
+Required data
+notification policies.
+Primary actions
+Edit/test.
+States
+channel unavailable.
+Analytics
+intelligence_notifications_portal_viewed.
+Acceptance criteria
+Avoid alerting on trivial probability changes.
+
+P42 — Consent & Privacy
+Route: /intelligence/privacy
+Contract
+Specification
+Purpose
+Control Intelligence processing scope.
+Entry points
+System.
+Layout hierarchy
+Domain consent → cross-domain → derived artifacts → retention → deletion.
+Core components
+privacy controls.
+Required data
+consents/artifact inventory.
+Primary actions
+Revoke/export/delete.
+States
+pending deletion.
+Analytics
+intelligence_privacy_portal_viewed.
+Acceptance criteria
+Scope changes affect future processing predictably.
+
+P43 — Export Center
+Route: /intelligence/export
+Contract
+Specification
+Purpose
+Export predictions/outcomes/models metadata.
+Entry points
+System.
+Layout hierarchy
+Scope → date → artifacts → format → include debug data if authorized.
+Core components
+export wizard.
+Required data
+artifact indexes.
+Primary actions
+Generate.
+States
+large export.
+Analytics
+intelligence_export_portal_requested.
+Acceptance criteria
+No surprise source-domain export.
+
+P44 — Deletion Center
+Route: /intelligence/delete
+Contract
+Specification
+Purpose
+Delete derived Intelligence data safely.
+Entry points
+System.
+Layout hierarchy
+Artifact categories → personalization reset → impacted models/features → confirmation.
+Core components
+impact analysis.
+Required data
+artifact graph.
+Primary actions
+Delete/request.
+States
+processing.
+Analytics
+intelligence_delete_portal_requested.
+Acceptance criteria
+Core domain deletion handled by owning domain.
+
+P45 — Audit Log
+Route: /intelligence/audit
+Contract
+Specification
+Purpose
+Trace consent/model/prediction/admin actions.
+Entry points
+System/admin.
+Layout hierarchy
+Actor/action/entity/time → before/after → source.
+Core components
+audit table.
+Required data
+audit events.
+Primary actions
+Filter/export.
+States
+none.
+Analytics
+intelligence_audit_viewed.
+Acceptance criteria
+Promotion, rollback, consent and deletion events always auditable.
+
+P46 — Settings
+Route: /intelligence/settings
+Contract
+Specification
+Purpose
+System/product preferences.
+Entry points
+System.
+Layout hierarchy
+Feature flags → default explanations → scenario units → retention defaults → advanced.
+Core components
+settings sections.
+Required data
+config.
+Primary actions
+Save/reset.
+States
+invalid config.
+Analytics
+intelligence_settings_portal_viewed.
+Acceptance criteria
+Cannot disable required safety gates.
+
+
+3. Supporting Portal Drawers / Dialogs
+ID
+Surface
+D01
+Prediction quick detail
+D02
+Projection assumptions
+D03
+Scenario clone/save
+D04
+Model promotion gate review
+D05
+Rollback confirmation
+D06
+Feature lineage preview
+D07
+Data-quality incident
+D08
+Consent scope editor
+D09
+Sensitive debug authorization
+D10
+Recommendation policy test
+D11
+Agent action diff
+D12
+Delete impact confirmation
+
+4. Portal Build Order
+Phase
+Pages
+Product surface
+P01–P19
+Data foundation
+P20–P24
+Models & registry
+P25–P31
+Operations/MLOps
+P32–P37
+Recommendations/Agent
+P38–P40
+Governance
+P41–P46
