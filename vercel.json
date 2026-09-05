@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "fluid": true,
+  "installCommand": "npm --prefix backend ci --include=dev && npm --prefix frontend ci --include=dev",
+  "buildCommand": "VITE_PERSONAL_API_URL=/api npm run build",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "backend/dist/**",
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
+    { "source": "/((?!api(?:/|$)|assets/).*)", "destination": "/index.html" }
+  ],
+  "git": { "deploymentEnabled": false }
+}

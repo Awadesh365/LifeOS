@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test, { beforeEach } from 'node:test';
+
+// Keep dated training fixtures independent of the day the suite is run.
+beforeEach((context) => context.mock.timers.enable({ apis: ['Date'], now: new Date('2026-08-15T12:00:00Z') }));
 import { decideProgression, estimateOneRepMax, type ProgressionSet } from '../../services/training/progression.js';
 
 const prescription = { repMin: 6, repMax: 10, targetRir: 2, targetSets: 3, restSeconds: 180, increment: 2.5 };

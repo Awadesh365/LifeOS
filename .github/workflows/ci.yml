@@ -1,0 +1,188 @@
+name: CI
+on:
+  push:
+    branches: [main, chore/ci-cd]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-test-only
+          POSTGRES_DB: lifeos_ci_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lifeos_ci_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:ci-test-only@localhost:5432/lifeos_ci_test
+      SESSION_SECRET: ci-only-secret-not-for-production-use
+      DB_SYNC: "false"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: backend/.nvmrc
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Migrate empty database
+        run: npm run db:migrate
+      - name: Verify migration replay is safe
+        run: npm run db:migrate
+      - name: Verify Vercel API entry
+        env:
+          NODE_ENV: production
+          VERCEL: "1"
+        run: node ../scripts/smoke-api.cjs
+      - name: Smoke test production server
+        env:
+          NODE_ENV: production
+          BACKEND_PORT: "5000"
+        run: |
+          node dist/src/server.js > /tmp/lifeos-api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:5000/api/health-check; then
+              exit 0
+            fi
+            if ! kill -0 "$api_pid" 2>/dev/null; then break; fi
+            sleep 1
+          done
+          cat /tmp/lifeos-api.log
+          exit 1
+
+  frontend:
+    name: Portal checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      VITE_PERSONAL_API_URL: /api
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: backend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test -- --run
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portal-${{ github.sha }}
+          path: frontend/dist
+          if-no-files-found: error
+          retention-days: 7
+
+  mobile:
+    name: Mobile checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      CI: "1"
+      EXPO_PUBLIC_API_URL: https://example.invalid/api
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: mobile/.nvmrc
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - name: Verify Android JavaScript bundle
+        run: npx expo export --platform android --output-dir dist-ci
+
+  checks:
+    name: All checks passed
+    if: always()
+    needs: [backend, frontend, mobile]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every application check
+        env:
+          BACKEND: ${{ needs.backend.result }}
+          FRONTEND: ${{ needs.frontend.result }}
+          MOBILE: ${{ needs.mobile.result }}
+        run: test "$BACKEND" = success && test "$FRONTEND" = success && test "$MOBILE" = success
+
+  deploy:
+    name: Deploy production
+    needs: [checks]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    concurrency:
+      group: lifeos-production
+      cancel-in-progress: false
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: backend/.nvmrc
+          package-manager-cache: false
+      - name: Verify deployment configuration
+        env:
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
+        run: |
+          test -n "$VERCEL_TOKEN"
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+          test -n "$DATABASE_DIRECT_URL"
+      - run: npm install --global vercel@59.11.7
+      - run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - run: vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Migrate production database
+        working-directory: backend
+        env:
+          NODE_ENV: production
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
+        run: npm run db:migrate
+      - name: Publish checked build
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" > /tmp/lifeos-deployment-url
+      - name: Verify live deployment
+        env:
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+        run: |
+          test -n "$PRODUCTION_URL"
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 "$PRODUCTION_URL/api/health-check"
+          curl --fail --silent --show-error "$PRODUCTION_URL/" > /dev/null

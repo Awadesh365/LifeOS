@@ -1,0 +1,13 @@
+.git
+.github
+**/node_modules
+**/.env
+**/.env.*
+**/dist
+**/coverage
+**/test-results
+**/playwright-report
+mobile
+docs
+*.docx
+deep-research-report.md

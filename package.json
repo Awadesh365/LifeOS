@@ -1,0 +1,8 @@
+{
+  "name": "lifeos-deployment",
+  "private": true,
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "build": "npm --prefix backend run build && npm --prefix frontend run build"
+  }
+}

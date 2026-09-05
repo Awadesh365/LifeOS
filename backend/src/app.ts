@@ -73,7 +73,7 @@ app.use(session({
       : { conObject: { host: config.db.host, port: config.db.port, database: config.db.name, user: config.db.user, password: config.db.password } }),
     tableName: 'user_sessions',
     createTableIfMissing: false,
-    pruneSessionInterval: 15 * 60,
+    pruneSessionInterval: process.env.VERCEL ? false : 15 * 60,
   }),
   resave: false,
   saveUninitialized: false,
