@@ -1,0 +1,202 @@
+[
+  {
+    "id": "M00",
+    "title": "Intelligence Entry",
+    "path": ""
+  },
+  {
+    "id": "M01",
+    "title": "Intelligence Onboarding",
+    "path": "onboarding"
+  },
+  {
+    "id": "M02",
+    "title": "Domain Consent",
+    "path": "onboarding/consent"
+  },
+  {
+    "id": "M03",
+    "title": "Readiness Setup",
+    "path": "onboarding/readiness"
+  },
+  {
+    "id": "M04",
+    "title": "Intelligence Home",
+    "path": "home"
+  },
+  {
+    "id": "M05",
+    "title": "All Forecasts",
+    "path": "forecasts"
+  },
+  {
+    "id": "M06",
+    "title": "Prediction Detail",
+    "path": "predictions/:id"
+  },
+  {
+    "id": "M07",
+    "title": "Projection Detail",
+    "path": "projections/:id"
+  },
+  {
+    "id": "M08",
+    "title": "Scenario Simulator",
+    "path": "scenarios/new"
+  },
+  {
+    "id": "M09",
+    "title": "Recommendation Detail",
+    "path": "recommendations/:id"
+  },
+  {
+    "id": "M10",
+    "title": "Recommendation Action Review",
+    "path": "recommendations/:id/apply"
+  },
+  {
+    "id": "M11",
+    "title": "Prediction History",
+    "path": "history"
+  },
+  {
+    "id": "M12",
+    "title": "Prediction Outcome",
+    "path": "history/:id"
+  },
+  {
+    "id": "M13",
+    "title": "Trust & Quality",
+    "path": "trust"
+  },
+  {
+    "id": "M14",
+    "title": "Data Readiness",
+    "path": "readiness"
+  },
+  {
+    "id": "M15",
+    "title": "Why This Prediction",
+    "path": "predictions/:id/why"
+  },
+  {
+    "id": "M16",
+    "title": "Prediction Feedback",
+    "path": "predictions/:id/feedback"
+  },
+  {
+    "id": "M17",
+    "title": "Money Intelligence",
+    "path": "money"
+  },
+  {
+    "id": "M18",
+    "title": "Spend Forecast",
+    "path": "money/spend-forecast"
+  },
+  {
+    "id": "M19",
+    "title": "Transaction Anomaly",
+    "path": "money/anomalies/:id"
+  },
+  {
+    "id": "M20",
+    "title": "Productivity Intelligence",
+    "path": "productivity"
+  },
+  {
+    "id": "M21",
+    "title": "Task Completion Prediction",
+    "path": "productivity/tasks/:taskId"
+  },
+  {
+    "id": "M22",
+    "title": "Task Duration Estimate",
+    "path": "productivity/duration/:taskId"
+  },
+  {
+    "id": "M23",
+    "title": "Learning Intelligence",
+    "path": "learning"
+  },
+  {
+    "id": "M24",
+    "title": "Course Completion Forecast",
+    "path": "learning/:courseId/forecast"
+  },
+  {
+    "id": "M25",
+    "title": "Maintenance Intelligence",
+    "path": "maintenance"
+  },
+  {
+    "id": "M26",
+    "title": "Fitness Intelligence",
+    "path": "fitness"
+  },
+  {
+    "id": "M27",
+    "title": "Cross-Domain Insights",
+    "path": "cross-domain"
+  },
+  {
+    "id": "M28",
+    "title": "Agent Intelligence Handoff",
+    "path": "agent-handoff/:id"
+  },
+  {
+    "id": "M30",
+    "title": "Notification Center",
+    "path": "notifications"
+  },
+  {
+    "id": "M31",
+    "title": "Notification Settings",
+    "path": "settings/notifications"
+  },
+  {
+    "id": "M32",
+    "title": "Intelligence Settings",
+    "path": "settings"
+  },
+  {
+    "id": "M33",
+    "title": "Privacy & Consent",
+    "path": "settings/privacy"
+  },
+  {
+    "id": "M34",
+    "title": "Export Intelligence Data",
+    "path": "settings/export"
+  },
+  {
+    "id": "M35",
+    "title": "Delete Intelligence Data",
+    "path": "settings/delete"
+  },
+  {
+    "id": "M36",
+    "title": "Model Transparency",
+    "path": "models"
+  },
+  {
+    "id": "M37",
+    "title": "Model Detail",
+    "path": "models/:name"
+  },
+  {
+    "id": "M38",
+    "title": "Data Sources",
+    "path": "data-sources"
+  },
+  {
+    "id": "M39",
+    "title": "Stale / Unavailable Detail",
+    "path": "status/:artifactId"
+  },
+  {
+    "id": "M40",
+    "title": "Offline Intelligence",
+    "path": "offline"
+  }
+]
