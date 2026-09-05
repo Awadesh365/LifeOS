@@ -111,6 +111,12 @@ export interface Consent {
   updatedAt?: string;
 }
 export interface Diagnostics extends Summary {
+  monitoring: {
+    quality: Record<string, unknown>[];
+    drift: Record<string, unknown>[];
+    window: string;
+    driftDefinition: string;
+  };
   events: Record<string, unknown>[];
   audit: Record<string, unknown>[];
   schemas: Record<string, unknown>[];

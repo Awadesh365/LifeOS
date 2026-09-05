@@ -294,6 +294,7 @@ export default function IntelligencePortal() {
       ...templates["money-run-rate"].fields,
     }),
     [scenarioName, setScenarioName] = useState(""),
+    [currency, setCurrency] = useState("INR"),
     [scenarioDomain, setScenarioDomain] = useState("money"),
     [comparison, setComparison] = useState<IntelligenceArtifact[]>([]);
   const [confirmation, setConfirmation] = useState(""),
@@ -572,6 +573,8 @@ export default function IntelligencePortal() {
                   );
                   setAssumptions(artifact.payload.assumptions ?? {});
                   setScenarioDomain(artifact.domain);
+                  if (artifact.payload.template === "money-run-rate")
+                    setCurrency(artifact.payload.unit ?? "INR");
                   navigate(ROOT + "/scenarios");
                 }}
               >
@@ -759,6 +762,14 @@ export default function IntelligencePortal() {
                 <MenuItem value="maintenance">Maintenance</MenuItem>
               </TextField>
             )}
+            {template === "money-run-rate" && (
+              <TextField
+                label="Currency"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+                inputProps={{ maxLength: 3 }}
+              />
+            )}
             <TextField
               label="Scenario name"
               value={scenarioName}
@@ -787,7 +798,7 @@ export default function IntelligencePortal() {
                   {
                     domain: scenarioDomain,
                     template,
-                    assumptions,
+                    assumptions: { ...assumptions, currency },
                     name: scenarioName || undefined,
                     save: true,
                   },
@@ -1008,7 +1019,7 @@ export default function IntelligencePortal() {
                     () =>
                       api.request("/models/train", "POST", {
                         definitionId: modelId,
-                        currency: "INR",
+                        currency,
                       }),
                     "Training completed",
                   )
@@ -1233,6 +1244,55 @@ export default function IntelligencePortal() {
       </Panel>
     );
   } else if (
+    path === "monitoring/data-quality" ||
+    path === "monitoring/drift"
+  ) {
+    content = (
+      <Panel
+        heading={
+          path.endsWith("drift")
+            ? "Input distribution drift"
+            : "Event data quality"
+        }
+      >
+        {path.endsWith("drift") ? (
+          <>
+            <p>{diag?.monitoring?.window}</p>
+            <Table
+              rows={diag?.monitoring?.drift ?? []}
+              columns={[
+                "currency",
+                "currentSamples",
+                "previousSamples",
+                "state",
+                "standardizedMeanShift",
+              ]}
+            />
+            <p className="intel-muted">{diag?.monitoring?.driftDefinition}</p>
+          </>
+        ) : (
+          <>
+            <Table
+              rows={diag?.monitoring?.quality ?? []}
+              columns={[
+                "domain",
+                "events",
+                "lateEvents",
+                "invalidTimestamps",
+                "dataThrough",
+                "status",
+              ]}
+            />
+            <p className="intel-muted">
+              Late means recorded more than 24 hours after occurrence. Imported
+              history is expected to be late; it is excluded from unavailable
+              historical training cutoffs.
+            </p>
+          </>
+        )}
+      </Panel>
+    );
+  } else if (
     path.startsWith("monitoring") ||
     path === "diagnostics/inference"
   ) {
@@ -1336,6 +1396,14 @@ export default function IntelligencePortal() {
             available yet.
           </Alert>
         )}
+        {domainPath === "money" && (
+          <TextField
+            label="Currency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+            inputProps={{ maxLength: 3 }}
+          />
+        )}
         {filterBar}
         <Panel
           heading={
@@ -1357,13 +1425,29 @@ export default function IntelligencePortal() {
             />
           </Panel>
         )}
-        {domainPath === "money" && <Button disabled={busy} onClick={() => void action(async () => { const a = await api.request<IntelligenceArtifact>("/sources/projection", "POST", {currency:"INR"}); navigate(`${ROOT}/projections/${a.id}`); }, "Ledger projection generated")}>Project from current ledger</Button>}
+        {domainPath === "money" && (
+          <Button
+            disabled={busy}
+            onClick={() =>
+              void action(async () => {
+                const a = await api.request<IntelligenceArtifact>(
+                  "/sources/projection",
+                  "POST",
+                  { currency },
+                );
+                navigate(`${ROOT}/projections/${a.id}`);
+              }, "Ledger projection generated")
+            }
+          >
+            Project from current ledger
+          </Button>
+        )}
         {domainPath === "money" && (
           <Button
             disabled={busy}
             onClick={() =>
               void action(
-                () => api.request("/predictions", "POST", { currency: "INR" }),
+                () => api.request("/predictions", "POST", { currency }),
                 "Prediction generated",
               )
             }

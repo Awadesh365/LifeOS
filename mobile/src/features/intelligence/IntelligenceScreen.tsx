@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, type Href } from "expo-router";
 import { Share, Text, TextInput, View, Switch, StyleSheet } from "react-native";
@@ -67,9 +67,15 @@ export default function IntelligenceScreen({ path = "" }: { path?: string }) {
     ),
     [scenarioDomain, setScenarioDomain] = useState<Domain>("money"),
     [scenarioName, setScenarioName] = useState(""),
+    [currency, setCurrency] = useState("INR"),
     [result, setResult] = useState<IntelligenceArtifact>(),
     [note, setNote] = useState(""),
     [confirmation, setConfirmation] = useState("");
+  const [observedAt, setObservedAt] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setObservedAt(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
   const data = query.data;
   const go = (p: string) =>
     router.push(("/intelligence" + (p ? "/" + p : "")) as Href);
@@ -174,7 +180,7 @@ export default function IntelligenceScreen({ path = "" }: { path?: string }) {
       {text(`Data through: ${fmt(a.dataThrough)}`, true)}
       {text(`Readiness: ${label(a.payload.readiness ?? a.state)}`, true)}
       {a.payload.expiresAt &&
-        Date.parse(a.payload.expiresAt) < Date.now() &&
+        Date.parse(a.payload.expiresAt) < observedAt &&
         text("Expired — refresh before acting.")}
       {
         <Button
@@ -350,6 +356,8 @@ export default function IntelligenceScreen({ path = "" }: { path?: string }) {
               }
             />
           )}{" "}
+          {template === "money-run-rate" &&
+            input("Currency", currency, (v) => setCurrency(v.toUpperCase()))}
           {input("Scenario name", scenarioName, setScenarioName)}
           {Object.entries(assumptions).map(([k, v]) =>
             input(
@@ -369,12 +377,15 @@ export default function IntelligenceScreen({ path = "" }: { path?: string }) {
                   {
                     domain: scenarioDomain,
                     template,
-                    assumptions: Object.fromEntries(
-                      Object.entries(assumptions).map(([k, v]) => [
-                        k,
-                        Number(v),
-                      ]),
-                    ),
+                    assumptions: {
+                      ...Object.fromEntries(
+                        Object.entries(assumptions).map(([k, v]) => [
+                          k,
+                          Number(v),
+                        ]),
+                      ),
+                      currency,
+                    },
                     name: scenarioName || undefined,
                     save: true,
                   },
@@ -737,14 +748,30 @@ export default function IntelligenceScreen({ path = "" }: { path?: string }) {
             </View>
           </Card>
         )}
-        {d === "money" && <Button label="Project from current ledger" disabled={busy || query.isError} onPress={() => void act(async () => { const a = await api.mutate<IntelligenceArtifact>("/sources/projection", {currency:"INR"}); go(`projections/${a.id}`); }, "Ledger projection generated")}/>}
+        {d === "money" &&
+          input("Currency", currency, (v) => setCurrency(v.toUpperCase()))}
+        {d === "money" && (
+          <Button
+            label="Project from current ledger"
+            disabled={busy || query.isError}
+            onPress={() =>
+              void act(async () => {
+                const a = await api.mutate<IntelligenceArtifact>(
+                  "/sources/projection",
+                  { currency },
+                );
+                go(`projections/${a.id}`);
+              }, "Ledger projection generated")
+            }
+          />
+        )}
         {d === "money" && (
           <Button
             label="Generate validated forecast"
             disabled={busy || query.isError}
             onPress={() =>
               void act(
-                () => api.mutate("/predictions", { currency: "INR" }),
+                () => api.mutate("/predictions", { currency }),
                 "Prediction generated",
               )
             }

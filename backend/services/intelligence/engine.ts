@@ -32,13 +32,26 @@ export function atCutoff(events: Event[], cutoff: string) {
     )
     .sort(
       (a, b) =>
-        a.recordedAt.localeCompare(b.recordedAt) || a.id.localeCompare(b.id),
+        a.recordedAt.localeCompare(b.recordedAt) ||
+        (a.sequence && b.sequence
+          ? BigInt(a.sequence) < BigInt(b.sequence)
+            ? -1
+            : BigInt(a.sequence) > BigInt(b.sequence)
+              ? 1
+              : 0
+          : a.id.localeCompare(b.id)),
     );
 }
 export function project(input: Record<string, any>) {
   const type = input.template;
   const a = input.assumptions ?? {};
   if (type === "money-run-rate") {
+    const currency = a.currency ?? "INR";
+    if (typeof currency !== "string" || !/^[A-Z]{3}$/.test(currency))
+      throw createHttpError(
+        400,
+        "currency must be a three-letter uppercase code",
+      );
     const spent = numeric(a.spent, "spent"),
       elapsedDays = numeric(a.elapsedDays, "elapsedDays", 1, 31),
       periodDays = numeric(a.periodDays, "periodDays", elapsedDays, 31),
@@ -48,7 +61,7 @@ export function project(input: Record<string, any>) {
       );
     return {
       value: round((spent / elapsedDays) * periodDays + remainingCommitments),
-      unit: String(a.currency ?? "INR").match(/^[A-Z]{3}$/)?.[0] ?? "INR",
+      unit: currency,
       assumptions: { spent, elapsedDays, periodDays, remainingCommitments },
       formula:
         "spent / elapsedDays × periodDays + additional remaining commitments",
@@ -235,7 +248,12 @@ export function trainFinance(
         f.actual >= Math.max(0, f.predicted - width) &&
         f.actual <= f.predicted + width,
     ).length / holdout.length;
+  const lastTrainingMonth = new Date(`${rows.at(-1)!.month}-01T00:00:00Z`);
+  const lastCompleteMonth = new Date(cutoff);
+  lastCompleteMonth.setUTCDate(1);
+  lastCompleteMonth.setUTCMonth(lastCompleteMonth.getUTCMonth()-1);
   const gates = {
+    recentTrainingData: rows.at(-1)!.month === lastCompleteMonth.toISOString().slice(0,7),
     temporalHoldout: true,
     sufficientLabels: rows.length >= 18,
     beatsBaseline: mae < baselineMae,
@@ -251,7 +269,7 @@ export function trainFinance(
     dataHash: createHash("sha256").update(JSON.stringify(rows)).digest("hex"),
     trainingWindow: [rows[0].month, rows.at(-1)!.month],
     trainedAt: cutoff,
-    dataThrough: cutoff,
+    dataThrough: new Date(Date.UTC(lastTrainingMonth.getUTCFullYear(), lastTrainingMonth.getUTCMonth()+1,1)-1).toISOString(),
     parameters: { center: median(rows.slice(-6).map((r) => r.value)), width },
     metrics: {
       mae: round(mae),
@@ -266,5 +284,103 @@ export function trainFinance(
     validation: Object.values(gates).every(Boolean) ? "passed" : "failed",
     limitation:
       "Small personal sample; interval coverage is measured on chronological holdout and is not a guarantee.",
+  };
+}
+
+export function monitorEvents(events: Event[], cutoff: string) {
+  const end = Date.parse(cutoff),
+    currentStart = end - 30 * DAY,
+    previousStart = end - 60 * DAY;
+  const quality = [
+    "money",
+    "productivity",
+    "learning",
+    "maintenance",
+    "fitness",
+  ].map((domain) => {
+    const rows = events.filter((e) => e.domain === domain);
+    return {
+      domain,
+      events: rows.length,
+      lateEvents: rows.filter(
+        (e) => Date.parse(e.recordedAt) - Date.parse(e.eventTime) > DAY,
+      ).length,
+      invalidTimestamps: rows.filter(
+        (e) =>
+          !Number.isFinite(Date.parse(e.eventTime)) ||
+          !Number.isFinite(Date.parse(e.recordedAt)) ||
+          Date.parse(e.recordedAt) > end,
+      ).length,
+      dataThrough:
+        rows
+          .map((e) => e.recordedAt)
+          .sort()
+          .at(-1) ?? null,
+      status: rows.length ? "observed" : "no_history",
+    };
+  });
+  const currencies = [
+    ...new Set(
+      events
+        .filter((e) => e.domain === "money")
+        .map((e) => String(e.attributes.currency)),
+    ),
+  ];
+  const drift = currencies.map((currency) => {
+    const rows = events.filter(
+      (e) =>
+        e.domain === "money" &&
+        e.attributes.currency === currency &&
+        e.eventType !== "TRANSACTION_DELETED" &&
+        Number.isFinite(Number(e.attributes.amount)),
+    );
+    const current = rows
+      .filter(
+        (e) =>
+          Date.parse(e.recordedAt) > currentStart &&
+          Date.parse(e.recordedAt) <= end,
+      )
+      .map((e) => Number(e.attributes.amount));
+    const previous = rows
+      .filter(
+        (e) =>
+          Date.parse(e.recordedAt) > previousStart &&
+          Date.parse(e.recordedAt) <= currentStart,
+      )
+      .map((e) => Number(e.attributes.amount));
+    if (current.length < 30 || previous.length < 30)
+      return {
+        currency,
+        currentSamples: current.length,
+        previousSamples: previous.length,
+        state: "insufficient_samples",
+        standardizedMeanShift: null,
+      };
+    const mean = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length;
+    const baseline = mean(previous),
+      sd = Math.sqrt(
+        previous.reduce((s, x) => s + (x - baseline) ** 2, 0) / previous.length,
+      );
+    const shift =
+      sd === 0 ? null : round(Math.abs(mean(current) - baseline) / sd);
+    return {
+      currency,
+      currentSamples: current.length,
+      previousSamples: previous.length,
+      state:
+        shift === null
+          ? "constant_baseline"
+          : shift > 1
+            ? "review_shift"
+            : "no_large_mean_shift",
+      standardizedMeanShift: shift,
+    };
+  });
+  return {
+    quality,
+    drift,
+    window: "Latest 30 recorded days compared with preceding 30 days",
+    driftDefinition:
+      "Absolute difference in mean event amount divided by baseline standard deviation. Event distribution only; does not measure prediction correctness or cause automatic retraining.",
   };
 }

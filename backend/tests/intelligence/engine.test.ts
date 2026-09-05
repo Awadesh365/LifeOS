@@ -7,6 +7,7 @@ import {
   financeDataset,
   trainFinance,
   readiness,
+  monitorEvents,
 } from "../../services/intelligence/engine.js";
 import type { Event } from "../../services/intelligence/contracts.js";
 const event = (overrides: Partial<Event> = {}): Event => ({
@@ -155,4 +156,32 @@ test("temporal validation windows never overlap future targets", () => {
     v.validation,
     Object.values(v.gates).every(Boolean) ? "passed" : "failed",
   );
+});
+
+test("monitoring suppresses drift estimates for sparse samples and keeps currencies separate", () => {
+  const result = monitorEvents(
+    [
+      event(),
+      event({ id: "usd", attributes: { amount: 900, currency: "USD" } }),
+    ],
+    "2024-02-01T00:00:00Z",
+  );
+  assert.equal(result.drift.length, 2);
+  assert.ok(
+    result.drift.every(
+      (r) =>
+        r.state === "insufficient_samples" && r.standardizedMeanShift === null,
+    ),
+  );
+});
+
+test("event sequence preserves edits that share the same timestamp", () => {
+  const rows = atCutoff(
+    [
+      event({ id: "a", sequence: "2", attributes: { amount: 2 } }),
+      event({ id: "z", sequence: "1", attributes: { amount: 1 } }),
+    ],
+    "2025-01-01T00:00:00Z",
+  );
+  assert.equal(rows.at(-1)?.attributes.amount, 2);
 });

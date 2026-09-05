@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
+import { TRANSACTION_TYPES } from "../money/ledger.js";
 import { Op, type Transaction } from "sequelize";
 import { models, sequelize } from "../../models/index.js";
 import { createHttpError } from "../../utils/httpError.js";
@@ -26,6 +28,7 @@ import {
   trainFinance,
   round,
   median,
+  monitorEvents,
 } from "./engine.js";
 type Row = Record<string, any>;
 const plain = (r: any): Row => JSON.parse(JSON.stringify(r));
@@ -129,7 +132,11 @@ export async function recordEvent(
     !schema.types.includes(body.eventType)
   )
     throw createHttpError(400, "Unsupported event schema or type");
-  if(typeof body.eventTime !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(body.eventTime)) throw createHttpError(400,"eventTime must be an ISO timestamp");
+  if (
+    typeof body.eventTime !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T/.test(body.eventTime)
+  )
+    throw createHttpError(400, "eventTime must be an ISO timestamp");
   const eventTime = new Date(body.eventTime);
   if (
     !Number.isFinite(eventTime.getTime()) ||
@@ -147,6 +154,24 @@ export async function recordEvent(
     else if (typeof value !== "string" || value.length > 120)
       throw createHttpError(400, `Invalid ${key}`);
     attributes[key] = value;
+  }
+  if (d === "money") {
+    numeric(attributes.amount, "amount", 0, 1e12);
+    if (
+      typeof attributes.currency !== "string" ||
+      !/^[A-Z]{3}$/.test(attributes.currency)
+    )
+      throw createHttpError(400, "currency must be a three-letter code");
+    if (!TRANSACTION_TYPES.includes(attributes.semanticType))
+      throw createHttpError(400, "Invalid transaction semantic type");
+    const date = attributes.occurredOn;
+    if (
+      typeof date !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      !Number.isFinite(Date.parse(date)) ||
+      new Date(date).toISOString().slice(0, 10) !== date
+    )
+      throw createHttpError(400, "occurredOn must be a real calendar date");
   }
   const deduplicationKey = str(body.deduplicationKey, "deduplicationKey");
   const values = {
@@ -170,7 +195,10 @@ export async function recordEvent(
     if (
       old.entityId !== values.entityId ||
       old.eventType !== values.eventType ||
-      JSON.stringify(old.attributes) !== JSON.stringify(attributes)
+      !isDeepStrictEqual(old.attributes, attributes) ||
+      old.domain !== values.domain ||
+      old.entityType !== values.entityType ||
+      old.eventTime !== values.eventTime
     )
       throw createHttpError(
         409,
@@ -186,14 +214,15 @@ export async function ingest(userId: string, body: Row) {
     return recordEvent(userId, body, transaction);
   });
 }
-export async function events(userId: string) {
-  const enabled = await enabledDomains(userId);
+export async function events(userId: string, transaction?: Transaction) {
+  const enabled = await enabledDomains(userId, transaction);
   return plain(
     await LifeEvent.findAll({
+      transaction,
       where: { userId, domain: { [Op.in]: enabled } },
       order: [
         ["recordedAt", "ASC"],
-        ["id", "ASC"],
+        ["sequence", "ASC"],
       ],
     }),
   ) as Event[];
@@ -215,6 +244,17 @@ export async function importSources(userId: string) {
           semanticType: a.semanticType,
           occurredOn: a.occurredOn,
         };
+        const latest = await LifeEvent.findOne({
+          where: { userId, domain: "money", entityId: a.id },
+          order: [["sequence", "DESC"]],
+          transaction,
+        });
+        if (
+          latest &&
+          latest.get("eventType") !== "TRANSACTION_DELETED" &&
+          isDeepStrictEqual(latest.get("attributes"), attributes)
+        )
+          continue;
         const key = `money:${a.id}:${a.updatedAt}`;
         if (
           await LifeEvent.findOne({
@@ -337,11 +377,19 @@ export async function listArtifacts(userId: string, query: Row = {}) {
     }),
   );
 }
-export async function getArtifact(userId: string, id: string) {
-  if(!/^[0-9a-f-]{36}$/i.test(id)) throw createHttpError(404,"Intelligence artifact not found");
-  const r = await ArtifactRecord.findOne({ where: { userId, id } });
+export async function getArtifact(
+  userId: string,
+  id: string,
+  transaction?: Transaction,
+) {
+  if (!/^[0-9a-f-]{36}$/i.test(id))
+    throw createHttpError(404, "Intelligence artifact not found");
+  const r = await ArtifactRecord.findOne({
+    where: { userId, id },
+    transaction,
+  });
   if (!r) throw createHttpError(404, "Intelligence artifact not found");
-  await requireConsent(userId, String(r.get("domain")));
+  await requireConsent(userId, String(r.get("domain")), transaction);
   return plain(r);
 }
 export async function feedback(userId: string, id: string, body: Row) {
@@ -357,7 +405,7 @@ export async function feedback(userId: string, id: string, body: Row) {
     throw createHttpError(400, "Invalid feedback response");
   return sequelize.transaction(async (transaction) => {
     await lock(userId, transaction);
-    const a = await getArtifact(userId, id);
+    const a = await getArtifact(userId, id, transaction);
     await ArtifactRecord.create(
       {
         userId,
@@ -388,11 +436,12 @@ export async function feedback(userId: string, id: string, body: Row) {
     return { ok: true };
   });
 }
-export async function versions(userId: string) {
-  const ds = await enabledDomains(userId);
+export async function versions(userId: string, transaction?: Transaction) {
+  const ds = await enabledDomains(userId, transaction);
   const ids = DEFINITIONS.filter((d) => ds.includes(d.domain)).map((d) => d.id);
   return plain(
     await ModelVersion.findAll({
+      transaction,
       where: { userId, definitionId: { [Op.in]: ids } },
       order: [["createdAt", "DESC"]],
     }),
@@ -410,7 +459,7 @@ export async function train(userId: string, body: Row) {
   return sequelize.transaction(async (transaction) => {
     await lock(userId, transaction);
     await requireConsent(userId, "money", transaction);
-    const es = await events(userId);
+    const es = await events(userId, transaction);
     const gate = readiness(es, ["money"], now(), currency)[0];
     if (gate.state !== "ready_for_validation")
       throw createHttpError(409, gate.reason);
@@ -483,7 +532,7 @@ export async function predict(userId: string, body: Row) {
     await lock(userId, transaction);
     await requireConsent(userId, "money", transaction);
     const currency = str(body.currency ?? "INR", "currency", 3),
-      vs = await versions(userId);
+      vs = await versions(userId, transaction);
     const v = vs.find(
       (r: Row) => r.stage === "champion" && r.payload.currency === currency,
     );
@@ -495,8 +544,10 @@ export async function predict(userId: string, body: Row) {
         409,
         "No fresh validated champion. Use a deterministic projection.",
       );
-    const es = await events(userId);
-    const through = es.filter((e) => e.domain === "money").at(-1)?.recordedAt;
+    const es = await events(userId, transaction);
+    const through = es
+      .filter((e) => e.domain === "money" && e.attributes.currency === currency)
+      .at(-1)?.recordedAt;
     if (!through || Date.now() - new Date(through).getTime() > 7 * 86400000)
       throw createHttpError(
         409,
@@ -507,10 +558,19 @@ export async function predict(userId: string, body: Row) {
       spend = monthlySpend(es, generatedAt, currency),
       actual = spend.find((r) => r.month === month)?.value ?? 0;
     const p = v.payload,
-      value = median(spend.filter(r => r.month < month).slice(-6).map(r => r.value)),
+      value = median(
+        spend
+          .filter((r) => r.month < month)
+          .slice(-6)
+          .map((r) => r.value),
+      ),
       lower = Math.max(0, value - p.parameters.width),
       upper = value + p.parameters.width;
-    if (actual > upper) throw createHttpError(409, "Recorded spending is outside the validated range. Use the run-rate projection and review the model.");
+    if (actual > upper)
+      throw createHttpError(
+        409,
+        "Recorded spending is outside the validated range. Use the run-rate projection and review the model.",
+      );
     const payload = {
       title: "Month-end spend forecast",
       definitionId: "FIN-01",
@@ -528,7 +588,7 @@ export async function predict(userId: string, body: Row) {
         featureTime: generatedAt,
         featureSetVersion: p.featureSetVersion,
         actualToDate: actual,
-        recentMonthTotals: spend.filter(r => r.month < month).slice(-6),
+        recentMonthTotals: spend.filter((r) => r.month < month).slice(-6),
         sourceTimestamps: [through],
       },
       explanation: [
@@ -562,7 +622,7 @@ export async function predict(userId: string, body: Row) {
 export async function resolveOutcome(userId: string, id: string, body: Row) {
   return sequelize.transaction(async (transaction) => {
     await lock(userId, transaction);
-    const a = await getArtifact(userId, id);
+    const a = await getArtifact(userId, id, transaction);
     if (a.kind !== "prediction")
       throw createHttpError(400, "Only predictions have outcomes");
     if (a.payload.horizon >= now().slice(0, 7))
@@ -595,7 +655,11 @@ export async function resolveOutcome(userId: string, id: string, body: Row) {
 export async function recommend(userId: string, body: Row) {
   return sequelize.transaction(async (transaction) => {
     await lock(userId, transaction);
-    const a = await getArtifact(userId, str(body.artifactId, "artifactId"));
+    const a = await getArtifact(
+      userId,
+      str(body.artifactId, "artifactId"),
+      transaction,
+    );
     if (a.kind !== "projection" || a.payload.template !== "workload")
       throw createHttpError(400, "Select a workload projection");
     if (a.payload.value <= 0)
@@ -688,9 +752,19 @@ export async function exportData(userId: string) {
     exportedAt: now(),
     scope: "derived intelligence only",
     consents: await consents(userId),
-    events: plain(await LifeEvent.findAll({where:{userId},order:[["recordedAt","ASC"]]})),
-    artifacts: plain(await ArtifactRecord.findAll({where:{userId},order:[["generatedAt","ASC"]]})),
-    models: plain(await ModelVersion.findAll({where:{userId}})),
+    events: plain(
+      await LifeEvent.findAll({
+        where: { userId },
+        order: [["recordedAt", "ASC"]],
+      }),
+    ),
+    artifacts: plain(
+      await ArtifactRecord.findAll({
+        where: { userId },
+        order: [["generatedAt", "ASC"]],
+      }),
+    ),
+    models: plain(await ModelVersion.findAll({ where: { userId } })),
     preferences: await preferences(userId),
   };
 }
@@ -754,19 +828,25 @@ export async function summary(userId: string) {
       { domain: "learning", owned: false },
       { domain: "fitness", owned: false },
     ],
-    quality: resolved.length
-      ? {
-          sampleCount: resolved.length,
-          mae: round(
-            resolved.reduce(
-              (s: number, a: Row) => s + a.payload.outcome.absoluteError,
-              0,
-            ) / resolved.length,
-          ),
-          scope:
-            "Resolved FIN-01 outcomes; do not compare different currencies",
-        }
-      : null,
+    quality: null,
+    qualityByCurrency: [
+      ...new Set(resolved.map((a: Row) => a.payload.unit)),
+    ].map((unit) => {
+      const rows = resolved.filter((a: Row) => a.payload.unit === unit);
+      return {
+        unit,
+        sampleCount: rows.length,
+        mae: round(
+          rows.reduce(
+            (sum: number, a: Row) => sum + a.payload.outcome.absoluteError,
+            0,
+          ) / rows.length,
+        ),
+        coverage:
+          rows.filter((a: Row) => a.payload.outcome.covered).length /
+          rows.length,
+      };
+    }),
   };
 }
 export async function diagnostics(userId: string) {
@@ -782,9 +862,91 @@ export async function diagnostics(userId: string) {
   return {
     ...s,
     events: es.slice(-500).reverse(),
+    monitoring: monitorEvents(es, now()),
     audit: plain(audits),
     schemas: EVENT_SCHEMAS,
     contracts: AGENT_CONTRACTS,
     definitions: DEFINITIONS,
   };
+}
+
+/** Deterministic projection from the user's actual current ledger, separately from training history. */
+export async function sourceProjection(userId: string, body: Row) {
+  const currency = str(body.currency ?? "INR", "currency", 3);
+  if (!/^[A-Z]{3}$/.test(currency))
+    throw createHttpError(400, "Invalid currency");
+  return sequelize.transaction(async (transaction) => {
+    await lock(userId, transaction);
+    await requireConsent(userId, "money", transaction);
+    const generatedAt = now(),
+      date = generatedAt.slice(0, 10);
+    const rows = plain(
+      await models.MoneyTransaction.findAll({
+        where: {
+          userId,
+          currency,
+          occurredOn: { [Op.between]: [date.slice(0, 7) + "-01", date] },
+        },
+        transaction,
+      }),
+    ) as Row[];
+    const eligible = rows.filter((r) =>
+      ["expense", "fee", "refund"].includes(r.semanticType),
+    );
+    if (!eligible.length)
+      throw createHttpError(
+        409,
+        "No eligible spending records for this month and currency. Enter assumptions in the Scenario Lab instead.",
+      );
+    const spent = Math.max(
+      0,
+      eligible.reduce(
+        (sum, r) =>
+          sum + Number(r.amount) * (r.semanticType === "refund" ? -1 : 1),
+        0,
+      ),
+    );
+    const utc = new Date(generatedAt),
+      periodDays = new Date(
+        Date.UTC(utc.getUTCFullYear(), utc.getUTCMonth() + 1, 0),
+      ).getUTCDate();
+    const result = project({
+      template: "money-run-rate",
+      assumptions: {
+        spent: round(spent),
+        elapsedDays: utc.getUTCDate(),
+        periodDays,
+        remainingCommitments: 0,
+        currency,
+      },
+    });
+    const through = eligible
+      .map((r) => r.updatedAt)
+      .sort()
+      .at(-1);
+    return plain(
+      await ArtifactRecord.create(
+        {
+          userId,
+          domain: "money",
+          kind: "projection",
+          generatedAt,
+          dataThrough: through,
+          payload: {
+            ...result,
+            title: "Current monthly spending run rate",
+            template: "money-run-rate",
+            formulaVersion: "projection-v1",
+            readiness: "source_backed",
+            uncertainty: "Deterministic run rate; not a learned forecast",
+            source:
+              "Current owned ledger; expenses and fees minus refunds; transfers excluded",
+            sourceCount: eligible.length,
+            saved: true,
+          },
+        },
+        { transaction },
+      ),
+    );
+  });
 }

@@ -12,7 +12,16 @@ import {
   AGENT_CONTRACTS,
 } from "../../services/intelligence/contracts.js";
 const router = Router();
-router.use((req,res,next)=>{ if(!["GET","HEAD","OPTIONS"].includes(req.method) && (!req.body || typeof req.body!=="object" || Array.isArray(req.body))) {res.status(400).json({error:"A JSON object is required"});return;}next();});
+router.use((req, res, next) => {
+  if (
+    !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
+    (!req.body || typeof req.body !== "object" || Array.isArray(req.body))
+  ) {
+    res.status(400).json({ error: "A JSON object is required" });
+    return;
+  }
+  next();
+});
 const run =
   (fn: (req: Request) => Promise<unknown> | unknown) =>
   (req: Request, res: Response, next: NextFunction) => {
@@ -50,6 +59,10 @@ router.put(
 router.post(
   "/sources/import",
   run((r) => service.importSources(owner(r))),
+);
+router.post(
+  "/sources/projection",
+  run((r) => service.sourceProjection(owner(r), r.body)),
 );
 router.get(
   "/definitions",

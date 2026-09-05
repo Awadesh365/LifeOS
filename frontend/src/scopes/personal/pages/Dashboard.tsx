@@ -1,3 +1,4 @@
+import IntelligenceEntry from "../intelligence/IntelligenceEntry";
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
@@ -248,6 +249,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
           </Alert>
         )}
 
+        <Box sx={{ mb: 3 }}><IntelligenceEntry /></Box>
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid size={{ xs: 6, md: 4, lg: 2.4 }}>
             <Paper

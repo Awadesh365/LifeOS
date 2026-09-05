@@ -7,7 +7,7 @@ module.exports = {
    const json = {type:S.JSONB,allowNull:false};
    await q.createTable('intelligence_consents',{...common(),domain:text,enabled:{type:S.BOOLEAN,allowNull:false,defaultValue:false},purpose:{type:S.STRING},policy_version:{type:S.STRING},updated_at:{type:S.DATE}}, {transaction});
    await q.addIndex('intelligence_consents',['user_id','domain'],{unique:true,transaction});
-   await q.createTable('intelligence_events',{...common(),domain:text,event_type:text,entity_type:text,entity_id:text,event_time:{type:S.DATE,allowNull:false},recorded_at:{type:S.DATE,allowNull:false},schema_version:{type:S.INTEGER,allowNull:false,defaultValue:1},deduplication_key:text,attributes:json},{transaction});
+   await q.createTable('intelligence_events',{...common(),domain:text,event_type:text,entity_type:text,entity_id:text,sequence:{type:S.BIGINT,autoIncrement:true,allowNull:false,unique:true},event_time:{type:S.DATE,allowNull:false},recorded_at:{type:S.DATE,allowNull:false},schema_version:{type:S.INTEGER,allowNull:false,defaultValue:1},deduplication_key:text,attributes:json},{transaction});
    await q.addIndex('intelligence_events',['user_id','deduplication_key'],{unique:true,transaction});
    await q.addIndex('intelligence_events',['user_id','domain','recorded_at'],{transaction});
    await q.createTable('intelligence_artifacts',{...common(),domain:text,kind:text,generated_at:{type:S.DATE,allowNull:false},data_through:{type:S.DATE},payload:json,state:{type:S.STRING,defaultValue:'active'}},{transaction});

@@ -97,12 +97,73 @@ test(
         assert.equal((await S.events(uid)).length, 1);
       },
     );
+    await t.test(
+      "event replay is idempotent regardless of attribute key order",
+      async () => {
+        const input = {
+          domain: "money",
+          entityType: "transaction",
+          entityId: "event-test",
+          eventType: "TRANSACTION_RECORDED",
+          eventTime: "2024-01-01T00:00:00Z",
+          schemaVersion: 1,
+          deduplicationKey: "event-replay",
+          attributes: {
+            amount: 1,
+            currency: "INR",
+            semanticType: "expense",
+            occurredOn: "2024-01-01",
+          },
+        };
+        const first = await S.ingest(uid, input);
+        const second = await S.ingest(uid, {
+          ...input,
+          attributes: {
+            occurredOn: "2024-01-01",
+            semanticType: "expense",
+            currency: "INR",
+            amount: 1,
+          },
+        });
+        assert.equal(first.id, second.id);
+        await assert.rejects(
+          S.ingest(uid, {
+            ...input,
+            attributes: { ...input.attributes, amount: "not a number" },
+          }),
+          /amount/,
+        );
+      },
+    );
     await t.test("source import is idempotent", async () => {
       await S.importSources(uid);
       const n = (await S.events(uid)).length;
       await S.importSources(uid);
       assert.equal((await S.events(uid)).length, n);
     });
+    await t.test(
+      "ledger projection uses owned records and leaves the source unchanged",
+      async () => {
+        const date = new Date().toISOString().slice(0, 10);
+        const row = await models.MoneyTransaction.create({
+          id: "source-projection",
+          userId: uid,
+          semanticType: "expense",
+          occurredOn: date,
+          amount: 100,
+          currency: "USD",
+          description: "Test ledger projection",
+        });
+        const before = await models.MoneyTransaction.count();
+        const a = await S.sourceProjection(uid, { currency: "USD" });
+        assert.equal(a.kind, "projection");
+        assert.equal(a.payload.unit, "USD");
+        assert.equal(a.payload.assumptions.spent, 100);
+        assert.equal(a.payload.readiness, "source_backed");
+        assert.equal(await models.MoneyTransaction.count(), before);
+        await row.destroy();
+      },
+    );
     await t.test("feedback is distinct from outcomes", async () => {
       await S.feedback(uid, artifactId, { response: "helpful" });
       assert.equal(
@@ -131,6 +192,26 @@ test(
         );
       },
     );
+    await t.test(
+      "concurrent feedback does not exhaust the database pool",
+      async () => {
+        await S.setConsent(uid, { domain: "money", enabled: true });
+        await Promise.all(
+          Array.from({ length: 8 }, () =>
+            S.feedback(uid, artifactId, { response: "helpful" }),
+          ),
+        );
+      },
+    );
+    await t.test(
+      "export includes revoked-domain data without enabling processing",
+      async () => {
+        await S.setConsent(uid, { domain: "money", enabled: false });
+        const exported = await S.exportData(uid);
+        assert.ok(exported.artifacts.some((a: any) => a.id === artifactId));
+        assert.equal((await S.enabledDomains(uid)).length, 0);
+      },
+    );
     await t.test("failed candidates never replace a champion", async () => {
       await S.setConsent(uid, { domain: "money", enabled: true });
       const v = await store.ModelVersion.create({
@@ -149,6 +230,24 @@ test(
       );
       assert.equal((await v.reload()).get("stage"), "candidate");
       await assert.rejects(S.predict(uid, { currency: "INR" }), /champion/);
+    });
+    await t.test("eligible history trains, promotes and serves a reproducible forecast", async()=>{
+      const current = new Date();
+      const historical = Array.from({length:24},(_,i)=>{
+        const date=new Date(Date.UTC(current.getUTCFullYear(),current.getUTCMonth()-24+i,10)).toISOString();
+        return {userId:uid,domain:'money',entityType:'transaction',entityId:`trained-${i}`,eventType:'TRANSACTION_RECORDED',eventTime:date,recordedAt:date,schemaVersion:1,deduplicationKey:`training-fixture-${i}`,attributes:{amount:100+i%3*10,currency:'EUR',semanticType:'expense',occurredOn:date.slice(0,10)}};
+      });
+      await store.LifeEvent.bulkCreate(historical);
+      await S.ingest(uid,{domain:'money',entityType:'transaction',entityId:'current-eur',eventType:'TRANSACTION_RECORDED',eventTime:current.toISOString(),schemaVersion:1,deduplicationKey:'current-eur',attributes:{amount:1,currency:'EUR',semanticType:'expense',occurredOn:current.toISOString().slice(0,10)}});
+      const candidate=await S.train(uid,{definitionId:'FIN-01',currency:'EUR'});
+      assert.equal(candidate.payload.validation,'passed');
+      await S.transition(uid,candidate.id,{stage:'champion'});
+      const prediction=await S.predict(uid,{currency:'EUR'});
+      assert.equal(prediction.payload.value,110);
+      assert.equal(prediction.payload.modelVersion,candidate.id);
+      assert.equal((await S.getArtifact(uid,prediction.id)).payload.value,110);
+      assert.ok(prediction.payload.lower<=prediction.payload.value&&prediction.payload.upper>=prediction.payload.value);
+      await assert.rejects(S.resolveOutcome(uid,prediction.id,{actual:110,reason:'Too early'}),/horizon has not ended/);
     });
     await t.test(
       "deletion clears derived graph and preserves core records",
@@ -178,8 +277,97 @@ test(
         assert.equal(await store.Audit.count({ where: { userId: uid } }), 1);
       },
     );
+    await t.test(
+      "HTTP endpoints enforce sessions, CSRF, role and malformed input",
+      async () => {
+        await sequelize.query(
+          "CREATE TABLE user_sessions (sid varchar PRIMARY KEY, sess json NOT NULL, expire timestamp(6) NOT NULL)",
+        );
+        const { hash } = await import("@node-rs/argon2");
+        await models.User.update(
+          { passwordHash: await hash("Test-only-password-4821"), role: "user" },
+          { where: { id: other } },
+        );
+        const { default: app } = await import("../../src/app.js");
+        const server = await new Promise<import("node:http").Server>(
+          (resolve) => {
+            const server = app.listen(0, "127.0.0.1", () => resolve(server));
+          },
+        );
+        try {
+          const address = server.address() as import("node:net").AddressInfo;
+          const base = `http://127.0.0.1:${address.port}/api`;
+          assert.equal(
+            (await fetch(base + "/intelligence/summary")).status,
+            401,
+          );
+          const login = await fetch(base + "/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: `${other}@test.invalid`,
+              password: "Test-only-password-4821",
+            }),
+          });
+          assert.equal(login.status, 200);
+          const session = (await login.json()) as any;
+          const cookie = login.headers.get("set-cookie")!.split(";")[0];
+          assert.equal(
+            (
+              await fetch(base + "/intelligence/consents", {
+                method: "PUT",
+                headers: { cookie, "Content-Type": "application/json" },
+                body: JSON.stringify({ domain: "money", enabled: true }),
+              })
+            ).status,
+            403,
+          );
+          const headers = {
+            cookie,
+            "Content-Type": "application/json",
+            "x-csrf-token": session.csrfToken,
+          };
+          assert.equal(
+            (
+              await fetch(base + "/intelligence/consents", {
+                method: "PUT",
+                headers,
+                body: JSON.stringify({ domain: "money", enabled: true }),
+              })
+            ).status,
+            200,
+          );
+          assert.equal(
+            (await fetch(base + "/intelligence/diagnostics", { headers }))
+              .status,
+            403,
+          );
+          assert.equal(
+            (
+              await fetch(base + "/intelligence/artifacts/not-a-uuid", {
+                headers,
+              })
+            ).status,
+            404,
+          );
+          assert.equal(
+            (
+              await fetch(base + "/intelligence/projections", {
+                method: "POST",
+                headers,
+                body: "[]",
+              })
+            ).status,
+            400,
+          );
+        } finally {
+          await new Promise<void>((resolve, reject) =>
+            server.close((e) => (e ? reject(e) : resolve())),
+          );
+        }
+      },
+    );
     await triggers.down(sequelize.getQueryInterface());
     await migration.down(sequelize.getQueryInterface());
-
   },
 );

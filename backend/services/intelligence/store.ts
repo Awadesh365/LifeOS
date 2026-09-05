@@ -43,6 +43,12 @@ export const LifeEvent = define(
   "LifeEvent",
   "intelligence_events",
   {
+    sequence: {
+      type: DataTypes.BIGINT,
+      autoIncrement: true,
+      allowNull: false,
+      unique: true,
+    },
     domain: { type: DataTypes.STRING, allowNull: false },
     eventType: { type: DataTypes.STRING, allowNull: false },
     entityType: { type: DataTypes.STRING, allowNull: false },

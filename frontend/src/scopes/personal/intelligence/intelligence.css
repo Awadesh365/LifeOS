@@ -226,6 +226,18 @@
     margin-bottom: 10px;
   }
 }
-.intelligence a.MuiButton-contained{color:var(--primary-contrast,#fff)}
-.intelligence .intel-nav a:not(.active){color:inherit}
-.intel-actions .MuiFormControl-root{min-width:145px}
+.intelligence a.MuiButton-contained {
+  color: var(--primary-contrast, #fff);
+}
+.intelligence .intel-nav a:not(.active) {
+  color: inherit;
+}
+.intel-actions .MuiFormControl-root {
+  min-width: 145px;
+}
+.lifeos-personal-scope[data-personal-theme="dark"]
+  .app-layout:has(.intelligence)
+  .mobile-header-bar {
+  background: var(--bg-header, #141a27);
+  border-color: var(--border);
+}

@@ -203,6 +203,7 @@ export const AGENT_CONTRACTS = [
   },
 ];
 export type Event = {
+  sequence?: string;
   id: string;
   domain: Domain;
   entityId: string;
