@@ -27,6 +27,7 @@ import FuturePlans from "./pages/FuturePlans";
 import NutritionPortal from "./nutrition/NutritionPortal";
 import Training from "./pages/Training";
 import Appearance from "./pages/Appearance";
+import IntelligencePortal from "./intelligence/IntelligencePortal";
 import MaintenancePortal from "./maintenance/MaintenancePortal";
 import "./personal.css";
 import { getPersonalNavItem } from "./navigation";
@@ -143,6 +144,7 @@ const PersonalScope = () => {
               </Box>
             )}
             <Routes>
+              <Route path="intelligence/*" element={<IntelligencePortal />} />
               <Route index element={<Dashboard isMobile={isMobile} />} />
               <Route path="habits" element={<Habits isMobile={isMobile} />} />
               <Route path="routine" element={<Routine isMobile={isMobile} />} />

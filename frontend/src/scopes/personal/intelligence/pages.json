@@ -1,0 +1,324 @@
+[
+  {
+    "id": "P01",
+    "title": "Intelligence Overview",
+    "path": "",
+    "purpose": "Strategic cross-domain intelligence overview.",
+    "acceptance": "Clearly separates projections from predictions."
+  },
+  {
+    "id": "P02",
+    "title": "Forecasts Workspace",
+    "path": "forecasts",
+    "purpose": "Analyze all projections/predictions.",
+    "acceptance": "Sortable by domain/type/horizon/status."
+  },
+  {
+    "id": "P03",
+    "title": "Prediction Detail",
+    "path": "predictions/:id",
+    "purpose": "Full prediction lineage and outcome context.",
+    "acceptance": "Exact stored payload visible."
+  },
+  {
+    "id": "P04",
+    "title": "Projection Detail",
+    "path": "projections/:id",
+    "purpose": "Inspect deterministic projection logic.",
+    "acceptance": "Reproducible with same inputs/version."
+  },
+  {
+    "id": "P05",
+    "title": "Scenario Lab",
+    "path": "scenarios",
+    "purpose": "Build and compare what-if scenarios.",
+    "acceptance": "Scenarios never mutate source records."
+  },
+  {
+    "id": "P06",
+    "title": "Recommendations",
+    "path": "recommendations",
+    "purpose": "Review ranked recommendations and rationale.",
+    "acceptance": "Recommendation state separate from prediction correctness."
+  },
+  {
+    "id": "P07",
+    "title": "Recommendation Detail",
+    "path": "recommendations/:id",
+    "purpose": "Inspect options/constraints before action.",
+    "acceptance": "Hard rules override model suggestion."
+  },
+  {
+    "id": "P08",
+    "title": "Money Intelligence",
+    "path": "domains/money",
+    "purpose": "Finance intelligence analysis.",
+    "acceptance": "No investment advice."
+  },
+  {
+    "id": "P09",
+    "title": "Productivity Intelligence",
+    "path": "domains/productivity",
+    "purpose": "Task completion/duration/workload analysis.",
+    "acceptance": "No human-worth score."
+  },
+  {
+    "id": "P10",
+    "title": "Learning Intelligence",
+    "path": "domains/learning",
+    "purpose": "Learning pace/prediction analysis.",
+    "acceptance": "Projection/prediction labels explicit."
+  },
+  {
+    "id": "P11",
+    "title": "Maintenance Intelligence",
+    "path": "domains/maintenance",
+    "purpose": "Maintenance predictive analysis.",
+    "acceptance": "Schedule engine remains truth."
+  },
+  {
+    "id": "P12",
+    "title": "Fitness Intelligence",
+    "path": "domains/fitness",
+    "purpose": "Behavioral training/adherence analysis.",
+    "acceptance": "No diagnostic/medical predictions."
+  },
+  {
+    "id": "P13",
+    "title": "Cross-Domain Intelligence",
+    "path": "domains/cross-domain",
+    "purpose": "Explore approved cross-domain associations/models.",
+    "acceptance": "Association never labeled causal."
+  },
+  {
+    "id": "P14",
+    "title": "Prediction History",
+    "path": "history",
+    "purpose": "Audit predictions over time.",
+    "acceptance": "Unresolved excluded from performance aggregates."
+  },
+  {
+    "id": "P15",
+    "title": "Outcome Resolution",
+    "path": "outcomes",
+    "purpose": "Inspect target resolution pipeline.",
+    "acceptance": "Manual corrections marked distinctly."
+  },
+  {
+    "id": "P16",
+    "title": "Quality Dashboard",
+    "path": "quality",
+    "purpose": "User/product-level model quality.",
+    "acceptance": "No universal accuracy."
+  },
+  {
+    "id": "P17",
+    "title": "Calibration & Uncertainty",
+    "path": "quality/calibration",
+    "purpose": "Analyze probability/range reliability.",
+    "acceptance": "Coverage and width both shown for intervals."
+  },
+  {
+    "id": "P18",
+    "title": "Data Readiness",
+    "path": "readiness",
+    "purpose": "See eligibility for each predictive feature.",
+    "acceptance": "Thresholds transparent/versioned."
+  },
+  {
+    "id": "P19",
+    "title": "Data Sources",
+    "path": "data-sources",
+    "purpose": "Inspect domain-to-intelligence lineage.",
+    "acceptance": "Respect consent scopes."
+  },
+  {
+    "id": "P20",
+    "title": "Event Explorer",
+    "path": "events",
+    "purpose": "Debug Event Sourcing Lite history.",
+    "acceptance": "Sensitive attributes redacted by role."
+  },
+  {
+    "id": "P21",
+    "title": "Event Schema Registry",
+    "path": "events/schemas",
+    "purpose": "Manage versioned event contracts.",
+    "acceptance": "Breaking change cannot silently replace active schema."
+  },
+  {
+    "id": "P22",
+    "title": "Feature Catalog",
+    "path": "features",
+    "purpose": "Catalog engineered features.",
+    "acceptance": "Every feature documents prediction-time availability."
+  },
+  {
+    "id": "P23",
+    "title": "Feature Definition",
+    "path": "features/:id",
+    "purpose": "Inspect one feature lineage.",
+    "acceptance": "Cutoff semantics mandatory."
+  },
+  {
+    "id": "P24",
+    "title": "Feature Snapshot",
+    "path": "predictions/:id/features",
+    "purpose": "Reproduce prediction-time input.",
+    "acceptance": "Only authorized roles see sensitive values."
+  },
+  {
+    "id": "P25",
+    "title": "Model Catalog",
+    "path": "models",
+    "purpose": "Inventory domain-specific models.",
+    "acceptance": "One giant LifeOS model is not default."
+  },
+  {
+    "id": "P26",
+    "title": "Model Detail",
+    "path": "models/:name",
+    "purpose": "Technical/product contract for model.",
+    "acceptance": "Product goal and evaluation metric both present."
+  },
+  {
+    "id": "P27",
+    "title": "Model Versions",
+    "path": "models/:name/versions",
+    "purpose": "Version history/aliases.",
+    "acceptance": "Champion alias change audited."
+  },
+  {
+    "id": "P28",
+    "title": "Model Version Detail",
+    "path": "models/:name/versions/:version",
+    "purpose": "Reproducibility and validation record.",
+    "acceptance": "No promotion if required gates fail."
+  },
+  {
+    "id": "P29",
+    "title": "Backtests / Temporal Validation",
+    "path": "models/:name/backtests",
+    "purpose": "Inspect time-aware evaluation.",
+    "acceptance": "No shuffled evaluation for temporal targets."
+  },
+  {
+    "id": "P30",
+    "title": "Model Comparison",
+    "path": "models/:name/compare",
+    "purpose": "Compare candidate vs champion/baseline.",
+    "acceptance": "Target/feature definition mismatch blocks naive comparison."
+  },
+  {
+    "id": "P31",
+    "title": "Registry / Promotion",
+    "path": "registry",
+    "purpose": "Controlled model promotion/rollback.",
+    "acceptance": "Every action creates audit event."
+  },
+  {
+    "id": "P32",
+    "title": "Monitoring Overview",
+    "path": "monitoring",
+    "purpose": "Operational health of Intelligence.",
+    "acceptance": "Unavailable model distinguished from bad prediction."
+  },
+  {
+    "id": "P33",
+    "title": "Data Quality Monitor",
+    "path": "monitoring/data-quality",
+    "purpose": "Detect broken data pipelines.",
+    "acceptance": "Affected user predictions can be suppressed."
+  },
+  {
+    "id": "P34",
+    "title": "Drift Monitor",
+    "path": "monitoring/drift",
+    "purpose": "Track input/output drift.",
+    "acceptance": "Drift alone does not auto-retrain."
+  },
+  {
+    "id": "P35",
+    "title": "Performance Monitor",
+    "path": "monitoring/performance",
+    "purpose": "Track resolved outcome performance.",
+    "acceptance": "Uses only resolved outcomes."
+  },
+  {
+    "id": "P36",
+    "title": "Training Jobs",
+    "path": "jobs/training",
+    "purpose": "Track training/evaluation runs.",
+    "acceptance": "Failed job never changes champion."
+  },
+  {
+    "id": "P37",
+    "title": "Inference Diagnostics",
+    "path": "diagnostics/inference",
+    "purpose": "Inspect serving latency/errors/readiness.",
+    "acceptance": "No sensitive payload in ordinary logs."
+  },
+  {
+    "id": "P38",
+    "title": "Recommendation Engine",
+    "path": "recommendation-engine",
+    "purpose": "Configure/test recommendation policies.",
+    "acceptance": "Prediction service cannot directly mutate plans."
+  },
+  {
+    "id": "P39",
+    "title": "Agent Intelligence Contracts",
+    "path": "agent-contracts",
+    "purpose": "Define structured tools exposed to agent.",
+    "acceptance": "Agent numeric outputs come from tool payload."
+  },
+  {
+    "id": "P40",
+    "title": "Agent Trace Review",
+    "path": "agent-traces",
+    "purpose": "Audit agent use of intelligence artifacts.",
+    "acceptance": "Sensitive conversation text minimized by policy."
+  },
+  {
+    "id": "P41",
+    "title": "Notifications",
+    "path": "notifications",
+    "purpose": "Configure material intelligence alerts.",
+    "acceptance": "Avoid alerting on trivial probability changes."
+  },
+  {
+    "id": "P42",
+    "title": "Consent & Privacy",
+    "path": "privacy",
+    "purpose": "Control Intelligence processing scope.",
+    "acceptance": "Scope changes affect future processing predictably."
+  },
+  {
+    "id": "P43",
+    "title": "Export Center",
+    "path": "export",
+    "purpose": "Export predictions/outcomes/models metadata.",
+    "acceptance": "No surprise source-domain export."
+  },
+  {
+    "id": "P44",
+    "title": "Deletion Center",
+    "path": "delete",
+    "purpose": "Delete derived Intelligence data safely.",
+    "acceptance": "Core domain deletion handled by owning domain."
+  },
+  {
+    "id": "P45",
+    "title": "Audit Log",
+    "path": "audit",
+    "purpose": "Trace consent/model/prediction/admin actions.",
+    "acceptance": "Promotion, rollback, consent and deletion events always auditable."
+  },
+  {
+    "id": "P46",
+    "title": "Settings",
+    "path": "settings",
+    "purpose": "System/product preferences.",
+    "acceptance": "Cannot disable required safety gates."
+  }
+]

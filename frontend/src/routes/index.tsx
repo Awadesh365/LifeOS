@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { Navigate, RouteObject, useRoutes } from "react-router-dom";
+import { Navigate, RouteObject, useRoutes, useLocation } from "react-router-dom";
 import Loadable from "../components/ui/Loadable";
 import LoginPage from '../auth/LoginPage';
 import RequireAuth from '../auth/RequireAuth';
@@ -31,6 +31,11 @@ const legacyWorkspacePaths = [
   "maintenance",
 ];
 
+function IntelligenceRedirect() {
+  const location = useLocation();
+  return <Navigate to={`/app${location.pathname}${location.search}`} replace />;
+}
+
 export default function Router() {
   const routes: RouteObject[] = [
     {
@@ -42,6 +47,7 @@ export default function Router() {
       element: <RequireAuth><PersonalTracker /></RequireAuth>,
     },
     { path: '/login', element: <LoginPage /> },
+    { path: '/intelligence/*', element: <IntelligenceRedirect /> },
     ...legacyWorkspacePaths.map((path) => ({
       path: `/${path}`,
       element: <Navigate to={`/app/${path}`} replace />,
