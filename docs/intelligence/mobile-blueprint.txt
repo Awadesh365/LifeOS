@@ -1,0 +1,1014 @@
+WHOLESIGNAL — MOBILE
+IntelligenceComplete Mobile Screen Blueprint
+Daily intelligence, understandable predictions, scenarios and actions
+Mobile prioritizes decision support and trust; model operations remain secondary.
+
+1. Mobile IA
+Level
+Mobile experience
+Today
+Intelligence summary cards embedded into daily context
+Intelligence
+Overview • Forecasts • Recommendations • History
+Domains
+Money • Productivity • Learning • Maintenance • Fitness
+Trust
+Why this? • Data readiness • Accuracy/quality • Privacy
+Agent
+Ask WholeSignal; structured prediction/recommendation cards
+
+2. Shared Mobile Rules
+Never show a prediction without horizon, freshness and readiness/confidence context.
+Probability is not certainty; use plain-language ranges and avoid alarmist red styling.
+If insufficient data, replace prediction with readiness/projection—not a placeholder probability.
+Structured numerical cards are rendered outside LLM prose.
+User can inspect why, data used, model version and actual outcome later.
+M00 — Intelligence Entry
+Route: /intelligence
+Contract
+Specification
+Purpose
+Enter Intelligence and communicate its scope.
+Entry points
+Bottom nav/More; cross-domain cards.
+Layout hierarchy
+Header → current intelligence status → key cards → domains → recent outcomes.
+Core components
+IntelligenceCard; DomainStrip; readiness banner.
+Required data
+latest projections/predictions/recommendations.
+Primary actions
+Open card/domain; ask agent; manage settings.
+States
+loading; no consent; no history; stale cached.
+Analytics
+intelligence_home_viewed.
+Acceptance criteria
+No prediction cards shown before eligibility/consent.
+
+M01 — Intelligence Onboarding
+Route: /intelligence/onboarding
+Contract
+Specification
+Purpose
+Explain analytics vs projections vs predictions and agent.
+Entry points
+First open.
+Layout hierarchy
+Concept sequence → examples → privacy promise → continue.
+Core components
+explanation cards; source/data diagram.
+Required data
+onboarding version.
+Primary actions
+Continue; skip Intelligence.
+States
+first run; resumed.
+Analytics
+intelligence_onboarding_started.
+Acceptance criteria
+User understands prediction is probabilistic.
+
+M02 — Domain Consent
+Route: /intelligence/onboarding/consent
+Contract
+Specification
+Purpose
+Choose domains Intelligence may process.
+Entry points
+M01/settings.
+Layout hierarchy
+Domain toggles → purpose text → optional cross-domain consent → confirm.
+Core components
+consent cards; scope details.
+Required data
+available domains; current permissions.
+Primary actions
+Enable/disable domain; continue.
+States
+none selected; policy changed.
+Analytics
+intelligence_consent_saved.
+Acceptance criteria
+Cross-domain intelligence requires separate explicit toggle.
+
+M03 — Readiness Setup
+Route: /intelligence/onboarding/readiness
+Contract
+Specification
+Purpose
+Show what can work now vs after more history.
+Entry points
+M02.
+Layout hierarchy
+Ready now: analytics/projections → gathering data: predictions → event coverage checklist.
+Core components
+readiness cards; progress not gamified.
+Required data
+event counts; label counts; data period.
+Primary actions
+Open requirements; finish.
+States
+insufficient history.
+Analytics
+intelligence_readiness_onboarding_viewed.
+Acceptance criteria
+No arbitrary 'training 43%' progress.
+
+M04 — Intelligence Home
+Route: /intelligence/home
+Contract
+Specification
+Purpose
+Daily cross-domain decision summary.
+Entry points
+M00/default.
+Layout hierarchy
+Today → Needs attention → Forecasts → Recommendations → Domain intelligence → trust footer.
+Core components
+cards; freshness badges; reason labels.
+Required data
+latest eligible intelligence artifacts.
+Primary actions
+Open; dismiss recommendation; scenario; agent handoff.
+States
+all healthy; low confidence; stale; partial domains.
+Analytics
+intelligence_home_daily_viewed.
+Acceptance criteria
+Each artifact states type: Projection/Prediction/Recommendation.
+
+M05 — All Forecasts
+Route: /intelligence/forecasts
+Contract
+Specification
+Purpose
+Browse projections and predictions separately.
+Entry points
+M04.
+Layout hierarchy
+Tabs Projection | Prediction → filters → cards.
+Core components
+type tabs; domain filters.
+Required data
+artifacts.
+Primary actions
+Open detail; filter.
+States
+empty; stale.
+Analytics
+intelligence_forecasts_viewed.
+Acceptance criteria
+Projection and Prediction are never mixed under same unlabeled card.
+
+M06 — Prediction Detail
+Route: /intelligence/predictions/:id
+Contract
+Specification
+Purpose
+Trustworthy explanation of one prediction.
+Entry points
+Any prediction card.
+Layout hierarchy
+Outcome headline → probability/value/range → horizon → why → data through → model/readiness → actions → outcome status.
+Core components
+PredictionHeader; interval chart; factors; metadata.
+Required data
+prediction; model version; feature/explanation summary.
+Primary actions
+Open explanation; give feedback; simulate if supported; ask agent.
+States
+unresolved; low confidence; stale; model retired.
+Analytics
+prediction_detail_viewed.
+Acceptance criteria
+Numeric value exactly matches stored structured prediction.
+
+M07 — Projection Detail
+Route: /intelligence/projections/:id
+Contract
+Specification
+Purpose
+Explain deterministic calculation and assumptions.
+Entry points
+Projection card.
+Layout hierarchy
+Result → assumptions → formula/rules → what-if controls → source data.
+Core components
+assumption list; scenario controls.
+Required data
+projection inputs/version.
+Primary actions
+Edit assumptions; save scenario.
+States
+missing input; stale source.
+Analytics
+projection_detail_viewed.
+Acceptance criteria
+Clearly labels calculation as projection, not ML.
+
+M08 — Scenario Simulator
+Route: /intelligence/scenarios/new
+Contract
+Specification
+Purpose
+Run deterministic what-if scenarios.
+Entry points
+Projection detail/recommendation.
+Layout hierarchy
+Choose domain/template → editable assumptions → result comparison → save/share to agent.
+Core components
+sliders/input rows; comparison table.
+Required data
+current state; projection function.
+Primary actions
+Run; reset; save; ask agent.
+States
+invalid assumptions; unavailable source.
+Analytics
+intelligence_scenario_run.
+Acceptance criteria
+No scenario writes domain state.
+
+M09 — Recommendation Detail
+Route: /intelligence/recommendations/:id
+Contract
+Specification
+Purpose
+Explain actionable suggestion without coercion.
+Entry points
+Home/domain/agent.
+Layout hierarchy
+Recommendation → expected benefit/tradeoff → facts/predictions used → alternatives → expiry → action.
+Core components
+option cards; rationale; constraints.
+Required data
+recommendation artifact.
+Primary actions
+Accept/modify/dismiss; ask agent.
+States
+expired; source prediction stale.
+Analytics
+recommendation_detail_viewed.
+Acceptance criteria
+User can see whether recommendation used ML.
+
+M10 — Recommendation Action Review
+Route: /intelligence/recommendations/:id/apply
+Contract
+Specification
+Purpose
+Review mutations before execution.
+Entry points
+M09.
+Layout hierarchy
+Proposed changes → affected domains → conflicts → confirmation.
+Core components
+diff cards; confirmation.
+Required data
+structured action proposal.
+Primary actions
+Confirm; edit; cancel.
+States
+permission missing; conflict.
+Analytics
+intelligence_recommendation_applied.
+Acceptance criteria
+No consequential write occurs before domain tool validation.
+
+M11 — Prediction History
+Route: /intelligence/history
+Contract
+Specification
+Purpose
+See past predictions and resolved outcomes.
+Entry points
+Intelligence tabs.
+Layout hierarchy
+Timeline/filter → predicted vs actual → status.
+Core components
+history rows; resolution chips.
+Required data
+predictions + outcomes.
+Primary actions
+Open; filter.
+States
+no resolved outcomes.
+Analytics
+prediction_history_viewed.
+Acceptance criteria
+Unresolved predictions are not scored.
+
+M12 — Prediction Outcome
+Route: /intelligence/history/:id
+Contract
+Specification
+Purpose
+Compare prediction with what actually happened.
+Entry points
+M11.
+Layout hierarchy
+Original prediction → actual → error/coverage → explanation → feedback.
+Core components
+comparison card; metric label.
+Required data
+prediction/outcome.
+Primary actions
+Feedback; open model info.
+States
+actual unavailable.
+Analytics
+prediction_outcome_viewed.
+Acceptance criteria
+Uses domain-appropriate error language.
+
+M13 — Trust & Quality
+Route: /intelligence/trust
+Contract
+Specification
+Purpose
+User-facing reliability dashboard.
+Entry points
+M04/settings.
+Layout hierarchy
+By domain/model → performance summary → calibration/coverage → data period → incidents/retired models.
+Core components
+quality cards; plain-language legend.
+Required data
+evaluation snapshots.
+Primary actions
+Open model/domain.
+States
+insufficient outcomes.
+Analytics
+intelligence_trust_viewed.
+Acceptance criteria
+No universal combined accuracy percentage.
+
+M14 — Data Readiness
+Route: /intelligence/readiness
+Contract
+Specification
+Purpose
+Explain why predictions are/aren’t available.
+Entry points
+M03/M06/M13.
+Layout hierarchy
+Domain rows → event history → resolved labels → missing requirements → available fallback.
+Core components
+readiness rows.
+Required data
+eligibility/readiness evaluation.
+Primary actions
+Open domain; manage tracking.
+States
+not enough data; disabled consent.
+Analytics
+intelligence_readiness_viewed.
+Acceptance criteria
+Readiness criteria are transparent.
+
+M15 — Why This Prediction
+Route: /intelligence/predictions/:id/why
+Contract
+Specification
+Purpose
+Explain model factors responsibly.
+Entry points
+M06.
+Layout hierarchy
+Top contributing signals → direction → caveat → source timestamps.
+Core components
+factor bars/table; caveat.
+Required data
+explanation payload.
+Primary actions
+Open data source; report issue.
+States
+explanation unavailable.
+Analytics
+prediction_explanation_viewed.
+Acceptance criteria
+Never phrases association as causation.
+
+M16 — Prediction Feedback
+Route: /intelligence/predictions/:id/feedback
+Contract
+Specification
+Purpose
+Collect trust/correction feedback.
+Entry points
+M06/M12.
+Layout hierarchy
+Was this useful? → issue type → optional note → submit.
+Core components
+feedback controls.
+Required data
+prediction metadata.
+Primary actions
+Submit/cancel.
+States
+offline queued.
+Analytics
+prediction_feedback_submitted.
+Acceptance criteria
+Feedback does not overwrite actual outcome.
+
+M17 — Money Intelligence
+Route: /intelligence/money
+Contract
+Specification
+Purpose
+Finance-specific analytics/projections/predictions.
+Entry points
+Domain strip/Money.
+Layout hierarchy
+Cashflow snapshot → month projection → spend forecast → anomaly cards → scenarios.
+Core components
+forecast cards; anomaly list.
+Required data
+Money artifacts.
+Primary actions
+Open; simulate; dismiss anomaly after review.
+States
+no Money consent/history.
+Analytics
+money_intelligence_viewed.
+Acceptance criteria
+Financial tracking/forecasting only; no investment advice.
+
+M18 — Spend Forecast
+Route: /intelligence/money/spend-forecast
+Contract
+Specification
+Purpose
+Month-end spend prediction.
+Entry points
+M17.
+Layout hierarchy
+Prediction range → deterministic run-rate baseline → drivers → upcoming commitments → actual-to-date.
+Core components
+range chart; baseline comparator.
+Required data
+forecast; recurring obligations.
+Primary actions
+Open why; scenario.
+States
+low history; month just started.
+Analytics
+money_spend_forecast_viewed.
+Acceptance criteria
+Shows baseline and ML separately.
+
+M19 — Transaction Anomaly
+Route: /intelligence/money/anomalies/:id
+Contract
+Specification
+Purpose
+Review unusual transaction signal.
+Entry points
+M17/notification.
+Layout hierarchy
+Transaction → why unusual → typical context → review status.
+Core components
+transaction card; anomaly explanation.
+Required data
+transaction + anomaly score/reasons.
+Primary actions
+Confirm unusual/expected; open transaction.
+States
+merchant/category missing.
+Analytics
+money_anomaly_reviewed.
+Acceptance criteria
+Anomaly is not fraud accusation.
+
+M20 — Productivity Intelligence
+Route: /intelligence/productivity
+Contract
+Specification
+Purpose
+Task/workload intelligence.
+Entry points
+Domain strip.
+Layout hierarchy
+Today workload projection → completion predictions → duration estimates → overload recommendations.
+Core components
+task prediction rows; capacity card.
+Required data
+task artifacts.
+Primary actions
+Open task prediction; replan via agent.
+States
+insufficient task history.
+Analytics
+productivity_intelligence_viewed.
+Acceptance criteria
+No productivity/personality scoring.
+
+M21 — Task Completion Prediction
+Route: /intelligence/productivity/tasks/:taskId
+Contract
+Specification
+Purpose
+Show chance of completing a planned task in window.
+Entry points
+M20/task detail.
+Layout hierarchy
+Probability band → planned window → factors → baseline → alternative time scenarios.
+Core components
+probability card; scenario chips.
+Required data
+task prediction.
+Primary actions
+Open why; simulate alternate time; replan.
+States
+task changed since prediction; low confidence.
+Analytics
+task_prediction_viewed.
+Acceptance criteria
+Stale prediction flagged when task plan changes.
+
+M22 — Task Duration Estimate
+Route: /intelligence/productivity/duration/:taskId
+Contract
+Specification
+Purpose
+Estimate realistic duration.
+Entry points
+M20/task detail.
+Layout hierarchy
+Estimate + interval → user's estimate → similar tasks → planning action.
+Core components
+duration comparison.
+Required data
+duration prediction/history.
+Primary actions
+Update planning estimate; simulate.
+States
+no comparable history.
+Analytics
+task_duration_prediction_viewed.
+Acceptance criteria
+Predicted duration does not overwrite user estimate automatically.
+
+M23 — Learning Intelligence
+Route: /intelligence/learning
+Contract
+Specification
+Purpose
+Learning pace and forecast dashboard.
+Entry points
+Domain strip.
+Layout hierarchy
+Current learning → deterministic pace projection → predictive completion → sessions at risk → scenarios.
+Core components
+course cards; timeline.
+Required data
+Learning artifacts.
+Primary actions
+Open course; scenario.
+States
+insufficient sessions.
+Analytics
+learning_intelligence_viewed.
+Acceptance criteria
+Distinguishes pace projection from learned forecast.
+
+M24 — Course Completion Forecast
+Route: /intelligence/learning/:courseId/forecast
+Contract
+Specification
+Purpose
+Estimate completion date/range.
+Entry points
+M23.
+Layout hierarchy
+Current progress → projection → prediction range → assumptions/factors → what-if study time.
+Core components
+date range card; scenario input.
+Required data
+course history/prediction.
+Primary actions
+Simulate 1h/2h etc.
+States
+course structure changed.
+Analytics
+learning_completion_forecast_viewed.
+Acceptance criteria
+Changes in syllabus invalidate stale prediction.
+
+M25 — Maintenance Intelligence
+Route: /intelligence/maintenance
+Contract
+Specification
+Purpose
+Maintenance timing/adherence intelligence.
+Entry points
+Domain strip.
+Layout hierarchy
+Due-window facts → likely completion → likely postponement → weekly grouping recommendations.
+Core components
+item intelligence cards.
+Required data
+Maintenance artifacts.
+Primary actions
+Open item/recommendation.
+States
+deterministic-only.
+Analytics
+maintenance_intelligence_viewed.
+Acceptance criteria
+Maintenance schedule engine remains source of truth.
+
+M26 — Fitness Intelligence
+Route: /intelligence/fitness
+Contract
+Specification
+Purpose
+Behavioral training intelligence.
+Entry points
+Domain strip.
+Layout hierarchy
+Adherence trend → next-week adherence prediction → workout duration → recovery-independent planning notes.
+Core components
+adherence cards.
+Required data
+Fitness artifacts.
+Primary actions
+Open; scenario.
+States
+health data disabled; low history.
+Analytics
+fitness_intelligence_viewed.
+Acceptance criteria
+No injury/disease diagnosis or medical risk.
+
+M27 — Cross-Domain Insights
+Route: /intelligence/cross-domain
+Contract
+Specification
+Purpose
+Explore carefully framed associations across domains.
+Entry points
+Explicit consent only.
+Layout hierarchy
+Association cards → compare periods → caveat → open sources.
+Core components
+correlation cards; filters.
+Required data
+approved cross-domain aggregates.
+Primary actions
+Open; dismiss; revoke cross-domain consent.
+States
+insufficient overlap; consent off.
+Analytics
+cross_domain_intelligence_viewed.
+Acceptance criteria
+Every association states 'not proof of causation'.
+
+M28 — Agent Intelligence Handoff
+Route: /intelligence/agent-handoff/:id
+Contract
+Specification
+Purpose
+Give structured intelligence artifact to agent.
+Entry points
+Any artifact CTA.
+Layout hierarchy
+Artifact summary → allowed agent actions → prompt input → continue.
+Core components
+structured context card.
+Required data
+artifact + permissions.
+Primary actions
+Ask agent; cancel.
+States
+artifact stale.
+Analytics
+intelligence_agent_handoff_started.
+Acceptance criteria
+Agent receives ID/structured object, not copied prose only.
+
+M29 — Intelligence Assistant
+Route: /assistant?context=intelligence
+Contract
+Specification
+Purpose
+Conversational reasoning over structured intelligence.
+Entry points
+M28/global assistant.
+Layout hierarchy
+Chat + rendered facts/projections/predictions/recommendations + tool confirmations.
+Core components
+chat; artifact cards.
+Required data
+tool outputs.
+Primary actions
+Ask; simulate; propose plan; confirm tool actions.
+States
+tool unavailable; low-confidence prediction.
+Analytics
+intelligence_agent_message_sent.
+Acceptance criteria
+LLM cannot manufacture prediction fields.
+
+M30 — Notification Center
+Route: /intelligence/notifications
+Contract
+Specification
+Purpose
+Review intelligence notifications.
+Entry points
+Notification tap/settings.
+Layout hierarchy
+Forecast changes → anomalies → recommendations → model/data notices.
+Core components
+notification rows.
+Required data
+events.
+Primary actions
+Open; dismiss.
+States
+empty.
+Analytics
+intelligence_notification_center_viewed.
+Acceptance criteria
+No repeated alerts for unchanged probability.
+
+M31 — Notification Settings
+Route: /intelligence/settings/notifications
+Contract
+Specification
+Purpose
+Control types/thresholds.
+Entry points
+Settings.
+Layout hierarchy
+Domain/type toggles → material-change thresholds → quiet hours.
+Core components
+settings rows.
+Required data
+preferences.
+Primary actions
+Save.
+States
+permission denied.
+Analytics
+intelligence_notification_settings_saved.
+Acceptance criteria
+Default conservative alerting.
+
+M32 — Intelligence Settings
+Route: /intelligence/settings
+Contract
+Specification
+Purpose
+Top-level Intelligence controls.
+Entry points
+More/M04.
+Layout hierarchy
+Domains → cross-domain → model transparency → notifications → privacy → data.
+Core components
+settings list.
+Required data
+consents/preferences.
+Primary actions
+Open/edit.
+States
+policy update.
+Analytics
+intelligence_settings_viewed.
+Acceptance criteria
+Disabling a domain stops future derived intelligence for it.
+
+M33 — Privacy & Consent
+Route: /intelligence/settings/privacy
+Contract
+Specification
+Purpose
+Manage processing scope and derived data.
+Entry points
+M32.
+Layout hierarchy
+Consent scopes → data categories → retention → cross-domain → revoke.
+Core components
+scope cards; explanation.
+Required data
+consents; derived-data inventory.
+Primary actions
+Revoke; delete derived intelligence; export.
+States
+deletion pending.
+Analytics
+intelligence_privacy_viewed.
+Acceptance criteria
+Revocation effect explained before confirm.
+
+M34 — Export Intelligence Data
+Route: /intelligence/settings/export
+Contract
+Specification
+Purpose
+Export predictions/models metadata/user feedback.
+Entry points
+M33.
+Layout hierarchy
+Choose scope/format → include feature snapshots? → generate.
+Core components
+export wizard.
+Required data
+artifact inventory.
+Primary actions
+Generate.
+States
+large export.
+Analytics
+intelligence_export_requested.
+Acceptance criteria
+Raw sensitive source data not silently bundled.
+
+M35 — Delete Intelligence Data
+Route: /intelligence/settings/delete
+Contract
+Specification
+Purpose
+Delete derived intelligence/model-personalization artifacts.
+Entry points
+M33.
+Layout hierarchy
+Impact → artifact categories → model personalization reset → confirm.
+Core components
+destructive confirmation.
+Required data
+counts/dependencies.
+Primary actions
+Delete; cancel.
+States
+processing.
+Analytics
+intelligence_data_delete_requested.
+Acceptance criteria
+Core domain records are separate and clearly unaffected unless chosen elsewhere.
+
+M36 — Model Transparency
+Route: /intelligence/models
+Contract
+Specification
+Purpose
+User-facing list of models affecting them.
+Entry points
+M13/M32.
+Layout hierarchy
+Domain → model name/purpose → version → status → data through → performance.
+Core components
+model rows.
+Required data
+served models.
+Primary actions
+Open model.
+States
+retired/no models.
+Analytics
+intelligence_models_viewed.
+Acceptance criteria
+Uses product names, with technical detail secondary.
+
+M37 — Model Detail
+Route: /intelligence/models/:name
+Contract
+Specification
+Purpose
+Explain one model/version.
+Entry points
+M36/M06.
+Layout hierarchy
+Purpose → target/horizon → version → baseline → validation summary → training period → limitations.
+Core components
+model facts; version history.
+Required data
+registry metadata.
+Primary actions
+Open version/history.
+States
+version retired.
+Analytics
+intelligence_model_detail_viewed.
+Acceptance criteria
+No source code/training-data exposure required; enough transparency for trust.
+
+M38 — Data Sources
+Route: /intelligence/data-sources
+Contract
+Specification
+Purpose
+Show which WholeSignal domains feed Intelligence.
+Entry points
+M14/M33.
+Layout hierarchy
+Domain sources → events/features → freshness → consent.
+Core components
+source cards.
+Required data
+data lineage summaries.
+Primary actions
+Disable scope/open source domain.
+States
+source unavailable.
+Analytics
+intelligence_data_sources_viewed.
+Acceptance criteria
+Does not expose sensitive feature values on overview.
+
+M39 — Stale / Unavailable Detail
+Route: /intelligence/status/:artifactId
+Contract
+Specification
+Purpose
+Explain why artifact is unavailable/stale.
+Entry points
+Any stale card.
+Layout hierarchy
+Reason → last valid result → fallback → next expected resolution.
+Core components
+status card.
+Required data
+readiness/monitoring result.
+Primary actions
+Use fallback; manage data.
+States
+model disabled; feature missing; stale.
+Analytics
+intelligence_artifact_unavailable_viewed.
+Acceptance criteria
+No silent fallback pretending to be current ML result.
+
+M40 — Offline Intelligence
+Route: /intelligence/offline
+Contract
+Specification
+Purpose
+Explain cached intelligence while offline.
+Entry points
+Offline banner.
+Layout hierarchy
+Cached artifacts → generated time → unavailable actions.
+Core components
+offline cache list.
+Required data
+cached artifacts.
+Primary actions
+Open cache; retry sync.
+States
+offline.
+Analytics
+intelligence_offline_viewed.
+Acceptance criteria
+Cached predictions always show generatedAt/dataThrough.
+
+
+3. Supporting Mobile Surfaces
+ID
+Surface
+S01
+Artifact type explainer: Analytics / Projection / Prediction / Recommendation
+S02
+Confidence/readiness explainer
+S03
+Prediction freshness banner
+S04
+Scenario assumption editor
+S05
+Feedback quick sheet
+S06
+Data-domain consent sheet
+S07
+Cross-domain consent sheet
+S08
+Agent action confirmation
+S09
+Model-version metadata sheet
+S10
+Data-source provenance sheet
+S11
+Stale-model fallback sheet
+S12
+Notification material-change threshold
+S13
+Delete-derived-data confirmation
+S14
+Insufficient-data education sheet
+S15
+Association-not-causation explainer
+
+4. Mobile Build Order
+Phase
+Screens
+Foundation
+M00–M16
+Domain intelligence
+M17–M27
+Agent
+M28–M29
+Trust/system
+M30–M40
