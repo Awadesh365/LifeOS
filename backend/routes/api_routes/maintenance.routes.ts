@@ -8,6 +8,7 @@ router.get('/areas', controller.listAreas);
 router.post('/areas', controller.createArea);
 router.get('/items', controller.listItems);
 router.post('/items', controller.createItem);
+router.get('/items/:id', controller.getItem);
 router.put('/items/:id', controller.updateItem);
 router.post('/items/:id/complete', controller.completeItem);
 router.get('/items/:id/history', controller.itemHistory);
@@ -20,4 +21,3 @@ router.get('/plan', controller.getPlan);
 router.put('/plan', controller.updatePlan);
 
 export default router;
-

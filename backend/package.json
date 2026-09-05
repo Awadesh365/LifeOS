@@ -9,6 +9,7 @@
     "build": "bash scripts/with-nvm-node.sh sh -c 'rm -rf dist && tsc && mkdir -p dist/data && cp data/articles.json dist/data/articles.json'",
     "start": "bash scripts/with-nvm-node.sh node dist/src/server.js",
     "test": "bash scripts/with-nvm-node.sh node --import tsx --test tests/**/*.test.ts",
+    "test:maintenance:db": "bash scripts/with-nvm-node.sh node --import tsx scripts/maintenance-test-db.ts",
     "db:start": "bash scripts/local-postgres.sh start",
     "db:stop": "bash scripts/local-postgres.sh stop",
     "db:status": "bash scripts/local-postgres.sh status",

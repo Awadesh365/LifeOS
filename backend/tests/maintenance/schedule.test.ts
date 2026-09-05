@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { calculateNeedState, nextFixedOccurrenceDate } from '../../services/maintenance/schedule.js';
+import { calculateNeedState, nextFixedOccurrenceDate, scheduleSnapshot } from '../../services/maintenance/schedule.js';
 
 const now = new Date('2026-08-31T12:00:00.000Z');
 
@@ -32,5 +32,14 @@ describe('maintenance need-state engine', () => {
   it('uses explicit condition and backlog states', () => {
     assert.equal(calculateNeedState({ scheduleType: 'condition', conditionState: 'needs_attention' }, now).state, 'needs_attention');
     assert.equal(calculateNeedState({ scheduleType: 'seasonal', status: 'backlog' }, now).state, 'backlog');
+  });
+
+  it('snapshots schedule context for immutable completion history', () => {
+    assert.deepEqual(scheduleSnapshot({ scheduleType: 'flexible_window', lastCompletedAt: '2026-08-20', windowStartDays: 10, windowEndDays: 14 }), {
+      plannedDate: null, windowStart: '2026-08-30', windowEnd: '2026-09-03', hardDueAt: null,
+    });
+    assert.deepEqual(scheduleSnapshot({ scheduleType: 'hard_deadline', nextDate: '2026-09-16' }), {
+      plannedDate: null, windowStart: null, windowEnd: null, hardDueAt: '2026-09-16',
+    });
   });
 });

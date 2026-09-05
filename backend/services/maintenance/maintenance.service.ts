@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { models, sequelize } from '../../models/index.js';
 import { createHttpError } from '../../utils/httpError.js';
 import { shortId } from '../../utils/id.js';
-import { calculateNeedState, nextFixedOccurrenceDate, SCHEDULE_TYPES } from './schedule.js';
+import { calculateNeedState, nextFixedOccurrenceDate, scheduleSnapshot, SCHEDULE_TYPES } from './schedule.js';
 
 const DEFAULT_AREAS = [
   ['Home', 'home', 'home'],
@@ -19,6 +19,7 @@ const ITEM_STATUSES = ['active', 'backlog', 'paused', 'archived'] as const;
 const PRIORITIES = ['must', 'should', 'can_wait'] as const;
 const EFFORTS = ['light', 'moderate', 'heavy'] as const;
 const REPAIR_STATES = ['reported', 'diagnosing', 'in_service', 'waiting', 'ready_to_collect', 'resolved', 'closed'] as const;
+const WORK_KINDS = ['routine', 'repair', 'improvement_project'] as const;
 
 type Row = Record<string, any>;
 
@@ -126,11 +127,30 @@ export async function listItems(userIdInput: unknown, query: Row = {}) {
   return items.map((item) => serializeItem(item));
 }
 
+export async function getItem(userIdInput: unknown, id: string) {
+  const ownerId = userId(userIdInput);
+  const item = await models.MaintenanceItem.findOne({
+    where: { id, userId: ownerId },
+    include: [
+      { model: models.MaintenanceArea, as: 'area', attributes: ['id', 'name', 'type', 'icon'] },
+      { model: models.MaintenanceAsset, as: 'asset', attributes: ['id', 'name'] },
+    ],
+  });
+  if (!item) throw createHttpError(404, 'Maintenance record not found');
+  return serializeItem(item);
+}
+
 function normalizeItemInput(body: Row, partial = false) {
   const output: Row = {};
+  if (body.scheduleType === 'repair') {
+    body = { ...body, workKind: 'repair', scheduleType: 'none' };
+  } else if (body.scheduleType === 'project') {
+    body = { ...body, workKind: 'improvement_project', scheduleType: 'none' };
+  }
   if (!partial || body.name !== undefined) output.name = requiredString(body.name, 'Item name');
   if (!partial || body.areaId !== undefined) output.areaId = requiredString(body.areaId, 'Area');
   if (!partial || body.scheduleType !== undefined) output.scheduleType = enumValue(body.scheduleType, SCHEDULE_TYPES, 'scheduleType', 'condition');
+  if (!partial || body.workKind !== undefined) output.workKind = enumValue(body.workKind, WORK_KINDS, 'workKind', 'routine');
   if (!partial || body.status !== undefined) output.status = enumValue(body.status, ITEM_STATUSES, 'status', 'active');
   if (!partial || body.priority !== undefined) output.priority = enumValue(body.priority, PRIORITIES, 'priority', 'should');
   if (!partial || body.effort !== undefined) output.effort = enumValue(body.effort, EFFORTS, 'effort', 'light');
@@ -166,32 +186,54 @@ export async function updateItem(userIdInput: unknown, id: string, input: unknow
   const values = normalizeItemInput((input ?? {}) as Row, true);
   if (values.areaId) await owned(models.MaintenanceArea, values.areaId, ownerId);
   if (values.assetId) await owned(models.MaintenanceAsset, values.assetId, ownerId);
-  await item.update({ ...values, updatedAt: new Date() });
+  const scheduleFields = ['scheduleType', 'intervalDays', 'windowStartDays', 'windowEndDays', 'nextDate', 'conditionState'];
+  const scheduleChanged = scheduleFields.some((field) => values[field] !== undefined && values[field] !== item.get(field));
+  await item.update({
+    ...values,
+    version: Number(item.get('version') ?? 1) + 1,
+    scheduleVersion: scheduleChanged ? Number(item.get('scheduleVersion') ?? 1) + 1 : item.get('scheduleVersion'),
+    updatedAt: new Date(),
+  });
   return serializeItem(item);
 }
 
 export async function completeItem(userIdInput: unknown, id: string, input: unknown) {
   const ownerId = userId(userIdInput);
-  const item = await owned(models.MaintenanceItem, id, ownerId);
-  const body = (input ?? {}) as Row;
-  const completedAt = body.completedAt ? new Date(body.completedAt) : new Date();
-  if (Number.isNaN(completedAt.getTime()) || completedAt.getTime() > Date.now() + 300_000) throw createHttpError(400, 'completedAt is invalid');
-  const occurrence = await sequelize.transaction(async (transaction) => {
+  return sequelize.transaction(async (transaction) => {
+    // Serialize completion operations per owner, including keys reused across items.
+    await models.User.findByPk(ownerId, { transaction, lock: transaction.LOCK.UPDATE });
+    const item = await models.MaintenanceItem.findOne({ where: { id, userId: ownerId }, transaction, lock: transaction.LOCK.UPDATE });
+    if (!item) throw createHttpError(404, 'Maintenance record not found');
+    const body = (input ?? {}) as Row;
+    const clientOperationId = optionalString(body.clientOperationId, 120);
+    if (clientOperationId) {
+      const existing = await models.MaintenanceOccurrence.findOne({ where: { userId: ownerId, clientOperationId }, transaction });
+      if (existing) {
+        if (existing.get('itemId') !== id || existing.get('action') !== 'completed') {
+          throw createHttpError(409, 'clientOperationId was already used for another maintenance action');
+        }
+        return { item: serializeItem(item), occurrence: existing.toJSON(), idempotentReplay: true };
+      }
+    }
+    const completedAt = body.completedAt ? new Date(body.completedAt) : new Date();
+    if (Number.isNaN(completedAt.getTime()) || completedAt.getTime() > Date.now() + 300_000) throw createHttpError(400, 'completedAt is invalid');
+    const snapshot = scheduleSnapshot(item.toJSON() as any);
+
     const created = await models.MaintenanceOccurrence.create({
       id: shortId(), userId: ownerId, itemId: id, action: 'completed', completedAt,
+      clientOperationId, scheduleVersion: Number(item.get('scheduleVersion') ?? 1), ...snapshot,
       durationMinutes: optionalPositiveInt(body.durationMinutes, 'durationMinutes') ?? item.get('durationMinutes'),
       cost: body.cost === undefined || body.cost === '' ? null : Math.max(0, Number(body.cost)),
       notes: optionalString(body.notes),
     }, { transaction });
-    const completionUpdate: Row = { lastCompletedAt: completedAt, updatedAt: new Date() };
+    const completionUpdate: Row = { lastCompletedAt: completedAt, version: Number(item.get('version') ?? 1) + 1, updatedAt: new Date() };
     if (item.get('scheduleType') === 'fixed_recurring' && item.get('nextDate') && item.get('intervalDays')) {
       completionUpdate.nextDate = nextFixedOccurrenceDate(String(item.get('nextDate')), Number(item.get('intervalDays')), completedAt);
     }
     if (item.get('scheduleType') === 'hard_deadline') completionUpdate.status = 'archived';
     await item.update(completionUpdate, { transaction });
-    return created;
+    return { item: serializeItem(item), occurrence: created.toJSON() };
   });
-  return { item: serializeItem(item), occurrence: occurrence.toJSON() };
 }
 
 export async function getItemHistory(userIdInput: unknown, id: string) {

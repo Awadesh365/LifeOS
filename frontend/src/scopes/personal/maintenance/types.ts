@@ -5,8 +5,8 @@ export type ScheduleType =
   | "condition"
   | "hard_deadline"
   | "seasonal"
-  | "repair"
-  | "project";
+  | "none";
+export type WorkKind = "routine" | "repair" | "improvement_project";
 export type NeedState =
   | "can_wait"
   | "approaching"
@@ -45,7 +45,10 @@ export interface MaintenanceItem {
   areaId: string;
   assetId?: string | null;
   name: string;
+  workKind: WorkKind;
   scheduleType: ScheduleType;
+  scheduleVersion: number;
+  version: number;
   status: "active" | "backlog" | "paused" | "archived";
   intervalDays?: number | null;
   windowStartDays?: number | null;
@@ -63,6 +66,22 @@ export interface MaintenanceItem {
   daysUntilTarget?: number | null;
   area?: Pick<MaintenanceArea, "id" | "name" | "type" | "icon">;
   asset?: Pick<MaintenanceAsset, "id" | "name"> | null;
+}
+
+export interface MaintenanceOccurrence {
+  id: string;
+  itemId: string;
+  action: "completed" | "skipped" | "deferred";
+  clientOperationId?: string | null;
+  scheduleVersion: number;
+  plannedDate?: string | null;
+  windowStart?: string | null;
+  windowEnd?: string | null;
+  hardDueAt?: string | null;
+  completedAt?: string | null;
+  durationMinutes?: number | null;
+  notes?: string | null;
+  createdAt: string;
 }
 
 export interface RepairCase {

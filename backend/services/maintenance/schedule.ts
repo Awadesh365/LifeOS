@@ -5,8 +5,7 @@ export const SCHEDULE_TYPES = [
   'condition',
   'hard_deadline',
   'seasonal',
-  'repair',
-  'project',
+  'none',
 ] as const;
 
 export type ScheduleType = typeof SCHEDULE_TYPES[number];
@@ -44,6 +43,24 @@ function daysBetween(from: string | Date, to: string | Date) {
 
 function toIsoDate(value: number) {
   return new Date(value).toISOString().slice(0, 10);
+}
+
+export function scheduleSnapshot(schedule: MaintenanceSchedule) {
+  if (schedule.scheduleType === 'flexible_window' && schedule.lastCompletedAt && schedule.windowStartDays && schedule.windowEndDays) {
+    const anchor = startOfUtcDay(schedule.lastCompletedAt);
+    return {
+      plannedDate: null,
+      windowStart: toIsoDate(anchor + schedule.windowStartDays * DAY_MS),
+      windowEnd: toIsoDate(anchor + schedule.windowEndDays * DAY_MS),
+      hardDueAt: null,
+    };
+  }
+  return {
+    plannedDate: schedule.scheduleType === 'hard_deadline' ? null : schedule.nextDate ?? null,
+    windowStart: null,
+    windowEnd: null,
+    hardDueAt: schedule.scheduleType === 'hard_deadline' ? schedule.nextDate ?? null : null,
+  };
 }
 
 export function nextFixedOccurrenceDate(currentDate: string, intervalDays: number, completedAt: Date) {

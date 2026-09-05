@@ -104,6 +104,34 @@
 .maintenance-row__identity {
   min-width: 0;
 }
+
+.maintenance-row__link {
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  text-align: left;
+  text-transform: none !important;
+  font-weight: 700 !important;
+}
+
+.maintenance-detail-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.maintenance-history-row {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+@media (max-width: 760px) {
+  .maintenance-detail-grid { grid-template-columns: 1fr; }
+  .maintenance-history-row { align-items: flex-start; flex-direction: column; }
+}
 .maintenance-row__identity .MuiTypography-caption {
   display: block;
   overflow: hidden;

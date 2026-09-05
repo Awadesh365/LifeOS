@@ -174,8 +174,8 @@ export const api = {
     request<GenericRecord[]>(endpoint, { signal }),
   maintenanceSummary: (signal?: AbortSignal) =>
     request<MobileMaintenanceSummary>('/maintenance/summary', { signal }),
-  completeMaintenanceItem: (id: string) =>
-    request<{ item: MobileMaintenanceItem }>(`/maintenance/items/${id}/complete`, { method: 'POST', body: {} }),
+  completeMaintenanceItem: (id: string, clientOperationId: string) =>
+    request<{ item: MobileMaintenanceItem }>(`/maintenance/items/${id}/complete`, { method: 'POST', body: { clientOperationId } }),
   moneyOverview: (signal?: AbortSignal) => request<MoneyOverview>('/money/overview', { signal }),
   moneyAccounts: (signal?: AbortSignal) => request<MoneyAccount[]>('/money/accounts', { signal }),
   createMoneyAccount: (input: Record<string, unknown>) =>

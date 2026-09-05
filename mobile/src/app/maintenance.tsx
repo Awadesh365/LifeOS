@@ -19,7 +19,7 @@ export default function MaintenanceScreen() {
   const queryClient = useQueryClient();
   const summary = useQuery({ queryKey: ['maintenance', 'summary'], queryFn: ({ signal }) => api.maintenanceSummary(signal) });
   const completion = useMutation({
-    mutationFn: (id: string) => api.completeMaintenanceItem(id),
+    mutationFn: ({ id, operationId }: { id: string; operationId: string }) => api.completeMaintenanceItem(id, operationId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['maintenance'] }),
   });
 
@@ -49,7 +49,7 @@ export default function MaintenanceScreen() {
             {data.attention.length ? data.attention.map((item) => <Card key={item.id}>
               <View style={styles.itemRow}>
                 <View style={styles.itemCopy}><Text style={styles.itemTitle}>{item.name}</Text><Text style={styles.itemMeta}>{item.area?.name ?? 'Maintenance'} · {STATE_LABELS[item.needState]} · ~{item.durationMinutes}m</Text><Text numberOfLines={2} style={styles.reason}>{item.needReason}</Text></View>
-                <Pressable accessibilityLabel={`Complete ${item.name}`} accessibilityRole="button" disabled={completion.isPending} onPress={() => completion.mutate(item.id)} style={({ pressed }) => [styles.complete, pressed && styles.pressed]}><MaterialCommunityIcons color={colors.primaryContrast} name="check" size={20} /></Pressable>
+                <Pressable accessibilityLabel={`Complete ${item.name}`} accessibilityRole="button" disabled={completion.isPending} onPress={() => completion.mutate({ id: item.id, operationId: `maintenance-${Date.now()}-${Math.random().toString(36).slice(2)}` })} style={({ pressed }) => [styles.complete, pressed && styles.pressed]}><MaterialCommunityIcons color={colors.primaryContrast} name="check" size={20} /></Pressable>
               </View>
             </Card>) : <StateMessage icon="check-circle-outline" message="Flexible maintenance will surface as it approaches its preferred window." title="Nothing needs attention" />}
           </View>

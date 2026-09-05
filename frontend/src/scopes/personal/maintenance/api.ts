@@ -2,6 +2,7 @@ import type {
   MaintenanceArea,
   MaintenanceAsset,
   MaintenanceItem,
+  MaintenanceOccurrence,
   MaintenanceSummary,
   RepairCase,
   WeeklyPlan,
@@ -54,6 +55,9 @@ export const maintenanceApi = {
     const query = new URLSearchParams(params).toString();
     return request<MaintenanceItem[]>(`/items${query ? `?${query}` : ""}`);
   },
+  item: (id: string) => request<MaintenanceItem>(`/items/${id}`),
+  itemHistory: (id: string) =>
+    request<MaintenanceOccurrence[]>(`/items/${id}/history`),
   createItem: (data: Partial<MaintenanceItem>) =>
     request<MaintenanceItem>("/items", {
       method: "POST",
@@ -64,10 +68,10 @@ export const maintenanceApi = {
       method: "PUT",
       body: JSON.stringify(data),
     }),
-  completeItem: (id: string) =>
+  completeItem: (id: string, clientOperationId: string = crypto.randomUUID()) =>
     request<{ item: MaintenanceItem }>(`/items/${id}/complete`, {
       method: "POST",
-      body: "{}",
+      body: JSON.stringify({ clientOperationId }),
     }),
   assets: () => request<MaintenanceAsset[]>("/assets"),
   createAsset: (data: Partial<MaintenanceAsset>) =>

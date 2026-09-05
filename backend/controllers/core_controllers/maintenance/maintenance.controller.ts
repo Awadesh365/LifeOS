@@ -5,6 +5,7 @@ export const summary = asyncHandler(async (req, res) => { res.json(await mainten
 export const listAreas = asyncHandler(async (req, res) => { res.json(await maintenance.listAreas(req.session.userId)); });
 export const createArea = asyncHandler(async (req, res) => { res.status(201).json(await maintenance.createArea(req.session.userId, req.body)); });
 export const listItems = asyncHandler(async (req, res) => { res.json(await maintenance.listItems(req.session.userId, req.query)); });
+export const getItem = asyncHandler(async (req, res) => { res.json(await maintenance.getItem(req.session.userId, req.params.id)); });
 export const createItem = asyncHandler(async (req, res) => { res.status(201).json(await maintenance.createItem(req.session.userId, req.body)); });
 export const updateItem = asyncHandler(async (req, res) => { res.json(await maintenance.updateItem(req.session.userId, req.params.id, req.body)); });
 export const completeItem = asyncHandler(async (req, res) => { res.status(201).json(await maintenance.completeItem(req.session.userId, req.params.id, req.body)); });

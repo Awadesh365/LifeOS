@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -37,6 +38,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
+  useParams,
 } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
@@ -52,6 +54,7 @@ import type {
   MaintenanceArea,
   MaintenanceAsset,
   MaintenanceItem,
+  MaintenanceOccurrence,
   MaintenanceSummary,
   NeedState,
   PlanPriority,
@@ -94,8 +97,7 @@ const SCHEDULE_LABELS: Record<ScheduleType, string> = {
   condition: "Condition based",
   hard_deadline: "Hard deadline",
   seasonal: "Seasonal",
-  repair: "Repair case",
-  project: "Project",
+  none: "No schedule",
 };
 const REPAIR_LABELS: Record<RepairCase["state"], string> = {
   reported: "Reported",
@@ -180,12 +182,19 @@ function ItemRow({
   onComplete?: (item: MaintenanceItem) => void;
   compact?: boolean;
 }) {
+  const navigate = useNavigate();
   return (
     <Box
       className={`maintenance-row ${compact ? "maintenance-row--compact" : ""}`}
     >
       <Box className="maintenance-row__identity">
-        <Typography fontWeight={700}>{item.name}</Typography>
+        <Button
+          className="maintenance-row__link"
+          onClick={() => navigate(`/app/maintenance/items/${item.id}`)}
+          size="small"
+        >
+          {item.name}
+        </Button>
         <Typography variant="caption" color="text.secondary">
           {item.area?.name ?? "Maintenance"} · {item.needReason}
         </Typography>
@@ -212,6 +221,89 @@ function ItemRow({
         </Tooltip>
       )}
     </Box>
+  );
+}
+
+function ItemDetail({
+  onComplete,
+}: {
+  onComplete: (item: MaintenanceItem) => Promise<void>;
+}) {
+  const { id = "" } = useParams();
+  const navigate = useNavigate();
+  const [item, setItem] = useState<MaintenanceItem | null>(null);
+  const [history, setHistory] = useState<MaintenanceOccurrence[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const [nextItem, nextHistory] = await Promise.all([
+        maintenanceApi.item(id),
+        maintenanceApi.itemHistory(id),
+      ]);
+      setItem(nextItem);
+      setHistory(nextHistory);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load this item.");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  if (loading) {
+    return <Box className="maintenance-loading"><CircularProgress size={28} /><Typography color="text.secondary">Loading maintenance history…</Typography></Box>;
+  }
+  if (error || !item) {
+    return <Alert severity="error" action={<Button onClick={() => void load()}>Retry</Button>}>{error || "Maintenance item not found."}</Alert>;
+  }
+
+  return (
+    <Stack spacing={2}>
+      <Box className="maintenance-page-heading">
+        <Box>
+          <Button size="small" onClick={() => navigate("/app/maintenance/items")}>← All items</Button>
+          <Typography variant="h5" sx={{ mt: 1 }}>{item.name}</Typography>
+          <Typography variant="body2" color="text.secondary">{item.area?.name ?? "Maintenance"} · {SCHEDULE_LABELS[item.scheduleType]}</Typography>
+        </Box>
+        {item.status === "active" && <Button variant="contained" startIcon={<CheckIcon />} onClick={async () => { await onComplete(item); await load(); }}>Record completion</Button>}
+      </Box>
+
+      <Box className="maintenance-detail-grid">
+        <Panel title="Current state">
+          <Stack spacing={1.5}>
+            <StateChip state={item.needState} />
+            <Typography>{item.needReason}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {item.calculatedTargetDate ? `Target ${item.calculatedTargetDate}` : "No calendar target"} · about {item.durationMinutes} minutes · {item.effort} effort
+            </Typography>
+          </Stack>
+        </Panel>
+        <Panel title="Schedule and links">
+          <Stack spacing={1}>
+            <Typography variant="body2"><strong>Timing:</strong> {SCHEDULE_LABELS[item.scheduleType]}</Typography>
+            <Typography variant="body2"><strong>Work type:</strong> {item.workKind.replace(/_/g, " ")}</Typography>
+            <Typography variant="body2"><strong>Linked asset:</strong> {item.asset?.name ?? "None"}</Typography>
+            <Typography variant="caption" color="text.secondary">Schedule version {item.scheduleVersion}. Historical completions retain the version that produced them.</Typography>
+          </Stack>
+        </Panel>
+      </Box>
+
+      <Panel title="Completion history">
+        {history.length ? <Stack divider={<Divider flexItem />}>
+          {history.map((occurrence) => <Box className="maintenance-history-row" key={occurrence.id}>
+            <Box><Typography fontWeight={700}>{occurrence.action === "completed" ? "Completed" : occurrence.action}</Typography><Typography variant="caption" color="text.secondary">{new Date(occurrence.completedAt ?? occurrence.createdAt).toLocaleString()}</Typography></Box>
+            <Typography variant="caption" color="text.secondary">Schedule v{occurrence.scheduleVersion}{occurrence.windowStart && occurrence.windowEnd ? ` · window ${occurrence.windowStart}–${occurrence.windowEnd}` : occurrence.hardDueAt ? ` · deadline ${occurrence.hardDueAt}` : occurrence.plannedDate ? ` · planned ${occurrence.plannedDate}` : ""}</Typography>
+          </Box>)}
+        </Stack> : <EmptyState title="No completion history" description="The first completion will appear here with the schedule context that was active at the time." />}
+      </Panel>
+    </Stack>
   );
 }
 
@@ -900,6 +992,7 @@ function NewItemDialog({
     name: "",
     areaId: "",
     assetId: "",
+    workKind: "routine" as MaintenanceItem["workKind"],
     scheduleType: "flexible_window" as ScheduleType,
     intervalDays: 30,
     windowStartDays: 10,
@@ -980,6 +1073,14 @@ function NewItemDialog({
             value={form.name}
             onChange={(event) => set("name", event.target.value)}
           />
+          <FormControl>
+            <InputLabel>Work type</InputLabel>
+            <Select label="Work type" value={form.workKind} onChange={(event) => set("workKind", event.target.value)}>
+              <MenuItem value="routine">Routine</MenuItem>
+              <MenuItem value="repair">Repair</MenuItem>
+              <MenuItem value="improvement_project">Improvement project</MenuItem>
+            </Select>
+          </FormControl>
           <Box className="maintenance-dialog-grid">
             <FormControl>
               <InputLabel>Area</InputLabel>
@@ -1003,7 +1104,6 @@ function NewItemDialog({
                 onChange={(event) => set("scheduleType", event.target.value)}
               >
                 {Object.entries(SCHEDULE_LABELS)
-                  .slice(0, 6)
                   .map(([value, label]) => (
                     <MenuItem value={value} key={value}>
                       {label}
@@ -1210,11 +1310,23 @@ export default function MaintenancePortal() {
       showError(err instanceof Error ? err.message : "Unable to save change.");
     }
   };
-  const complete = (item: MaintenanceItem) =>
-    void mutate(
-      () => maintenanceApi.completeItem(item.id),
-      `${item.name} recorded as complete.`,
-    );
+  const completionOperations = useRef(new Map<string, { id: string; pending: boolean }>());
+  const complete = async (item: MaintenanceItem) => {
+    const operation = completionOperations.current.get(item.id) ?? { id: crypto.randomUUID(), pending: false };
+    if (operation.pending) return;
+    operation.pending = true;
+    completionOperations.current.set(item.id, operation);
+    try {
+      await maintenanceApi.completeItem(item.id, operation.id);
+      completionOperations.current.delete(item.id);
+      await reload();
+      showSuccess(`${item.name} recorded as complete.`);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Unable to record completion.");
+    } finally {
+      operation.pending = false;
+    }
+  };
   const advanceRepair = (repair: RepairCase) => {
     const flow: RepairCase["state"][] = [
       "reported",
@@ -1329,6 +1441,7 @@ export default function MaintenancePortal() {
                 />
               }
             />
+            <Route path="items/:id" element={<ItemDetail onComplete={complete} />} />
             <Route path="areas" element={<AreasPage data={data} />} />
             <Route
               path="backlog"
