@@ -4,7 +4,11 @@ import config from '../config/env.js';
 import { defineLifeTrackerModels } from './schema.js';
 
 const sequelize = config.db.url
-  ? new Sequelize(config.db.url, { logging: false, pool: config.db.pool })
+  ? new Sequelize(config.db.url, { logging: false, pool: config.db.pool,
+      ...(/(?:[?&]sslmode=(?:require|verify-ca|verify-full))/.test(config.db.url)
+        ? { dialectOptions: { ssl: { require: true, rejectUnauthorized: true } } }
+        : {}),
+    })
   : new Sequelize(config.db.name, config.db.user, config.db.password, {
     host: config.db.host,
     port: config.db.port,

@@ -6,6 +6,9 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 const base = {
   dialect: 'postgres',
   logging: false,
+  ...(/(?:[?&]sslmode=(?:require|verify-ca|verify-full))/.test(process.env.DATABASE_DIRECT_URL || process.env.DATABASE_URL || '')
+    ? { dialectOptions: { ssl: { require: true, rejectUnauthorized: true } } }
+    : {}),
   pool: {
     max: Number(process.env.DB_POOL_MAX || 5),
     min: Number(process.env.DB_POOL_MIN || 0),
