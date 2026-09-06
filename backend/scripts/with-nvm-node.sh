@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# CI and hosts may provision the exact runtime outside nvm (for example setup-node).
+# Preserve it instead of switching to an unrelated nvm installation.
+if [ -f .nvmrc ] && command -v node >/dev/null 2>&1; then
+  requested_node_version="$(tr -d '[:space:]' < .nvmrc)"
+  if [ "$(node --version)" = "v${requested_node_version#v}" ]; then
+    exec "$@"
+  fi
+fi
+
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 if [ -s "$NVM_DIR/nvm.sh" ]; then
