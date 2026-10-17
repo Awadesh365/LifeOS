@@ -63,7 +63,7 @@ export async function consumeSupplement(id: string, amount: number) {
 
 const allowedNutritionRecordKeys = new Set([
   'lifeos-custom-foods', 'lifeos-saved-meals', 'lifeos-recipes', 'lifeos-meal-plans',
-  'lifeos-grocery-checked', 'lifeos-nutrition-targets', 'lifeos-nutrition-coverage',
+  'lifeos-grocery-checked', 'lifeos-grocery-prices', 'lifeos-nutrition-targets', 'lifeos-nutrition-coverage',
   'lifeos-nutrition-reports', 'lifeos-nutrition-sharing', 'lifeos-nutrition-data-issues',
   'lifeos-nutrition-preferences',
   'lifeos-fitness-body-checkins', 'lifeos-fitness-step-goal',

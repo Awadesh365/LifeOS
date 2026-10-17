@@ -11,6 +11,7 @@ import type {
   Exercise, PerformedSet, ProgramExercise, ProgressionDecision, TodayTraining,
   TrainingProfile, TrainingProgram, TrainingProgramDraft, TrainingReview, TrainingView,
 } from '../training/types';
+import FitnessLearning from '../training/FitnessLearning';
 import '../training/training.css';
 
 interface TrainingProps { isMobile?: boolean; }
@@ -77,6 +78,7 @@ export default function Training({ isMobile = false }: TrainingProps) {
             <Tab active={view === 'today'} onClick={() => setView('today')} icon={<Dumbbell size={16} />} label="Today" />
             <Tab active={view === 'program'} onClick={() => setView('program')} icon={<Target size={16} />} label="Program" />
             <Tab active={view === 'exercises'} onClick={() => setView('exercises')} icon={<BookOpen size={16} />} label="Exercises" />
+            <Tab active={view === 'learning'} onClick={() => setView('learning')} icon={<Sparkles size={16} />} label="Learn" />
             <Tab active={view === 'progress'} onClick={() => setView('progress')} icon={<BarChart3 size={16} />} label="Progress" />
           </div>
           <div className="training-command-actions">
@@ -105,6 +107,7 @@ export default function Training({ isMobile = false }: TrainingProps) {
         {view === 'today' && <TodayView data={today} date={date} profile={profile} onRefresh={loadData} onOpenExercise={openExercise} />}
         {view === 'program' && <ProgramView programs={programs} exercises={exercises} profile={profile} onRefresh={loadData} onActivate={async (id) => { await trainingApi.activateProgram(id); await loadData(); }} onOpenExercise={openExercise} />}
         {view === 'exercises' && <ExerciseLibrary exercises={exercises} onOpenExercise={openExercise} />}
+        {view === 'learning' && <FitnessLearning />}
         {view === 'progress' && <ProgressView review={review} onRefresh={loadData} />}
       </main>
       {selectedExercise && <ExerciseDetail exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />}

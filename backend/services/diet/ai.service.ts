@@ -3,6 +3,13 @@ import { createHttpError } from '../../utils/httpError.js';
 const MAX_IMAGE_CHARS = 7_000_000;
 const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
+function decodeImage(input: unknown) {
+  const image = String(input || '');
+  const match = image.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+  if (!match || !allowedMimeTypes.has(match[1]) || image.length > MAX_IMAGE_CHARS) throw createHttpError(400, 'Choose a JPEG, PNG, or WebP image smaller than 5 MB.');
+  return { image, mime: match[1] };
+}
+
 async function complete(messages: Array<Record<string, any>>, json = false) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw createHttpError(503, 'AI tools are not configured. Add OPENAI_API_KEY to the backend environment to enable them.');
@@ -23,9 +30,7 @@ async function complete(messages: Array<Record<string, any>>, json = false) {
 }
 
 export async function scanMeal(input: Record<string, unknown>) {
-  const image = String(input.image || '');
-  const match = image.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
-  if (!match || !allowedMimeTypes.has(match[1]) || image.length > MAX_IMAGE_CHARS) throw createHttpError(400, 'Choose a JPEG, PNG, or WebP image smaller than 5 MB.');
+  const { image } = decodeImage(input.image);
   const answer = await complete([
     { role: 'system', content: 'Estimate the visible meal from the image. Do not claim exactness. Return a JSON object with mealName (string), visibleItems (array of strings), calories (number or null), proteinGrams (number or null), confidence (low|medium|high), assumptions (array of strings). Use null when portion size or ingredients are not inferable. Do not infer allergies or medical suitability. Keep estimates conservative and explain uncertainty.' },
     { role: 'user', content: [{ type: 'text', text: 'Estimate this meal as a rough starting point. State portion assumptions and use low confidence when scale or ingredients are unclear.' }, { type: 'image_url', image_url: { url: image, detail: 'high' } }] },
@@ -41,6 +46,33 @@ export async function scanMeal(input: Record<string, unknown>) {
     confidence: ['low', 'medium', 'high'].includes(result.confidence) ? result.confidence : 'low',
     assumptions: Array.isArray(result.assumptions) ? result.assumptions.map(String).slice(0, 8) : [],
     source: 'AI visual estimate; user confirmation required',
+  };
+}
+
+export async function scanNutritionLabel(input: Record<string, unknown>) {
+  const { image } = decodeImage(input.image);
+  const answer = await complete([
+    { role: 'system', content: 'Read the nutrition label in the image. Do not invent missing values. Return one JSON object with productName (string), servingSize (string or null), basis (per_100g, per_100ml, per_serving, or unknown), caloriesKcal, proteinGrams, carbohydrateGrams, fatGrams, fiberGrams, sugarsGrams, sodiumMg (each number or null), ingredients (array of strings), allergens (array of strings), confidence (low|medium|high), and assumptions (array of strings). Convert energy from kJ to kcal only when the label clearly provides kJ; preserve the source basis. For salt, do not guess sodium unless conversion is unambiguous. Set unclear fields to null.' },
+    { role: 'user', content: [{ type: 'text', text: 'Transcribe this food label. Prefer the per-100g/100ml panel when present and report its basis. Keep all unclear values null.' }, { type: 'image_url', image_url: { url: image, detail: 'high' } }] },
+  ], true);
+  let result: any;
+  try { result = JSON.parse(answer); } catch { throw createHttpError(502, 'The AI service returned an unreadable label scan.'); }
+  const amount = (value: unknown, max: number) => typeof value === 'number' && Number.isFinite(value) && value >= 0 ? Math.min(max, Math.round(value * 10) / 10) : null;
+  const validBasis = ['per_100g', 'per_100ml', 'per_serving', 'unknown'];
+  return {
+    productName: String(result.productName || 'Scanned food label').slice(0, 120),
+    servingSize: typeof result.servingSize === 'string' ? result.servingSize.slice(0, 80) : null,
+    basis: validBasis.includes(result.basis) ? result.basis : 'unknown',
+    nutrients: {
+      caloriesKcal: amount(result.caloriesKcal, 10000), proteinGrams: amount(result.proteinGrams, 1000),
+      carbohydrateGrams: amount(result.carbohydrateGrams, 1000), fatGrams: amount(result.fatGrams, 1000),
+      fiberGrams: amount(result.fiberGrams, 1000), sugarsGrams: amount(result.sugarsGrams, 1000), sodiumMg: amount(result.sodiumMg, 100000),
+    },
+    ingredients: Array.isArray(result.ingredients) ? result.ingredients.map((item: unknown) => String(item).slice(0, 160)).slice(0, 60) : [],
+    allergens: Array.isArray(result.allergens) ? result.allergens.map((item: unknown) => String(item).slice(0, 120)).slice(0, 20) : [],
+    confidence: ['low', 'medium', 'high'].includes(result.confidence) ? result.confidence : 'low',
+    assumptions: Array.isArray(result.assumptions) ? result.assumptions.map((item: unknown) => String(item).slice(0, 240)).slice(0, 8) : [],
+    source: 'AI label transcription; user confirmation required',
   };
 }
 

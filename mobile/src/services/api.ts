@@ -1,3 +1,4 @@
+import { localIsoDate } from '@/utils/date';
 import { Platform } from 'react-native';
 import { z } from 'zod';
 import * as SecureStore from 'expo-secure-store';
@@ -151,9 +152,13 @@ export const api = {
       { method: 'PUT', body: preference },
     ),
   dashboard: (signal?: AbortSignal) =>
-    request<DashboardSummary>('/dashboard', { signal }),
+    request<DashboardSummary>(`/dashboard${dateQuery(localIsoDate())}`, { signal }),
   habits: (date: string, signal?: AbortSignal) =>
     request<Habit[]>(`/habits${dateQuery(date)}`, { signal }),
+  habitWeek: (date: string, signal?: AbortSignal) => request<{ days: { date: string; habits: Habit[]; completed: number; total: number }[] }>(`/habits/week${dateQuery(date)}`, { signal }),
+  updateHabit: (id: string, input: Pick<Habit, 'name' | 'icon' | 'category'>) => request<Habit>(`/habits/${id}`, { method: 'PUT', body: input }),
+  deleteHabit: (id: string) => request(`/habits/${id}`, { method: 'DELETE' }),
+  setHabitCompletion: (id: string, date: string, done: boolean) => request<Habit>(`/habits/${id}/completion`, { method: 'PUT', body: { date, done } }),
   toggleHabit: (id: string, date: string) =>
     request<{ ok: boolean }>(`/habits/${id}/toggle`, {
       method: 'POST',
@@ -167,6 +172,10 @@ export const api = {
   routines: (signal?: AbortSignal) => request<RoutineGroup[]>('/routines', { signal }),
   health: (date: string, signal?: AbortSignal) =>
     request<HealthLog | null>(`/health${dateQuery(date)}`, { signal }),
+  healthRecord: (key: string, signal?: AbortSignal) =>
+    request<{ id: string; key: string; value: unknown }>(`/diet/records/${encodeURIComponent(key)}`, { signal }),
+  saveHealthRecord: (key: string, value: unknown) =>
+    request<{ id: string; key: string; value: unknown }>(`/diet/records/${encodeURIComponent(key)}`, { method: 'PUT', body: { value } }),
   weeklyHealth: (signal?: AbortSignal) => request<HealthLog[]>('/health/weekly', { signal }),
   saveHealth: (input: HealthLog) =>
     request<HealthLog>('/health', { method: 'POST', body: input }),

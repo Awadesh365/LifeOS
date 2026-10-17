@@ -8,7 +8,8 @@
     "scheme": "lifeos",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/images/lifeos-icon.png"
+      "icon": "./assets/images/lifeos-icon.png",
+      "bundleIdentifier": "com.lifeos.mobile"
     },
     "android": {
       "package": "com.lifeos.mobile",
@@ -33,7 +34,15 @@
           "imageWidth": 110
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "@appeeky/expo-healthkit",
+        {
+          "healthSharePermission": "LifeOS reads your daily step count to sync it to your health check-in.",
+          "healthUpdatePermission": false,
+          "healthConnectPermissions": ["READ_STEPS"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

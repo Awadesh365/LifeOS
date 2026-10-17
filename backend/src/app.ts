@@ -64,7 +64,7 @@ app.use(cors({
   },
 }));
 // Meal photos are accepted as bounded data URLs; ordinary API bodies retain the smaller limit.
-app.use('/api/diet/scan-meal', express.json({ limit: '7mb', type: 'application/json' }));
+app.use(['/api/diet/scan-meal', '/api/diet/scan-label'], express.json({ limit: '7mb', type: 'application/json' }));
 app.use(express.json({ limit: '256kb', type: 'application/json' }));
 app.use(session({
   name: sessionCookieName,
@@ -93,7 +93,8 @@ app.use(verifyRequestOrigin);
 app.get('/api/health-check', (_req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 600, standardHeaders: 'draft-8', legacyHeaders: false }));
-app.use('/api/diet/scan-meal', rateLimit({ windowMs: 15 * 60 * 1000, limit: 12, standardHeaders: 'draft-8', legacyHeaders: false }));
+app.use(['/api/diet/scan-meal', '/api/diet/scan-label'], rateLimit({ windowMs: 15 * 60 * 1000, limit: 12, standardHeaders: 'draft-8', legacyHeaders: false }));
+app.use('/api/diet/products', rateLimit({ windowMs: 15 * 60 * 1000, limit: 90, standardHeaders: 'draft-8', legacyHeaders: false }));
 app.use('/api/diet/fitness-assistant', rateLimit({ windowMs: 15 * 60 * 1000, limit: 40, standardHeaders: 'draft-8', legacyHeaders: false }));
 app.use('/api', requireAuth, requireCsrf);
 

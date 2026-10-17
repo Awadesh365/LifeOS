@@ -6,11 +6,13 @@
     "node": ">=24.3.0"
   },
   "dependencies": {
+    "@appeeky/expo-healthkit": "^0.4.1",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@tanstack/react-query": "^5.102.2",
     "expo": "~57.0.19",
     "expo-constants": "~57.0.13",
+    "expo-dev-client": "~57.0.20",
     "expo-font": "~57.0.1",
     "expo-linking": "~57.0.9",
     "expo-router": "~57.0.18",
@@ -35,8 +37,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "vitest run",

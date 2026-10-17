@@ -1,6 +1,7 @@
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 import * as dietService from '../../../services/diet/diet.service.js';
 import * as dietAiService from '../../../services/diet/ai.service.js';
+import * as productScanService from '../../../services/diet/product-scan.service.js';
 
 export const listLogs = asyncHandler(async (req, res) => {
   res.json(await dietService.listLogs(req.query.date as string | undefined));
@@ -44,4 +45,12 @@ export const scanMeal = asyncHandler(async (req, res) => {
 
 export const askFitnessAssistant = asyncHandler(async (req, res) => {
   res.json(await dietAiService.askFitnessAssistant(req.body));
+});
+
+export const scanNutritionLabel = asyncHandler(async (req, res) => {
+  res.json(await dietAiService.scanNutritionLabel(req.body));
+});
+
+export const lookupProductByBarcode = asyncHandler(async (req, res) => {
+  res.json(await productScanService.lookupProductByBarcode(req.params.barcode));
 });

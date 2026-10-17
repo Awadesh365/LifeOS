@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import * as HealthKit from '@appeeky/expo-healthkit';
+import { Platform } from 'react-native';
 
 import { Screen } from '@/components/screen';
 import { Button, Card, SectionTitle, StateMessage } from '@/components/ui';
@@ -75,6 +77,8 @@ export default function HealthScreen() {
         </View>
       ) : null}
 
+      <StepSyncCard />
+
       {health.isPending ? (
         <StateMessage loading message="Loading today’s health signals." title="One moment" />
       ) : health.isError ? (
@@ -83,6 +87,73 @@ export default function HealthScreen() {
         <HealthForm initialLog={health.data} key={health.data?.id ?? 'new-check-in'} />
       )}
     </Screen>
+  );
+}
+
+type BodyCheckIn = { date: string; steps?: number; stepGoal?: number; [key: string]: unknown };
+const BODY_CHECKINS_KEY = 'lifeos-fitness-body-checkins';
+const DEFAULT_STEP_GOAL = 8000;
+
+function StepSyncCard() {
+  const { colors } = useLifeOSTheme();
+  const styles = createStyles(colors);
+  const queryClient = useQueryClient();
+  const [steps, setSteps] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+  const available = HealthKit.isAvailable() && Platform.OS !== 'web';
+
+  const syncSteps = async () => {
+    if (!available || busy) return;
+    setBusy(true);
+    try {
+      const stepType = HealthKit.QuantityType.stepCount;
+      if (HealthKit.getUnsupportedTypes([stepType]).includes(stepType)) {
+        Alert.alert('Step sync unavailable', 'This device does not provide step data through its health service.');
+        return;
+      }
+      const authorized = await HealthKit.requestAuthorization({ toRead: [stepType] });
+      if (!authorized) {
+        Alert.alert('Permission needed', 'Allow LifeOS to read steps in your device health settings, then try again.');
+        return;
+      }
+      const from = new Date();
+      from.setHours(0, 0, 0, 0);
+      const statistics = await HealthKit.queryStatistics({
+        type: stepType,
+        unit: HealthKit.Unit.count,
+        from,
+        to: new Date(),
+        options: HealthKit.StatisticsOption.cumulativeSum,
+      });
+      const total = Math.max(0, Math.round(statistics.sum ?? 0));
+      const existing = await api.healthRecord(BODY_CHECKINS_KEY).catch(() => null);
+      const records = Array.isArray(existing?.value) ? existing.value as BodyCheckIn[] : [];
+      const current = records.find((entry) => entry?.date === today);
+      const updated: BodyCheckIn = { ...current, date: today, steps: total, stepGoal: current?.stepGoal || DEFAULT_STEP_GOAL };
+      await api.saveHealthRecord(BODY_CHECKINS_KEY, [updated, ...records.filter((entry) => entry?.date !== today)]);
+      setSteps(total);
+      await queryClient.invalidateQueries({ queryKey: ['health'] });
+      Alert.alert('Steps synced', `${total.toLocaleString()} steps saved to today’s LifeOS body check-in.`);
+    } catch {
+      Alert.alert('Could not sync steps', 'Check your health permission and LifeOS connection, then try again.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Card>
+      <View style={styles.stepHeading}>
+        <View style={styles.stepIcon}><MaterialCommunityIcons color={colors.primary} name="shoe-print" size={19} /></View>
+        <View style={styles.stepCopy}>
+          <Text style={styles.label}>Daily steps</Text>
+          <Text style={styles.stepDetail}>{available ? 'Sync today’s total from Apple Health or Health Connect.' : 'Step sync is available in the LifeOS Android and iOS app.'}</Text>
+        </View>
+      </View>
+      {steps !== null ? <Text style={styles.stepTotal}>{steps.toLocaleString()} steps synced today</Text> : null}
+      <Button disabled={!available || busy} label={busy ? 'Syncing steps…' : 'Connect / sync steps'} onPress={() => void syncSteps()} />
+      <Text style={styles.stepPrivacy}>LifeOS requests step-count read access only. Sync runs when you tap the button; it does not run in the background.</Text>
+    </Card>
   );
 }
 
@@ -195,4 +266,10 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   numberInput: { color: colors.ink, fontSize: 28, fontWeight: '900', minHeight: 44, padding: 0 },
   suffix: { color: colors.inkMuted, fontSize: 11 },
   notes: { backgroundColor: colors.background, borderColor: colors.border, borderRadius: radii.sm, borderWidth: 1, color: colors.ink, fontSize: 15, lineHeight: 21, marginTop: spacing.sm, minHeight: 100, padding: spacing.md },
+  stepHeading: { alignItems: 'center', flexDirection: 'row', gap: spacing.md, marginBottom: spacing.md },
+  stepIcon: { alignItems: 'center', backgroundColor: colors.primarySoft, borderRadius: radii.sm, height: 38, justifyContent: 'center', width: 38 },
+  stepCopy: { flex: 1, gap: 3 },
+  stepDetail: { color: colors.inkMuted, fontSize: 12, lineHeight: 17 },
+  stepTotal: { color: colors.primary, fontSize: 17, fontWeight: '900', marginBottom: spacing.sm },
+  stepPrivacy: { color: colors.inkMuted, fontSize: 10, lineHeight: 15, marginTop: spacing.sm },
 });

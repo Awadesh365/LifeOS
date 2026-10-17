@@ -36,6 +36,7 @@ interface FoodItem {
 
 interface PlanItem { id: string; date: string; slot: string; foodId: string; }
 type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+interface GroceryPriceEntry { id: string; product: string; store: string; amount: number; currency: string; quantity: string; url: string; recordedAt: string; }
 
 const FOOD_IDEAS: FoodItem[] = [
   { id: 'vegetable-poha', name: 'Vegetable poha', category: 'Breakfast', preparation: 'Poha with peas, carrot, onion, lemon and peanuts', basis: 'One prepared bowl', calories: null, protein: null, fiber: null, source: 'Meal idea · nutrition not imported', completeness: 'reference-needed', ingredients: ['poha', 'peas', 'carrot', 'onion', 'lemon', 'peanuts'], note: 'A quick savory breakfast idea. Confirm ingredients and portions before calculating nutrition.' },
@@ -312,9 +313,10 @@ function RecipeEditor() {
 }
 
 function RecipeDetail() {
-  const { recipeId } = useParams(); const navigate = useNavigate(); const [recipes] = useLocalState<FoodItem[]>('lifeos-recipes', []); const recipe = recipes.find((item) => item.id === recipeId);
+  const { recipeId } = useParams(); const navigate = useNavigate(); const [recipes, setRecipes] = useLocalState<FoodItem[]>('lifeos-recipes', []); const recipe = recipes.find((item) => item.id === recipeId);
   if (!recipe) return <EmptyState icon={ClipboardList} title="Recipe not found" body="Create a recipe to start calculating from real ingredients." action={<button className="portal-primary" onClick={() => navigate('/app/diet/recipes/new/edit')}>New recipe</button>} />;
-  return <section className="nutrition-module"><PageHeader eyebrow={recipe.basis} title={recipe.name} description="User-created recipe" action={<button className="portal-primary" onClick={() => navigate(`/app/diet/recipes/${recipe.id}/edit`)}>Edit recipe</button>} /><div className="food-detail-grid"><article className="portal-card"><h2>Ingredients</h2><div className="ingredient-list">{recipe.ingredients.map((item) => <span key={item}><Check size={13} />{item}</span>)}</div></article><article className="portal-card"><h2>Nutrition per serving</h2><EmptyState icon={Database} title="Calculation unavailable" body="Ingredient quantities exist, but verified nutrient references have not been linked." /></article></div></section>;
+  const duplicate = () => { const copy = { ...recipe, id: `recipe-${Date.now()}`, name: `${recipe.name} copy`, ingredients: [...recipe.ingredients] }; setRecipes((current) => [...current, copy]); navigate(`/app/diet/recipes/${copy.id}`); };
+  return <section className="nutrition-module"><PageHeader eyebrow={recipe.basis} title={recipe.name} description="User-created recipe" action={<><button className="portal-secondary" onClick={duplicate}>Duplicate recipe</button><button className="portal-primary" onClick={() => navigate(`/app/diet/recipes/${recipe.id}/edit`)}>Edit recipe</button></>} /><div className="food-detail-grid"><article className="portal-card"><h2>Ingredients</h2><div className="ingredient-list">{recipe.ingredients.map((item) => <span key={item}><Check size={13} />{item}</span>)}</div></article><article className="portal-card"><h2>Nutrition per serving</h2><EmptyState icon={Database} title="Calculation unavailable" body="Ingredient quantities exist, but verified nutrient references have not been linked." /></article></div></section>;
 }
 
 function weekDates(baseDate?: string) { const now = baseDate ? new Date(`${baseDate}T12:00:00`) : new Date(); const monday = new Date(now); monday.setDate(now.getDate() - ((now.getDay() + 6) % 7)); return Array.from({ length: 7 }, (_, i) => { const d = new Date(monday); d.setDate(monday.getDate() + i); return d.toISOString().slice(0, 10); }); }
@@ -326,10 +328,55 @@ function PlannerPage() {
 }
 
 function GroceryPage() {
-  const [plans] = useLocalState<PlanItem[]>('lifeos-meal-plans', []); const [custom] = useLocalState<FoodItem[]>('lifeos-custom-foods', []); const [checked, setChecked] = useLocalState<string[]>('lifeos-grocery-checked', []); const ingredients = [...new Set(plans.flatMap((plan) => findFood(plan.foodId, custom)?.ingredients || []))].sort();
-  return <section className="nutrition-module"><PageHeader eyebrow="From your plan" title="Grocery list" description="Ingredients are gathered from planned meals. Quantities stay unspecified when recipes do not provide them." action={ingredients.length ? <button className="portal-secondary" onClick={() => window.print()}><Download size={16} /> Print</button> : undefined} />{ingredients.length ? <div className="grocery-layout"><div className="portal-card grocery-list">{ingredients.map((ingredient) => <label key={ingredient}><input type="checkbox" checked={checked.includes(ingredient)} onChange={() => setChecked((current) => current.includes(ingredient) ? current.filter((v) => v !== ingredient) : [...current, ingredient])} /><span>{ingredient}</span><small>Quantity not specified</small></label>)}</div><aside className="portal-card"><span className="nutrition-eyebrow">Progress</span><h2>{checked.length} of {ingredients.length} collected</h2><p className="portal-body-copy">Check-off state is personal to this device.</p><button className="portal-text-button" onClick={() => setChecked([])}>Clear checks</button></aside></div> : <EmptyState icon={ShoppingBasket} title="Your list is empty" body="Add meals to the weekly planner and their ingredients will appear here." action={<NavLink className="portal-primary" to="/app/diet/planner">Plan meals</NavLink>} />}</section>;
+  const [plans] = useLocalState<PlanItem[]>('lifeos-meal-plans', []);
+  const [custom] = useLocalState<FoodItem[]>('lifeos-custom-foods', []);
+  const [checked, setChecked] = useLocalState<string[]>('lifeos-grocery-checked', []);
+  const [prices, setPrices] = useLocalState<GroceryPriceEntry[]>('lifeos-grocery-prices', []);
+  const [view, setView] = useState<'list' | 'prices'>('list');
+  const [form, setForm] = useState({ product: '', store: '', amount: '', currency: 'INR', quantity: '', url: '' });
+  const [error, setError] = useState('');
+  const ingredients = [...new Set(plans.flatMap((plan) => findFood(plan.foodId, custom)?.ingredients || []))].sort();
+  const grouped = prices.reduce<Record<string, GroceryPriceEntry[]>>((all, entry) => { const key = [entry.product.trim().toLowerCase(), entry.quantity.trim().toLowerCase(), entry.currency].join('|'); (all[key] ||= []).push(entry); return all; }, {});
+  const addPrice = () => {
+    const amount = Number(form.amount);
+    if (!form.product.trim() || !form.store.trim() || !Number.isFinite(amount) || amount <= 0) { setError('Enter a product, store, and positive price.'); return; }
+    const entry: GroceryPriceEntry = { id: `price-${Date.now()}`, product: form.product.trim(), store: form.store.trim(), amount, currency: form.currency, quantity: form.quantity.trim(), url: form.url.trim(), recordedAt: new Date().toISOString() };
+    setPrices((current) => [entry, ...current]); setForm({ ...form, amount: '', url: '' }); setError('');
+  };
+  return <section className="nutrition-module">
+    <PageHeader eyebrow="Plan and compare" title="Groceries" description="Build a list from planned meals and keep a personal history of prices you find at stores." action={view === 'list' && ingredients.length ? <button className="portal-secondary" onClick={() => window.print()}><Download size={16} /> Print list</button> : undefined} />
+    <div className="grocery-mode-tabs"><button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Shopping list</button><button className={view === 'prices' ? 'active' : ''} onClick={() => setView('prices')}>Price tracker · {prices.length}</button></div>
+    {view === 'list' && (ingredients.length ? <div className="grocery-layout"><div className="portal-card grocery-list">{ingredients.map((ingredient) => <label key={ingredient}><input type="checkbox" checked={checked.includes(ingredient)} onChange={() => setChecked((current) => current.includes(ingredient) ? current.filter((v) => v !== ingredient) : [...current, ingredient])} /><span>{ingredient}</span><small>Quantity not specified</small></label>)}</div><aside className="portal-card"><span className="nutrition-eyebrow">Progress</span><h2>{checked.length} of {ingredients.length} collected</h2><p className="portal-body-copy">Check-off state syncs to your LifeOS account.</p><button className="portal-text-button" onClick={() => setChecked([])}>Clear checks</button></aside></div> : <EmptyState icon={ShoppingBasket} title="Your list is empty" body="Add meals to the weekly planner and their ingredients will appear here." action={<NavLink className="portal-primary" to="/app/diet/planner">Plan meals</NavLink>} />)}
+    {view === 'prices' && <div className="grocery-price-layout">
+      <article className="portal-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">Personal price watch</span><h2>Record a store price</h2></div><ShoppingBasket size={18} /></div><div className="portal-form-grid">
+        <label>Product<input value={form.product} onChange={(e) => setForm({ ...form, product: e.target.value })} placeholder="e.g. oats, 1 kg" /></label>
+        <label>Store<input value={form.store} onChange={(e) => setForm({ ...form, store: e.target.value })} placeholder="Store or retailer" /></label>
+        <label>Price<input type="number" min="0.01" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></label>
+        <label>Currency<select value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}><option value="INR">INR ₹</option><option value="USD">USD $</option><option value="EUR">EUR €</option><option value="GBP">GBP £</option></select></label>
+        <label>Package size, optional<input value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} placeholder="1 kg, 6 pack…" /></label>
+        <label>Product link, optional<input type="url" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://…" /></label>
+      </div>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}<button className="portal-primary" onClick={addPrice}>Save price</button><p className="body-source-note">Prices are entered by you and are not live retailer quotes. Compare only the same product, size, and currency.</p></article>
+      <div className="grocery-price-history">
+        {Object.entries(grouped).map(([key, entries]) => {
+          const ordered = [...entries].sort((a, b) => a.amount - b.amount);
+          return <article className="portal-card" key={key}>
+            <div className="portal-card-heading">
+              <div><span className="nutrition-eyebrow">{entries.length} recorded price{entries.length === 1 ? '' : 's'}</span><h2>{entries[0].product} · {entries[0].quantity || 'size unspecified'} · {entries[0].currency}</h2></div>
+              <strong>{ordered[0].currency} {ordered[0].amount.toFixed(2)}<small> lowest saved</small></strong>
+            </div>
+            {entries.map((entry) => <div className="grocery-price-row" key={entry.id}>
+              <span><strong>{entry.store}</strong><small>{entry.quantity || 'package size not stated'} · {new Date(entry.recordedAt).toLocaleDateString()}</small></span>
+              <strong>{entry.currency} {entry.amount.toFixed(2)}</strong>
+              {entry.url && <a href={entry.url} target="_blank" rel="noreferrer">Open</a>}
+              <button aria-label={`Delete ${entry.store} price for ${entry.product}`} onClick={() => setPrices((current) => current.filter((item) => item.id !== entry.id))}><Trash2 size={14} /></button>
+            </div>)}
+          </article>;
+        })}
+        {!prices.length && <EmptyState icon={Database} title="No saved prices" body="Add store prices to compare your own observations over time." />}
+      </div>
+    </div>}
+  </section>;
 }
-
 function CoveragePage() {
   const [coverage] = useLocalState<Record<string, string>>('lifeos-nutrition-coverage', {}); const days = Array.from({ length: 35 }, (_, index) => { const d = new Date(); d.setDate(d.getDate() - (34 - index)); return d.toISOString().slice(0, 10); }); const reviewed = days.filter((date) => coverage[date]).length;
   return <section className="nutrition-module"><PageHeader eyebrow="History" title="Coverage calendar" description="Coverage describes data quality, never food quality." /><div className="coverage-summary"><div><strong>{reviewed}</strong><span>reviewed days</span></div><div><strong>{days.filter((d) => coverage[d] === 'complete').length}</strong><span>likely complete</span></div><div><strong>{days.filter((d) => coverage[d] === 'partial').length}</strong><span>partial</span></div></div><div className="coverage-calendar">{days.map((date) => <NavLink to={`/app/diet/diary/${date}`} key={date} className={`coverage-date coverage-date--${coverage[date] || 'unknown'}`}><span>{new Intl.DateTimeFormat('en', { weekday: 'short' }).format(new Date(`${date}T12:00:00`))}</span><strong>{new Date(`${date}T12:00:00`).getDate()}</strong><small>{coverage[date]?.replace('-', ' ') || 'Not reviewed'}</small></NavLink>)}</div></section>;
@@ -359,16 +406,44 @@ function ReportsPage({ mode }: { mode: 'center' | 'builder' | 'preview' }) {
 type BodyCheckIn = { date: string; weightKg: number | null; waistCm: number | null; bodyFatPct: number | null; steps: number | null };
 type CoachMessage = { role: 'user' | 'assistant'; text: string; at: string };
 
+type ScannedLabel = {
+  productName: string; servingSize: string | null; basis: 'per_100g' | 'per_100ml' | 'per_serving' | 'unknown';
+  nutrients: { caloriesKcal: number | null; proteinGrams: number | null; carbohydrateGrams: number | null; fatGrams: number | null; fiberGrams: number | null; sugarsGrams: number | null; sodiumMg: number | null };
+  ingredients: string[]; allergens: string[]; confidence: string; assumptions: string[];
+};
+type ScannedProduct = { found: boolean; barcode: string; name?: string; brands?: string; quantity?: string; servingSize?: string; ingredients?: string; allergens?: string[]; nutritionGrade?: string | null; imageUrl?: string | null; nutrientsPer100g?: ScannedLabel['nutrients'] & { saltGrams?: number | null }; source?: string; sourceUrl?: string; license?: string };
+
 function MealScannerPage() {
   const dispatch = useAppDispatch();
+  const [, setSavedFoods] = useLocalState<FoodItem[]>('lifeos-custom-foods', []);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [mealType, setMealType] = useState<MealSlot>('lunch');
+  const [mode, setMode] = useState<'meal' | 'barcode' | 'label'>('meal');
   const [image, setImage] = useState('');
   const [fileName, setFileName] = useState('');
   const [estimate, setEstimate] = useState<{ mealName: string; visibleItems: string[]; calories: number | null; proteinGrams: number | null; confidence: string; assumptions: string[] } | null>(null);
+  const [barcode, setBarcode] = useState('');
+  const [product, setProduct] = useState<ScannedProduct | null>(null);
+  const [label, setLabel] = useState<ScannedLabel | null>(null);
+  const [cameraOn, setCameraOn] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const cameraStream = useRef<MediaStream | null>(null);
+  const cameraTimer = useRef<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+  const stopCamera = () => {
+    if (cameraTimer.current !== null) window.clearInterval(cameraTimer.current);
+    cameraTimer.current = null;
+    cameraStream.current?.getTracks().forEach((track) => track.stop());
+    cameraStream.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+    setCameraOn(false);
+  };
+  useEffect(() => () => {
+    if (cameraTimer.current !== null) window.clearInterval(cameraTimer.current);
+    cameraStream.current?.getTracks().forEach((track) => track.stop());
+  }, []);
   const prepareImage = async (file: File) => {
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Use a JPEG, PNG, or WebP photo.');
     const source = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Could not read this photo.')); reader.readAsDataURL(file); });
@@ -380,27 +455,69 @@ function MealScannerPage() {
     const output = canvas.toDataURL('image/jpeg', 0.78); if (output.length > 7_000_000) throw new Error('This photo is too large after compression. Choose a smaller image.');
     return output;
   };
-  const scan = async () => {
+  const scanMeal = async () => {
     if (!image) { setError('Choose a meal photo first.'); return; }
     setBusy(true); setError(''); setEstimate(null); setSaved(false);
     try { const response = await secureFetch(`${NUTRITION_API}/diet/scan-meal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || payload.message || 'Meal scan failed'); setEstimate(payload); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Meal scan failed.'); }
     finally { setBusy(false); }
   };
-  const save = async () => {
+  const scanLabel = async () => {
+    if (!image) { setError('Choose a clear photo of the nutrition label first.'); return; }
+    setBusy(true); setError(''); setLabel(null); setSaved(false);
+    try { const response = await secureFetch(`${NUTRITION_API}/diet/scan-label`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || payload.message || 'Label scan failed'); setLabel(payload); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Label scan failed.'); }
+    finally { setBusy(false); }
+  };
+  const lookupBarcode = async (code = barcode) => {
+    const clean = code.replace(/\s+/g, '');
+    if (!/^\d{8,14}$/.test(clean)) { setError('Enter a valid barcode with 8–14 digits.'); return; }
+    stopCamera(); setBusy(true); setError(''); setProduct(null); setBarcode(clean); setSaved(false);
+    try { const response = await secureFetch(`${NUTRITION_API}/diet/products/${encodeURIComponent(clean)}`); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || payload.message || 'Product lookup failed'); setProduct(payload); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Product lookup failed.'); }
+    finally { setBusy(false); }
+  };
+  const startBarcodeCamera = async () => {
+    const Detector = (window as unknown as { BarcodeDetector?: new (options?: { formats: string[] }) => { detect: (source: HTMLVideoElement) => Promise<Array<{ rawValue?: string }>> } }).BarcodeDetector;
+    if (!Detector || !navigator.mediaDevices?.getUserMedia) { setError('Camera barcode reading is unavailable in this browser. Enter the barcode digits instead.'); return; }
+    try {
+      setError(''); setCameraOn(true);
+      cameraStream.current = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+      if (!videoRef.current) throw new Error('Camera preview is unavailable.');
+      videoRef.current.srcObject = cameraStream.current;
+      await videoRef.current.play();
+      const detector = new Detector({ formats: ['ean_8', 'ean_13', 'upc_a', 'upc_e', 'itf', 'code_128'] });
+      cameraTimer.current = window.setInterval(async () => {
+        if (!videoRef.current || videoRef.current.readyState < 2 || busy) return;
+        try { const [result] = await detector.detect(videoRef.current); if (result?.rawValue) void lookupBarcode(result.rawValue); }
+        catch { /* Keep scanning; an undecodable frame is normal. */ }
+      }, 450);
+    } catch (cause) { stopCamera(); setError(cause instanceof Error ? cause.message : 'Camera access failed. Enter the barcode digits instead.'); }
+  };
+  const addFood = (name: string, calories: number | null, protein: number | null, fiber: number | null, basis: string, source: string, ingredients: string[]) => {
+    if (calories === null && protein === null && fiber === null) { setError('There are no confirmed nutrition values to save yet.'); return; }
+    const item: FoodItem = { id: `scanned-${Date.now()}`, name: name.trim() || 'Scanned food', category: 'Packaged food', preparation: 'Nutrition values saved from a label scan.', basis, calories, protein, fiber, source, completeness: fiber === null ? 'partial' : 'complete', ingredients, note: 'Check the package, serving size, and values before logging.' , custom: true };
+    setSavedFoods((current) => [item, ...current]); setSaved(true); setError('');
+  };
+  const saveMeal = async () => {
     if (!estimate) return;
     setBusy(true); setError('');
     try { await dispatch(addDietLog({ date, mealType, items: estimate.mealName, calories: estimate.calories, protein: estimate.proteinGrams, notes: `User-confirmed AI photo estimate (${estimate.confidence} confidence). Visible items: ${estimate.visibleItems.join(', ')}. Assumptions: ${estimate.assumptions.join('; ')}` })).unwrap(); setSaved(true); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not save meal to diary.'); }
     finally { setBusy(false); }
   };
-  return <section className="nutrition-module"><PageHeader eyebrow="Meal capture" title="Scan a meal" description="A photo can suggest ingredients and rough macro estimates. Confirm the portions and values before anything is added to your diary." />
-    <div className="ai-tool-grid"><article className="portal-card ai-scan-card"><div className="ai-tool-heading"><Camera size={20} /><div><h2>Meal photo estimate</h2><p>Photos are sent to your configured backend AI provider for analysis.</p></div></div><label className="ai-photo-picker">{image ? <img src={image} alt="Selected meal preview" /> : <span><Camera size={24} />Choose or take a photo</span>}<input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setFileName(file.name); setEstimate(null); setError(''); void prepareImage(file).then(setImage).catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not prepare photo.')); }} /></label>{fileName && <small className="ai-photo-name">{fileName}</small>}<div className="ai-scan-fields"><label>Date<input type="date" max={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} /></label><label>Meal<select value={mealType} onChange={(e) => setMealType(e.target.value as MealSlot)}><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label></div><button className="portal-primary" type="button" disabled={busy || !image} onClick={() => void scan()}>{busy ? 'Working…' : 'Estimate meal'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>
-      {estimate && <article className="portal-card ai-estimate-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">{estimate.confidence} confidence · estimate only</span><h2>Review before logging</h2></div><span className="food-quality food-quality--partial">Confirm</span></div><label>Meal name<input value={estimate.mealName} onChange={(e) => setEstimate({ ...estimate, mealName: e.target.value })} /></label><div className="ai-estimate-macros"><label>Calories<input type="number" min="0" value={estimate.calories ?? ''} onChange={(e) => setEstimate({ ...estimate, calories: e.target.value === '' ? null : Number(e.target.value) })} /> kcal</label><label>Protein<input type="number" min="0" value={estimate.proteinGrams ?? ''} onChange={(e) => setEstimate({ ...estimate, proteinGrams: e.target.value === '' ? null : Number(e.target.value) })} /> g</label></div><h3>Visible items</h3><p>{estimate.visibleItems.length ? estimate.visibleItems.join(', ') : 'No ingredients identified'}</p>{!!estimate.assumptions.length && <div className="portal-info"><Info size={15} /><span>{estimate.assumptions.join(' · ')}</span></div>}<p className="ai-estimate-caveat">Photo estimates can be substantially wrong when portions, ingredients, or cooking fats are hidden. Correct the values first.</p><button className="portal-primary" type="button" disabled={busy || saved} onClick={() => void save()}>{saved ? 'Added to diary' : busy ? 'Saving…' : 'Confirm and add to diary'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>}</div>
-    <div className="portal-info ai-privacy-note"><ShieldCheck size={16} /><span>Meal image processing requires the optional backend API key. The key stays on the server. The image is sent to that provider only when you start a scan; LifeOS does not save the photo.</span></div>
+  const productNutrients = product?.nutrientsPer100g;
+  return <section className="nutrition-module"><PageHeader eyebrow="Food capture" title="Scan food & nutrition" description="Estimate a meal, look up a packaged food barcode, or read an international nutrition label. Review all scanned values before saving." />
+    <div className="nutrition-scan-modes" role="tablist" aria-label="Food scanner type"><button className={mode === 'meal' ? 'active' : ''} onClick={() => { setMode('meal'); setError(''); }}><Camera size={15} /> Meal photo</button><button className={mode === 'barcode' ? 'active' : ''} onClick={() => { setMode('barcode'); stopCamera(); setError(''); }}><Search size={15} /> Barcode lookup</button><button className={mode === 'label' ? 'active' : ''} onClick={() => { setMode('label'); setError(''); }}><Apple size={15} /> Nutrition label</button></div>
+    {mode === 'meal' && <div className="ai-tool-grid"><article className="portal-card ai-scan-card"><div className="ai-tool-heading"><Camera size={20} /><div><h2>Meal photo estimate</h2><p>Photos are sent to your configured backend AI provider for analysis.</p></div></div><label className="ai-photo-picker">{image ? <img src={image} alt="Selected meal preview" /> : <span><Camera size={24} />Choose or take a photo</span>}<input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setFileName(file.name); setEstimate(null); setLabel(null); setError(''); void prepareImage(file).then(setImage).catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not prepare photo.')); }} /></label>{fileName && <small className="ai-photo-name">{fileName}</small>}<div className="ai-scan-fields"><label>Date<input type="date" max={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} /></label><label>Meal<select value={mealType} onChange={(e) => setMealType(e.target.value as MealSlot)}><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label></div><button className="portal-primary" type="button" disabled={busy || !image} onClick={() => void scanMeal()}>{busy ? 'Working…' : 'Estimate meal'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>
+      {estimate && <article className="portal-card ai-estimate-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">{estimate.confidence} confidence · estimate only</span><h2>Review before logging</h2></div><span className="food-quality food-quality--partial">Confirm</span></div><label>Meal name<input value={estimate.mealName} onChange={(e) => setEstimate({ ...estimate, mealName: e.target.value })} /></label><div className="ai-estimate-macros"><label>Calories<input type="number" min="0" value={estimate.calories ?? ''} onChange={(e) => setEstimate({ ...estimate, calories: e.target.value === '' ? null : Number(e.target.value) })} /> kcal</label><label>Protein<input type="number" min="0" value={estimate.proteinGrams ?? ''} onChange={(e) => setEstimate({ ...estimate, proteinGrams: e.target.value === '' ? null : Number(e.target.value) })} /> g</label></div><h3>Visible items</h3><p>{estimate.visibleItems.length ? estimate.visibleItems.join(', ') : 'No ingredients identified'}</p>{!!estimate.assumptions.length && <div className="portal-info"><Info size={15} /><span>{estimate.assumptions.join(' · ')}</span></div>}<p className="ai-estimate-caveat">Photo estimates can be substantially wrong when portions, ingredients, or cooking fats are hidden. Correct the values first.</p><button className="portal-primary" type="button" disabled={busy || saved} onClick={() => void saveMeal()}>{saved ? 'Added to diary' : busy ? 'Saving…' : 'Confirm and add to diary'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>}</div>}
+    {mode === 'barcode' && <div className="barcode-scan-layout"><article className="portal-card"><div className="ai-tool-heading"><Search size={20} /><div><h2>Packaged food lookup</h2><p>Read the package barcode or type its digits to check the Open Food Facts product database.</p></div></div><label className="barcode-input">Barcode<input inputMode="numeric" autoComplete="off" value={barcode} maxLength={14} placeholder="8–14 digit barcode" onChange={(event) => { setBarcode(event.target.value.replace(/\D/g, '')); setProduct(null); }} /></label><div className="barcode-actions"><button type="button" className="portal-primary" disabled={busy || barcode.length < 8} onClick={() => void lookupBarcode()}>{busy ? 'Looking up…' : 'Look up barcode'}</button><button type="button" className="portal-secondary" disabled={busy || cameraOn} onClick={() => void startBarcodeCamera()}>Scan with camera</button>{cameraOn && <button type="button" className="portal-secondary" onClick={stopCamera}>Stop camera</button>}</div>{cameraOn && <video className="barcode-camera-preview" ref={videoRef} muted playsInline />}{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}<p className="body-source-note">Product data is community-contributed and may be incomplete. Check the physical package before using values.</p></article>
+      {product && <article className="portal-card barcode-product-result">{product.found ? <><div className="portal-card-heading"><div><span className="nutrition-eyebrow">Barcode {product.barcode} · per 100 g</span><h2>{product.name}</h2></div>{product.nutritionGrade && <strong className="product-grade">{product.nutritionGrade}</strong>}</div>{product.brands && <p>{product.brands}</p>}<div className="barcode-nutrient-grid">{[['Energy', productNutrients?.caloriesKcal, 'kcal'], ['Protein', productNutrients?.proteinGrams, 'g'], ['Carbohydrate', productNutrients?.carbohydrateGrams, 'g'], ['Fat', productNutrients?.fatGrams, 'g'], ['Fiber', productNutrients?.fiberGrams, 'g'], ['Sugars', productNutrients?.sugarsGrams, 'g']].map(([name, value, unit]) => <div key={String(name)}><span>{name}</span><strong>{value ?? '—'}{value !== null && value !== undefined ? ` ${unit}` : ''}</strong></div>)}</div><p>{product.ingredients || 'Ingredients not available in this database entry.'}</p>{!!product.allergens?.length && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>Listed allergens: {product.allergens.join(', ')}. This community record is not an allergy-safety guarantee.</span></div>}<div className="portal-info"><Database size={15} /><span>Source: <a href={product.sourceUrl} target="_blank" rel="noreferrer">Open Food Facts</a> · {product.license}</span></div><button type="button" className="portal-primary" disabled={saved || productNutrients?.caloriesKcal == null && productNutrients?.proteinGrams == null} onClick={() => addFood(product.name || 'Scanned product', productNutrients?.caloriesKcal ?? null, productNutrients?.proteinGrams ?? null, productNutrients?.fiberGrams ?? null, 'Per 100 g', `${product.source} barcode ${product.barcode}`, product.ingredients ? [product.ingredients] : [])}>{saved ? 'Saved to Foods' : 'Save to Foods'}</button></> : <><h2>Product not found</h2><p>We did not find barcode {product.barcode}. Try the nutrition-label scanner or add a custom food from the package.</p><a href="https://world.openfoodfacts.org/cgi/product.pl" target="_blank" rel="noreferrer">Contribute the product to Open Food Facts</a></>}</article>}</div>}
+    {mode === 'label' && <div className="ai-tool-grid"><article className="portal-card ai-scan-card"><div className="ai-tool-heading"><Apple size={20} /><div><h2>International nutrition label reader</h2><p>Photograph the nutrition panel clearly. Keep the serving basis and package visible.</p></div></div><label className="ai-photo-picker">{image ? <img src={image} alt="Selected food label preview" /> : <span><Camera size={24} />Choose or take a label photo</span>}<input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setFileName(file.name); setLabel(null); setError(''); void prepareImage(file).then(setImage).catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not prepare photo.')); }} /></label>{fileName && <small className="ai-photo-name">{fileName}</small>}<button className="portal-primary" type="button" disabled={busy || !image} onClick={() => void scanLabel()}>{busy ? 'Reading label…' : 'Read nutrition label'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>
+      {label && <article className="portal-card ai-estimate-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">{label.confidence} confidence · {label.basis.replace(/_/g, ' ')}</span><h2>Review transcription</h2></div></div><label>Product name<input value={label.productName} onChange={(event) => setLabel({ ...label, productName: event.target.value })} /></label><label>Serving size<input value={label.servingSize || ''} placeholder="Not stated" onChange={(event) => setLabel({ ...label, servingSize: event.target.value || null })} /></label><div className="barcode-nutrient-grid">{([['caloriesKcal', 'Energy (kcal)'], ['proteinGrams', 'Protein (g)'], ['carbohydrateGrams', 'Carbohydrate (g)'], ['fatGrams', 'Fat (g)'], ['fiberGrams', 'Fiber (g)'], ['sugarsGrams', 'Sugars (g)'], ['sodiumMg', 'Sodium (mg)']] as const).map(([key, title]) => <label key={key}>{title}<input type="number" min="0" step="0.1" value={label.nutrients[key] ?? ''} onChange={(event) => setLabel({ ...label, nutrients: { ...label.nutrients, [key]: event.target.value === '' ? null : Number(event.target.value) } })} /></label>)}</div><div className="portal-info"><Info size={15} /><span>Basis: {label.basis.replace(/_/g, ' ')}. {label.assumptions.join(' · ') || 'Verify every value, unit, and serving basis against the package.'}</span></div>{!!label.allergens.length && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>Listed allergens: {label.allergens.join(', ')}. Always read the original package if allergies matter.</span></div>}<button type="button" className="portal-primary" disabled={saved || label.nutrients.caloriesKcal === null && label.nutrients.proteinGrams === null} onClick={() => addFood(label.productName, label.nutrients.caloriesKcal, label.nutrients.proteinGrams, label.nutrients.fiberGrams, `${label.basis.replace(/_/g, ' ')}${label.servingSize ? ` · ${label.servingSize}` : ''}`, `User-confirmed AI label transcription (${label.confidence} confidence)`, label.ingredients)}>{saved ? 'Saved to Foods' : 'Confirm and save to Foods'}</button></article>}</div>}
+    <div className="portal-info ai-privacy-note"><ShieldCheck size={16} /><span>Meal and label photos are sent to your configured backend AI provider only when you start a scan; LifeOS does not save the photo. Barcode lookups go to Open Food Facts. Scanned values are suggestions and need package-label verification.</span></div>
   </section>;
 }
-
 function FitnessCoachPage() {
   const [messages, setMessages] = useLocalState<CoachMessage[]>('lifeos-nutrition-action-coach-history', []);
   const [question, setQuestion] = useState(''); const [context, setContext] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
@@ -453,7 +570,8 @@ function NutritionCheckInPage() {
   const { history } = useAppSelector((state) => state.personal.diet);
   const [entries] = useLocalState<BodyCheckIn[]>('lifeos-fitness-body-checkins', []);
   const [coverage] = useLocalState<Record<string, string>>('lifeos-nutrition-coverage', {});
-  const [targets] = useLocalState('lifeos-nutrition-targets', { calories: 2100, protein: 130 });
+  const [targets, setTargets] = useLocalState('lifeos-nutrition-targets', { calories: 2100, protein: 130 });
+  const [lastAdjustment, setLastAdjustment] = useLocalState('lifeos-nutrition-last-adjustment', '');
   const [goal, setGoal] = useLocalState<'lose' | 'maintain' | 'gain'>('lifeos-nutrition-checkin-goal', 'maintain');
   const today = new Date().toISOString().slice(0, 10);
   useEffect(() => { void dispatch(fetchDiet(today)); }, [dispatch, today]);
@@ -463,19 +581,28 @@ function NutritionCheckInPage() {
   const currentWeight = average(shiftDateByDays(today, -6), today);
   const previousWeight = average(shiftDateByDays(today, -13), shiftDateByDays(today, -7));
   const recentDays = Array.from({ length: 7 }, (_, index) => shiftDateByDays(today, index - 6));
+  const previousDays = Array.from({ length: 7 }, (_, index) => shiftDateByDays(today, index - 13));
   const completeDays = recentDays.filter((date) => coverage[date] === 'complete');
+  const previousCompleteDays = previousDays.filter((date) => coverage[date] === 'complete');
   const caloriesByDay = new Map<string, number>();
   history.forEach((log) => { if (log.calories !== null) caloriesByDay.set(log.date, (caloriesByDay.get(log.date) || 0) + log.calories); });
   const loggedDayCalories = completeDays.map((date) => caloriesByDay.get(date)).filter((value): value is number => value !== undefined);
   const calorieAverage = loggedDayCalories.length >= 4 ? Math.round(loggedDayCalories.reduce((sum, value) => sum + value, 0) / loggedDayCalories.length) : null;
+  const previousLoggedCalories = previousCompleteDays.map((date) => caloriesByDay.get(date)).filter((value): value is number => value !== undefined);
+  const previousCalorieAverage = previousLoggedCalories.length >= 4 ? Math.round(previousLoggedCalories.reduce((sum, value) => sum + value, 0) / previousLoggedCalories.length) : null;
   const changePct = currentWeight !== null && previousWeight !== null ? ((currentWeight - previousWeight) / previousWeight) * 100 : null;
   let finding = 'Log at least three body-weight check-ins in both weeks and mark four or more recent nutrition days likely complete to review a trend.';
   if (changePct !== null) {
     const trending = goal === 'lose' ? changePct <= -0.25 : goal === 'gain' ? changePct >= 0.25 : Math.abs(changePct) < 0.25;
-    finding = trending ? 'Your logged weight trend is moving in the direction you selected. Keep observing before changing your manually set targets.' : 'This single weekly comparison does not justify an automatic calorie change. Check the log completeness, routine, and measurement consistency, then review again next week.';
+    finding = trending ? 'Your logged weight trend is moving in the direction you selected. Review the next weekly average before changing your target.' : 'The recent trend is outside the selected direction. If both weeks are logged consistently, a small target adjustment may be worth trying.';
   }
-  return <section className="nutrition-module"><PageHeader eyebrow="Weekly review" title="Nutrition check-in" description="Review your own logged intake and weight trend together. The app does not change targets automatically." />
-    <article className="portal-card checkin-card"><div className="checkin-goal-row"><label>What are you tracking toward?<select value={goal} onChange={(e) => setGoal(e.target.value as typeof goal)}><option value="lose">Weight reduction</option><option value="maintain">Weight maintenance</option><option value="gain">Weight gain</option></select></label><span>Current manual target: <strong>{targets.calories.toLocaleString()} kcal</strong></span></div><div className="checkin-stat-grid"><div><small>Current 7-day weight average</small><strong>{currentWeight === null ? 'Not enough data' : `${currentWeight.toFixed(1)} kg`}</strong></div><div><small>Previous 7-day average</small><strong>{previousWeight === null ? 'Not enough data' : `${previousWeight.toFixed(1)} kg`}</strong></div><div><small>Weight change</small><strong>{changePct === null ? '—' : `${changePct > 0 ? '+' : ''}${changePct.toFixed(2)}%`}</strong></div><div><small>Recorded calorie average</small><strong>{calorieAverage === null ? 'Not enough complete days' : `${calorieAverage.toLocaleString()} kcal`}</strong></div></div><div className="checkin-guidance"><Sparkles size={19} /><div><span className="nutrition-eyebrow">Review, not a prescription</span><p>{finding}</p></div></div><div className="portal-info"><Info size={15} /><span>Weight varies with hydration, digestion, and measurement timing. Targets stay user-controlled; seek professional guidance for medical, pregnancy, or eating-disorder contexts.</span></div></article>
+  const enoughData = changePct !== null && calorieAverage !== null && previousCalorieAverage !== null && completeDays.length >= 4 && previousCompleteDays.length >= 4;
+  const change = enoughData && changePct !== null ? goal === 'lose' ? changePct > -0.25 ? -100 : changePct < -1 ? 100 : 0 : goal === 'gain' ? changePct < 0.1 ? 100 : changePct > 0.5 ? -100 : 0 : changePct > 0.25 ? -100 : changePct < -0.25 ? 100 : 0 : 0;
+  const weekKey = weekDates(today)[0];
+  const suggestedCalories = Math.min(4000, Math.max(1200, Math.round((targets.calories + change) / 50) * 50));
+  const canApplySuggestion = enoughData && change !== 0 && suggestedCalories !== targets.calories && lastAdjustment !== weekKey;
+  return <section className="nutrition-module"><PageHeader eyebrow="Weekly review" title="Nutrition check-in" description="Review your logged intake and weight trend together. When both weeks are complete, LifeOS suggests a small change for you to accept or ignore." />
+    <article className="portal-card checkin-card"><div className="checkin-goal-row"><label>What are you tracking toward?<select value={goal} onChange={(e) => setGoal(e.target.value as typeof goal)}><option value="lose">Weight reduction</option><option value="maintain">Weight maintenance</option><option value="gain">Weight gain</option></select></label><span>Current manual target: <strong>{targets.calories.toLocaleString()} kcal</strong></span></div><div className="checkin-stat-grid"><div><small>Current 7-day weight average</small><strong>{currentWeight === null ? 'Not enough data' : `${currentWeight.toFixed(1)} kg`}</strong></div><div><small>Previous 7-day average</small><strong>{previousWeight === null ? 'Not enough data' : `${previousWeight.toFixed(1)} kg`}</strong></div><div><small>Weight change</small><strong>{changePct === null ? '—' : `${changePct > 0 ? '+' : ''}${changePct.toFixed(2)}%`}</strong></div><div><small>Recorded calorie average</small><strong>{calorieAverage === null ? 'Not enough complete days' : `${calorieAverage.toLocaleString()} kcal`}</strong></div></div><div className="checkin-guidance"><Sparkles size={19} /><div><span className="nutrition-eyebrow">Weekly adjustment</span><p>{finding}</p></div></div>{canApplySuggestion ? <div className="checkin-suggestion"><div><strong>Suggested target: {suggestedCalories.toLocaleString()} kcal/day</strong><p>{change > 0 ? 'Increase' : 'Decrease'} by 100 kcal/day based on two weeks of recorded weight and food data.</p></div><button className="portal-primary" onClick={() => { setTargets({ ...targets, calories: suggestedCalories }); setLastAdjustment(weekKey); }}>Apply suggestion</button></div> : !enoughData ? <div className="portal-info"><Info size={15} /><span>A suggestion appears after at least four complete diary days and three weigh-ins in each of both weeks. Incomplete logs stay unknown.</span></div> : <div className="portal-info"><Check size={15} /><span>{lastAdjustment === weekKey ? 'This week’s adjustment is saved. Review again next week.' : 'Your current weekly trend is within the selected range; no change suggested.'}</span></div>}<div className="portal-info"><Info size={15} /><span>Weight varies with hydration, digestion, and measurement timing. This conservative suggestion is optional, is not medical advice, and is limited to one change per week. Seek professional guidance for medical, pregnancy, or eating-disorder contexts.</span></div></article>
     <div className="portal-card checkin-data-card"><h2>Data used in this review</h2><p>{completeDays.length} of the last 7 days marked likely complete · {loggedDayCalories.length} days with calorie entries · {weightEntries.filter((entry) => entry.date >= shiftDateByDays(today, -13)).length} body-weight entries in the last 14 days.</p><NavLink className="portal-secondary" to="/app/diet/body">Log weight and steps <ArrowRight size={15} /></NavLink><NavLink className="portal-secondary" to="/app/diet/diary">Review nutrition diary <ArrowRight size={15} /></NavLink></div>
   </section>;
 }
