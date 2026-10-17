@@ -25,6 +25,62 @@
 .lifeos-personal-scope .training-empty-state h1 { color: var(--text-heading); font-size: 1.15rem; }
 .lifeos-personal-scope .training-empty-state p { color: var(--text-secondary); font-size: .72rem; }
 
+.lifeos-personal-scope .fitness-overview { display: grid; gap: 20px; }
+.lifeos-personal-scope .fitness-overview-hero { display: grid; grid-template-columns: minmax(0,1.08fr) minmax(310px,.92fr); gap: 22px; align-items: stretch; padding: 28px; border: 1px solid var(--border); border-radius: 20px; background: linear-gradient(135deg,rgba(229,85,85,.1),transparent 46%),var(--bg-card); }
+.lifeos-personal-scope .fitness-overview-copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 12px; }
+.lifeos-personal-scope .fitness-overview-copy .training-eyebrow { color: var(--accent); }
+.lifeos-personal-scope .fitness-overview-copy h1 { max-width: 590px; margin: 7px 0 10px; color: var(--text-heading); font-size: clamp(1.65rem,3vw,2.55rem); font-weight: 850; letter-spacing: -.055em; line-height: 1.05; }
+.lifeos-personal-scope .fitness-overview-copy > p { max-width: 570px; color: var(--text-secondary); font-size: .78rem; line-height: 1.7; }
+.lifeos-personal-scope .fitness-overview-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 21px; }
+.lifeos-personal-scope .fitness-overview-actions .training-primary-action { width: auto; min-width: 190px; padding: 0 17px; }
+.lifeos-personal-scope .fitness-overview-secondary, .lifeos-personal-scope .fitness-overview-heading > button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 2px; border: 0; background: transparent; color: var(--text-secondary); font-size: .68rem; font-weight: 800; cursor: pointer; }
+.lifeos-personal-scope .fitness-plan-card { position: relative; display: flex; flex-direction: column; justify-content: center; overflow: hidden; min-height: 230px; padding: 24px; border-radius: 16px; background: linear-gradient(145deg,#202936,#151b24); color: #fff; }
+.lifeos-personal-scope .fitness-plan-card::after { content: ''; position: absolute; right: -35px; top: -55px; width: 170px; height: 170px; border: 28px solid rgba(255,255,255,.045); border-radius: 50%; pointer-events: none; }
+.lifeos-personal-scope .fitness-plan-card .training-eyebrow { color: #aeb8c5; }
+.lifeos-personal-scope .fitness-plan-card h2 { position: relative; z-index: 1; margin: 5px 0 7px; color: #fff; font-size: 1.22rem; letter-spacing: -.025em; }
+.lifeos-personal-scope .fitness-plan-card > p { position: relative; z-index: 1; max-width: 420px; color: #c0c9d4; font-size: .69rem; line-height: 1.6; }
+.lifeos-personal-scope .fitness-plan-details { display: flex; flex-wrap: wrap; gap: 9px 15px; margin-top: 17px; }
+.lifeos-personal-scope .fitness-plan-details span { display: flex; align-items: center; gap: 6px; color: #e1e7ed; font-size: .61rem; }
+.lifeos-personal-scope .fitness-plan-details svg { color: #ff9a9a; }
+.lifeos-personal-scope .fitness-plan-link { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; align-self: flex-start; margin-top: 12px; padding: 0; border: 0; background: transparent; color: #fff; font-size: .68rem; font-weight: 800; cursor: pointer; }
+.lifeos-personal-scope .fitness-session-status { display: inline-flex; align-items: center; gap: 7px; align-self: flex-start; margin-top: 16px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.15); border-radius: 20px; color: #dce9e0; font-size: .58rem; font-weight: 750; }
+.lifeos-personal-scope .fitness-session-status > span { width: 7px; height: 7px; border-radius: 50%; background: #50d890; box-shadow: 0 0 0 3px rgba(80,216,144,.15); }
+.lifeos-personal-scope .fitness-overview-heading { display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+.lifeos-personal-scope .fitness-overview-heading h2 { margin-top: 3px; color: var(--text-heading); font-size: 1rem; font-weight: 820; letter-spacing: -.02em; }
+.lifeos-personal-scope .fitness-overview-metrics { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+.lifeos-personal-scope .fitness-overview-metric { display: flex; min-width: 0; gap: 11px; padding: 17px; border: 1px solid var(--border); border-radius: 13px; background: var(--bg-card); }
+.lifeos-personal-scope .fitness-overview-metric > span { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 10px; background: var(--accent-glow); color: var(--accent); }
+.lifeos-personal-scope .fitness-overview-metric > div { min-width: 0; }
+.lifeos-personal-scope .fitness-overview-metric small, .lifeos-personal-scope .fitness-overview-metric strong { display: block; }
+.lifeos-personal-scope .fitness-overview-metric small { color: var(--text-muted); font-size: .59rem; font-weight: 750; }
+.lifeos-personal-scope .fitness-overview-metric strong { overflow: hidden; margin: 4px 0; color: var(--text-heading); font-size: 1.13rem; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
+.lifeos-personal-scope .fitness-overview-metric p { color: var(--text-muted); font-size: .56rem; line-height: 1.5; }
+.lifeos-personal-scope .fitness-overview-lower { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(270px,.75fr); gap: 15px; }
+.lifeos-personal-scope .fitness-week-card, .lifeos-personal-scope .fitness-next-card { padding: 20px; border: 1px solid var(--border); border-radius: 15px; background: var(--bg-card); }
+.lifeos-personal-scope .fitness-week-card .training-section-heading { align-items: center; }
+.lifeos-personal-scope .fitness-week-card .training-section-heading h2 { margin-top: 3px; }
+.lifeos-personal-scope .fitness-week-chart { display: grid; height: 133px; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 13px; align-items: end; padding: 5px 8px 0; border-bottom: 1px solid var(--border); }
+.lifeos-personal-scope .fitness-week-day { display: grid; height: 100%; grid-template-rows: 18px minmax(0,1fr) 20px; justify-items: center; align-items: end; gap: 4px; }
+.lifeos-personal-scope .fitness-week-day strong { color: var(--text-secondary); font-size: .58rem; }
+.lifeos-personal-scope .fitness-week-day > span { width: min(100%,31px); min-height: 7px; border-radius: 6px 6px 2px 2px; background: var(--bg-secondary); transition: height .2s ease; }
+.lifeos-personal-scope .fitness-week-day > span.has-session { background: var(--gradient-1); }
+.lifeos-personal-scope .fitness-week-day small { align-self: center; color: var(--text-muted); font-size: .55rem; }
+.lifeos-personal-scope .fitness-week-note { margin-top: 12px; color: var(--text-muted); font-size: .6rem; line-height: 1.6; }
+.lifeos-personal-scope .fitness-next-card { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; background: var(--bg-secondary); }
+.lifeos-personal-scope .fitness-next-icon { display: grid; width: 34px; height: 34px; margin-bottom: 13px; place-items: center; border-radius: 10px; background: var(--info-glow); color: var(--info); }
+.lifeos-personal-scope .fitness-next-card h2 { margin: 4px 0 7px; color: var(--text-heading); font-size: .93rem; letter-spacing: -.02em; }
+.lifeos-personal-scope .fitness-next-card p { color: var(--text-secondary); font-size: .63rem; line-height: 1.65; }
+.lifeos-personal-scope .fitness-next-card button { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: .63rem; font-weight: 850; cursor: pointer; }
+.lifeos-personal-scope .fitness-quick-links { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 11px; }
+.lifeos-personal-scope .fitness-quick-links > a, .lifeos-personal-scope .fitness-quick-links > button { display: grid; min-width: 0; grid-template-columns: 36px minmax(0,1fr) 16px; gap: 10px; align-items: center; padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); color: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: border-color .18s ease, transform .18s ease; }
+.lifeos-personal-scope .fitness-quick-links > a:hover, .lifeos-personal-scope .fitness-quick-links > button:hover { transform: translateY(-1px); border-color: var(--accent); }
+.lifeos-personal-scope .fitness-quick-links > a > span, .lifeos-personal-scope .fitness-quick-links > button > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: var(--info-glow); color: var(--info); }
+.lifeos-personal-scope .fitness-quick-links > a > div, .lifeos-personal-scope .fitness-quick-links > button > div { min-width: 0; }
+.lifeos-personal-scope .fitness-quick-links strong, .lifeos-personal-scope .fitness-quick-links small { display: block; }
+.lifeos-personal-scope .fitness-quick-links strong { color: var(--text-heading); font-size: .65rem; }
+.lifeos-personal-scope .fitness-quick-links small { margin-top: 3px; color: var(--text-muted); font-size: .55rem; line-height: 1.5; }
+.lifeos-personal-scope .fitness-quick-links > a > svg, .lifeos-personal-scope .fitness-quick-links > button > svg { color: var(--text-muted); }
+
 .lifeos-personal-scope .workout-preview-layout { display: grid; grid-template-columns: minmax(330px,.72fr) minmax(0,1.28fr); gap: 20px; align-items: start; }
 .lifeos-personal-scope .workout-hero-card { position: sticky; top: 20px; overflow: hidden; padding: 30px; border-radius: 19px; background: radial-gradient(circle at 105% -5%, rgba(229,85,85,.33), transparent 35%), linear-gradient(145deg,#202936,#151b24); color: #fff; }
 .lifeos-personal-scope .workout-hero-card::after { content: ''; position: absolute; right: -32px; bottom: -50px; width: 160px; height: 160px; border: 30px solid rgba(255,255,255,.025); border-radius: 50%; }
@@ -275,17 +331,19 @@
 @media (max-width: 1080px) {
   .lifeos-personal-scope .exercise-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .lifeos-personal-scope .progress-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .lifeos-personal-scope .fitness-overview-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
   .lifeos-personal-scope .training-page { padding: 20px 16px 40px; }
   .lifeos-personal-scope .workout-preview-layout, .lifeos-personal-scope .execution-layout, .lifeos-personal-scope .program-layout, .lifeos-personal-scope .progress-grid { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .fitness-overview-hero, .lifeos-personal-scope .fitness-overview-lower { grid-template-columns: 1fr; }
   .lifeos-personal-scope .workout-hero-card, .lifeos-personal-scope .execution-queue, .lifeos-personal-scope .program-sidebar { position: static; }
   .lifeos-personal-scope .execution-queue nav { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 650px) {
   .lifeos-personal-scope .training-page { padding: 15px 12px 34px; }
   .lifeos-personal-scope .training-commandbar { align-items: stretch; flex-direction: column; }
-  .lifeos-personal-scope .training-tabs { display: grid; grid-template-columns: repeat(4,1fr); }
+  .lifeos-personal-scope .training-tabs { display: grid; grid-template-columns: repeat(5,1fr); }
   .lifeos-personal-scope .training-tabs button { justify-content: center; padding: 0 6px; }
   .lifeos-personal-scope .training-tabs button span { display: none; }
   .lifeos-personal-scope .training-date-nav label { flex: 1; }
@@ -309,6 +367,18 @@
   .lifeos-personal-scope .library-filters label { grid-column: 1 / -1; }
   .lifeos-personal-scope .exercise-grid { grid-template-columns: 1fr; }
   .lifeos-personal-scope .progress-metrics { grid-template-columns: 1fr 1fr; }
+  .lifeos-personal-scope .fitness-overview-hero { gap: 13px; padding: 15px; }
+  .lifeos-personal-scope .fitness-overview-copy { padding: 6px; }
+  .lifeos-personal-scope .fitness-overview-copy h1 { font-size: 1.65rem; }
+  .lifeos-personal-scope .fitness-overview-actions { align-items: stretch; flex-direction: column; gap: 5px; }
+  .lifeos-personal-scope .fitness-overview-actions .training-primary-action { width: 100%; }
+  .lifeos-personal-scope .fitness-overview-secondary { align-self: center; }
+  .lifeos-personal-scope .fitness-plan-card { min-height: 200px; padding: 19px; }
+  .lifeos-personal-scope .fitness-overview-metrics { gap: 8px; }
+  .lifeos-personal-scope .fitness-overview-metric { gap: 8px; padding: 11px; }
+  .lifeos-personal-scope .fitness-overview-metric > span { width: 29px; height: 29px; }
+  .lifeos-personal-scope .fitness-overview-metric strong { font-size: .97rem; }
+  .lifeos-personal-scope .fitness-quick-links { grid-template-columns: 1fr; }
   .lifeos-personal-scope .adherence-ring { width: 90px; height: 90px; }
   .lifeos-personal-scope .adherence-ring::before { width: 67px; height: 67px; }
   .lifeos-personal-scope .exercise-drawer { padding: 20px; }

@@ -4,6 +4,7 @@ import {
   ChevronRight, Clock3, Dumbbell, History, Info, Pause, Play, Search,
   Settings2, ShieldAlert, Sparkles, Target, TimerReset, TrendingUp, Trophy, X,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import { trainingApi } from '../training/api';
 import type {
@@ -27,7 +28,7 @@ const titleCase = (value: string) => value.split('_').join(' ').replace(/\b\w/g,
 const emptyToday: TodayTraining = { program: null, workout: null, activeSession: null, previousByExercise: {} };
 
 export default function Training({ isMobile = false }: TrainingProps) {
-  const [view, setView] = useState<TrainingView>('today');
+  const [view, setView] = useState<TrainingView>('overview');
   const [date, setDate] = useState(todayIso());
   const [today, setToday] = useState<TodayTraining>(emptyToday);
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
@@ -72,6 +73,7 @@ export default function Training({ isMobile = false }: TrainingProps) {
       <main className={`training-page ${isMobile ? 'training-page--mobile' : ''}`}>
         <div className="training-commandbar">
           <div className="training-tabs" role="tablist" aria-label="Training views">
+            <Tab active={view === 'overview'} onClick={() => setView('overview')} icon={<Activity size={16} />} label="Overview" />
             <Tab active={view === 'today'} onClick={() => setView('today')} icon={<Dumbbell size={16} />} label="Today" />
             <Tab active={view === 'program'} onClick={() => setView('program')} icon={<Target size={16} />} label="Program" />
             <Tab active={view === 'exercises'} onClick={() => setView('exercises')} icon={<BookOpen size={16} />} label="Exercises" />
@@ -90,6 +92,16 @@ export default function Training({ isMobile = false }: TrainingProps) {
         {error && <div className="training-banner training-banner--error"><AlertTriangle size={17} /><span><strong>Training API unavailable.</strong> {error}</span><button type="button" onClick={() => void loadData()}>Retry</button></div>}
         {loading && <div className="training-loading"><span /> Loading training context…</div>}
 
+        {view === 'overview' && <FitnessOverview
+          date={date}
+          today={today}
+          review={review}
+          profile={profile}
+          onOpenToday={() => setView('today')}
+          onOpenPrograms={() => setView('program')}
+          onOpenExercises={() => setView('exercises')}
+          onOpenProgress={() => setView('progress')}
+        />}
         {view === 'today' && <TodayView data={today} date={date} profile={profile} onRefresh={loadData} onOpenExercise={openExercise} />}
         {view === 'program' && <ProgramView programs={programs} onActivate={async (id) => { await trainingApi.activateProgram(id); await loadData(); }} onOpenExercise={openExercise} />}
         {view === 'exercises' && <ExerciseLibrary exercises={exercises} onOpenExercise={openExercise} />}
@@ -99,6 +111,113 @@ export default function Training({ isMobile = false }: TrainingProps) {
       {showSettings && <TrainingSettings profile={profile} onClose={() => setShowSettings(false)} onSave={async (next) => { await trainingApi.updateProfile(next); setShowSettings(false); await loadData(); }} />}
     </>
   );
+}
+
+function FitnessOverview({ date, today, review, profile, onOpenToday, onOpenPrograms, onOpenExercises, onOpenProgress }: {
+  date: string;
+  today: TodayTraining;
+  review: TrainingReview | null;
+  profile: TrainingProfile | null;
+  onOpenToday: () => void;
+  onOpenPrograms: () => void;
+  onOpenExercises: () => void;
+  onOpenProgress: () => void;
+}) {
+  const days = Array.from({ length: 7 }, (_, index) => dateShift(date, index - 6));
+  const sessionsByDay = new Map<string, number>();
+  review?.sessions
+    .filter((session) => session.status === 'completed')
+    .forEach((session) => {
+      const sessionDate = session.date.slice(0, 10);
+      sessionsByDay.set(sessionDate, (sessionsByDay.get(sessionDate) || 0) + 1);
+    });
+  const maxSessions = Math.max(1, ...days.map((day) => sessionsByDay.get(day) || 0));
+  const workout = today.workout;
+
+  return (
+    <section className="fitness-overview">
+      <article className="fitness-overview-hero">
+        <div className="fitness-overview-copy">
+          <span className="training-eyebrow">Your fitness, in one place</span>
+          <h1>Build strength with a plan that fits your life.</h1>
+          <p>See today’s workout, keep your training consistent, and review progress from the work you actually logged.</p>
+          <div className="fitness-overview-actions">
+            <button type="button" className="training-primary-action" onClick={onOpenToday}>
+              <Play size={17} fill="currentColor" /> {today.activeSession ? 'Continue workout' : 'View today’s workout'}
+            </button>
+            <button type="button" className="fitness-overview-secondary" onClick={onOpenPrograms}>Explore programs <ArrowRight size={15} /></button>
+          </div>
+        </div>
+        <div className="fitness-plan-card">
+          <span className="training-eyebrow">{today.program?.name || 'Training plan'}</span>
+          {workout ? <>
+            <h2>{workout.name}</h2>
+            <p>{workout.description || 'Your next planned session, ready when you are.'}</p>
+            <div className="fitness-plan-details">
+              <span><Dumbbell size={15} /> {workout.exercises.length} movements</span>
+              <span><Clock3 size={15} /> ~{profile?.minutesPerSession || 60} min</span>
+              <span><Target size={15} /> {workout.exercises.reduce((sum, item) => sum + item.targetSets, 0)} working sets</span>
+            </div>
+          </> : <>
+            <h2>Choose a starting plan</h2>
+            <p>Pick a program that matches your schedule and available equipment.</p>
+            <button type="button" className="fitness-plan-link" onClick={onOpenPrograms}>Browse training programs <ArrowRight size={15} /></button>
+          </>}
+          {today.activeSession && <span className="fitness-session-status"><span /> Workout in progress</span>}
+        </div>
+      </article>
+
+      <div className="fitness-overview-heading">
+        <div><span className="training-eyebrow">A useful snapshot</span><h2>Progress from your training log</h2></div>
+        <button type="button" onClick={onOpenProgress}>View full review <ArrowRight size={15} /></button>
+      </div>
+
+      <div className="fitness-overview-metrics">
+        <OverviewMetric icon={<Check size={18} />} label="Sessions completed" value={review ? String(review.sessionsCompleted) : '—'} detail={review ? `28-day review · ending ${formatDate(date)}` : 'Waiting for review data'} />
+        <OverviewMetric icon={<Dumbbell size={18} />} label="Working sets logged" value={review ? String(review.workingSets) : '—'} detail="Warm-up sets are excluded" />
+        <OverviewMetric icon={<Trophy size={18} />} label="Best estimated 1RM" value={review?.bestPerformance ? `${review.bestPerformance.estimatedOneRepMax} ${profile?.loadUnit || 'kg'}` : '—'} detail={review?.bestPerformance?.exercise || 'Complete comparable sets to establish a baseline'} />
+        <OverviewMetric icon={<ShieldAlert size={18} />} label="Pain flags" value={review ? String(review.painFlags) : '—'} detail={review?.painFlags ? 'Review these before progressing' : 'No flags recorded in this period'} />
+      </div>
+
+      <div className="fitness-overview-lower">
+        <article className="fitness-week-card">
+          <div className="training-section-heading"><div><span className="training-eyebrow">Last seven days</span><h2>Keep a rhythm you can repeat</h2></div><span>Completed sessions</span></div>
+          <div className="fitness-week-chart" role="img" aria-label="Workout sessions logged over the last seven days">
+            {days.map((day) => {
+              const count = sessionsByDay.get(day) || 0;
+              return <div className="fitness-week-day" key={day} title={`${formatDate(day)}: ${count} ${count === 1 ? 'session' : 'sessions'}`}>
+                <strong>{count || ''}</strong><span className={count ? 'has-session' : ''} style={{ height: `${count ? Math.max(18, (count / maxSessions) * 100) : 8}%` }} />
+                <small>{new Intl.DateTimeFormat('en', { weekday: 'narrow' }).format(new Date(`${day}T12:00:00`))}</small>
+              </div>;
+            })}
+          </div>
+          <p className="fitness-week-note">{review?.sessionsCompleted
+            ? 'A completed session is a useful data point. Compare like-for-like movements before changing your plan.'
+            : 'Your activity appears here after you complete and log a workout.'}</p>
+        </article>
+
+        <article className="fitness-next-card">
+          <span className="fitness-next-icon"><Sparkles size={18} /></span>
+          <span className="training-eyebrow">Your next step</span>
+          <h2>{today.program ? 'Make today’s session count.' : 'Set up your training context.'}</h2>
+          <p>{today.program
+            ? 'Use the plan as a guide, record what you actually did, and let comparable sessions inform progression.'
+            : 'Choose your goal, schedule, experience, and equipment so the program fits your real constraints.'}</p>
+          <button type="button" onClick={today.program ? onOpenToday : onOpenPrograms}>{today.program ? 'Open today’s workout' : 'Choose a program'} <ArrowRight size={15} /></button>
+        </article>
+      </div>
+
+      <div className="fitness-quick-links">
+        <button type="button" onClick={onOpenExercises}><span><BookOpen size={18} /></span><div><strong>Exercise library</strong><small>Find setup cues, alternatives, and movement notes.</small></div><ArrowRight size={16} /></button>
+        <Link to="/app/diet"><span><Activity size={18} /></span><div><strong>Nutrition</strong><small>Log meals and review recorded energy and protein.</small></div><ArrowRight size={16} /></Link>
+        <Link to="/app/health"><span><History size={18} /></span><div><strong>Daily health</strong><small>Keep movement, sleep, hydration, and wellbeing together.</small></div><ArrowRight size={16} /></Link>
+      </div>
+    </section>
+  );
+}
+
+function OverviewMetric({ icon, label, value, detail }: { icon: React.ReactNode; label: string; value: string; detail: string }) {
+  return <article className="fitness-overview-metric"><span>{icon}</span><div><small>{label}</small><strong>{value}</strong><p>{detail}</p></div></article>;
 }
 
 function Tab({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {

@@ -1,4 +1,4 @@
-export type TrainingView = 'today' | 'program' | 'exercises' | 'progress';
+export type TrainingView = 'overview' | 'today' | 'program' | 'exercises' | 'progress';
 
 export interface Exercise {
   id: string;
