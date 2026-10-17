@@ -6,6 +6,8 @@ const router = Router();
 
 router.get('/logs', dietApiController.listLogs);
 router.post('/logs', dietApiController.createLog);
+router.post('/scan-meal', dietApiController.scanMeal);
+router.post('/fitness-assistant', dietApiController.askFitnessAssistant);
 router.delete('/logs/:id', dietApiController.deleteLog);
 router.get('/supplements', dietApiController.listSupplements);
 router.post('/supplements', dietApiController.createSupplement);

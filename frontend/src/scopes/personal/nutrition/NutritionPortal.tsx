@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle, Apple, ArrowRight, BarChart3, Bell, BookOpen, CalendarDays,
   Check, ChevronLeft, ChevronRight, ClipboardList, Database, Download, FileBarChart, Filter,
-  HeartHandshake, Info, LayoutDashboard, Link2, Lock, Plus, Search,
+  Camera, Footprints, HeartHandshake, Info, LayoutDashboard, Link2, Lock, MessageCircle, Plus, Scale, Search,
   Settings2, ShieldCheck, ShoppingBasket, SlidersHorizontal, Sparkles, Target,
   Trash2, UtensilsCrossed, X,
 } from 'lucide-react';
@@ -53,7 +53,7 @@ const FOOD_IDEAS: FoodItem[] = [
 ];
 
 const PRIMARY_NAV: readonly NutritionNavItem[] = [
-  ['Overview', '', LayoutDashboard], ['Diary', 'diary', BookOpen],
+  ['Overview', '', LayoutDashboard], ['Diary', 'diary', BookOpen], ['Meal scan', 'scan', Camera], ['AI coach', 'coach', MessageCircle],
   ['Foods', 'foods', Apple], ['Meals', 'meals', UtensilsCrossed],
   ['Recipes', 'recipes', ClipboardList], ['Planner', 'planner', CalendarDays],
   ['Insights', 'insights', Sparkles],
@@ -61,11 +61,12 @@ const PRIMARY_NAV: readonly NutritionNavItem[] = [
 
 const SECONDARY_NAV: readonly { label: string; items: readonly NutritionNavItem[] }[] = [
   { label: 'Review', items: [['Coverage', 'history', CalendarDays], ['Reports', 'reports', FileBarChart], ['Exports', 'exports', Download]] },
-  { label: 'Plan & data', items: [['Groceries', 'grocery', ShoppingBasket], ['Targets', 'targets', Target], ['Data sources', 'data-sources', Database], ['Data quality', 'data-quality', ShieldCheck]] },
+  { label: 'Plan & data', items: [['Groceries', 'grocery', ShoppingBasket], ['Targets', 'targets', Target], ['Body & steps', 'body', Scale], ['Weekly check-in', 'check-in', Footprints], ['Data sources', 'data-sources', Database], ['Data quality', 'data-quality', ShieldCheck]] },
   { label: 'System', items: [['Integrations', 'integrations', Link2], ['Settings', 'settings/preferences', Settings2]] },
 ] as const;
 
 const NUTRITION_API = import.meta.env.VITE_PERSONAL_API_URL || 'http://localhost:3001/api';
+const shiftDateByDays = (date: string, days: number) => { const result = new Date(`${date}T12:00:00`); result.setDate(result.getDate() + days); return result.toISOString().slice(0, 10); };
 
 function useLocalState<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(() => {
@@ -148,6 +149,10 @@ export default function NutritionPortal({ isMobile = false }: { isMobile?: boole
             <Route path="insights/micronutrients" element={<InsightsPage section="micronutrients" />} />
             <Route path="insights/nutrient/:key" element={<InsightsPage section="nutrient" />} />
             <Route path="insights/patterns" element={<InsightsPage section="patterns" />} />
+            <Route path="scan" element={<MealScannerPage />} />
+            <Route path="coach" element={<FitnessCoachPage />} />
+            <Route path="body" element={<BodyCompositionPage />} />
+            <Route path="check-in" element={<NutritionCheckInPage />} />
             <Route path="reviews/:week" element={<Diet isMobile={isMobile} showHeader={false} initialView="review" />} />
             <Route path="reports" element={<ReportsPage mode="center" />} />
             <Route path="reports/new" element={<ReportsPage mode="builder" />} />
@@ -349,6 +354,130 @@ function ReportsPage({ mode }: { mode: 'center' | 'builder' | 'preview' }) {
   if (mode === 'builder') { const create = () => { const next = { id: `report-${Date.now()}`, name: name.trim(), period: 'Last 7 days', sections }; setReports([...reports, next]); navigate(`/app/diet/reports/${next.id}`); }; return <section className="nutrition-module"><PageHeader eyebrow="Report builder" title="Build a nutrition report" description="Choose a period and include caveats alongside every analysis." /><div className="portal-form-card"><div className="portal-form-grid"><label className="span-two">Report name<input value={name} onChange={(e) => setName(e.target.value)} /></label><label>Period<select><option>Last 7 days</option><option>Last 30 days</option><option>Custom range</option></select></label><fieldset className="span-two"><legend>Sections</legend>{['Energy and protein', 'Data completeness', 'Meal patterns', 'Micronutrients'].map((item) => <label key={item}><input type="checkbox" checked={sections.includes(item)} onChange={() => setSections((current) => current.includes(item) ? current.filter((v) => v !== item) : [...current, item])} />{item}</label>)}</fieldset></div><div className="portal-form-actions"><button className="portal-primary" disabled={!name.trim() || !sections.length} onClick={create}>Create preview</button></div></div></section>; }
   if (mode === 'preview') return <section className="nutrition-module"><PageHeader eyebrow="Report preview" title={report?.name || 'Report unavailable'} description={report?.period || 'This report could not be found.'} action={report && <button className="portal-secondary" onClick={() => window.print()}><Download size={16} /> Print / PDF</button>} />{report ? <div className="report-preview">{report.sections.map((section) => <article className="portal-card" key={section}><h2>{section}</h2><p>Report data uses confirmed diary records in the selected period.</p><div className="portal-info"><Info size={15} /><span>Missing and partial days are not interpreted as zero intake.</span></div></article>)}</div> : <EmptyState title="Report not found" body="Return to the reports center and create a new report." />}</section>;
   return <section className="nutrition-module"><PageHeader eyebrow="Reports center" title="Nutrition reports" description="Create reviewable, export-safe summaries with limitations included." action={<button className="portal-primary" onClick={() => navigate('/app/diet/reports/new')}><Plus size={16} /> New report</button>} />{reports.length ? <div className="portal-list">{reports.map((r) => <button key={r.id} onClick={() => navigate(`/app/diet/reports/${r.id}`)}><FileBarChart size={18} /><span><strong>{r.name}</strong><small>{r.period} · {r.sections.length} sections</small></span><ChevronRight size={16} /></button>)}</div> : <EmptyState icon={FileBarChart} title="No reports created" body="Build a report when you want to review or share a period." />}</section>;
+}
+
+type BodyCheckIn = { date: string; weightKg: number | null; waistCm: number | null; bodyFatPct: number | null; steps: number | null };
+type CoachMessage = { role: 'user' | 'assistant'; text: string; at: string };
+
+function MealScannerPage() {
+  const dispatch = useAppDispatch();
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [mealType, setMealType] = useState<MealSlot>('lunch');
+  const [image, setImage] = useState('');
+  const [fileName, setFileName] = useState('');
+  const [estimate, setEstimate] = useState<{ mealName: string; visibleItems: string[]; calories: number | null; proteinGrams: number | null; confidence: string; assumptions: string[] } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
+  const prepareImage = async (file: File) => {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Use a JPEG, PNG, or WebP photo.');
+    const source = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Could not read this photo.')); reader.readAsDataURL(file); });
+    const picture = await new Promise<HTMLImageElement>((resolve, reject) => { const next = new Image(); next.onload = () => resolve(next); next.onerror = () => reject(new Error('Could not decode this photo.')); next.src = source; });
+    const scale = Math.min(1, 1600 / Math.max(picture.width, picture.height));
+    const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(picture.width * scale)); canvas.height = Math.max(1, Math.round(picture.height * scale));
+    const context = canvas.getContext('2d'); if (!context) throw new Error('Photo processing is unavailable in this browser.');
+    context.drawImage(picture, 0, 0, canvas.width, canvas.height);
+    const output = canvas.toDataURL('image/jpeg', 0.78); if (output.length > 7_000_000) throw new Error('This photo is too large after compression. Choose a smaller image.');
+    return output;
+  };
+  const scan = async () => {
+    if (!image) { setError('Choose a meal photo first.'); return; }
+    setBusy(true); setError(''); setEstimate(null); setSaved(false);
+    try { const response = await secureFetch(`${NUTRITION_API}/diet/scan-meal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || payload.message || 'Meal scan failed'); setEstimate(payload); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Meal scan failed.'); }
+    finally { setBusy(false); }
+  };
+  const save = async () => {
+    if (!estimate) return;
+    setBusy(true); setError('');
+    try { await dispatch(addDietLog({ date, mealType, items: estimate.mealName, calories: estimate.calories, protein: estimate.proteinGrams, notes: `User-confirmed AI photo estimate (${estimate.confidence} confidence). Visible items: ${estimate.visibleItems.join(', ')}. Assumptions: ${estimate.assumptions.join('; ')}` })).unwrap(); setSaved(true); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not save meal to diary.'); }
+    finally { setBusy(false); }
+  };
+  return <section className="nutrition-module"><PageHeader eyebrow="Meal capture" title="Scan a meal" description="A photo can suggest ingredients and rough macro estimates. Confirm the portions and values before anything is added to your diary." />
+    <div className="ai-tool-grid"><article className="portal-card ai-scan-card"><div className="ai-tool-heading"><Camera size={20} /><div><h2>Meal photo estimate</h2><p>Photos are sent to your configured backend AI provider for analysis.</p></div></div><label className="ai-photo-picker">{image ? <img src={image} alt="Selected meal preview" /> : <span><Camera size={24} />Choose or take a photo</span>}<input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setFileName(file.name); setEstimate(null); setError(''); void prepareImage(file).then(setImage).catch((cause) => setError(cause instanceof Error ? cause.message : 'Could not prepare photo.')); }} /></label>{fileName && <small className="ai-photo-name">{fileName}</small>}<div className="ai-scan-fields"><label>Date<input type="date" max={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} /></label><label>Meal<select value={mealType} onChange={(e) => setMealType(e.target.value as MealSlot)}><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label></div><button className="portal-primary" type="button" disabled={busy || !image} onClick={() => void scan()}>{busy ? 'Working…' : 'Estimate meal'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>
+      {estimate && <article className="portal-card ai-estimate-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">{estimate.confidence} confidence · estimate only</span><h2>Review before logging</h2></div><span className="food-quality food-quality--partial">Confirm</span></div><label>Meal name<input value={estimate.mealName} onChange={(e) => setEstimate({ ...estimate, mealName: e.target.value })} /></label><div className="ai-estimate-macros"><label>Calories<input type="number" min="0" value={estimate.calories ?? ''} onChange={(e) => setEstimate({ ...estimate, calories: e.target.value === '' ? null : Number(e.target.value) })} /> kcal</label><label>Protein<input type="number" min="0" value={estimate.proteinGrams ?? ''} onChange={(e) => setEstimate({ ...estimate, proteinGrams: e.target.value === '' ? null : Number(e.target.value) })} /> g</label></div><h3>Visible items</h3><p>{estimate.visibleItems.length ? estimate.visibleItems.join(', ') : 'No ingredients identified'}</p>{!!estimate.assumptions.length && <div className="portal-info"><Info size={15} /><span>{estimate.assumptions.join(' · ')}</span></div>}<p className="ai-estimate-caveat">Photo estimates can be substantially wrong when portions, ingredients, or cooking fats are hidden. Correct the values first.</p><button className="portal-primary" type="button" disabled={busy || saved} onClick={() => void save()}>{saved ? 'Added to diary' : busy ? 'Saving…' : 'Confirm and add to diary'}</button>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}</article>}</div>
+    <div className="portal-info ai-privacy-note"><ShieldCheck size={16} /><span>Meal image processing requires the optional backend API key. The key stays on the server. The image is sent to that provider only when you start a scan; LifeOS does not save the photo.</span></div>
+  </section>;
+}
+
+function FitnessCoachPage() {
+  const [messages, setMessages] = useLocalState<CoachMessage[]>('lifeos-nutrition-action-coach-history', []);
+  const [question, setQuestion] = useState(''); const [context, setContext] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  const ask = async (event: React.FormEvent) => {
+    event.preventDefault(); const prompt = question.trim(); if (!prompt || busy) return;
+    setBusy(true); setError(''); setMessages((current) => [...current, { role: 'user' as const, text: prompt, at: new Date().toISOString() }].slice(-20)); setQuestion('');
+    try { const response = await secureFetch(`${NUTRITION_API}/diet/fitness-assistant`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: prompt, context }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || payload.message || 'Assistant request failed'); setMessages((current) => [...current, { role: 'assistant' as const, text: payload.answer, at: new Date().toISOString() }].slice(-20)); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Assistant request failed.'); }
+    finally { setBusy(false); }
+  };
+  return <section className="nutrition-module"><PageHeader eyebrow="Learning support" title="Fitness & nutrition assistant" description="Ask for general explanations about training or nutrition. Share only context you want sent to your configured AI provider." action={messages.length > 0 ? <button className="portal-secondary" type="button" onClick={() => setMessages([])}><Trash2 size={15} /> Clear chat</button> : undefined} /><div className="coach-workspace"><div className="coach-messages">{messages.length ? messages.map((message, index) => <article className={`coach-message coach-message--${message.role}`} key={`${message.at}-${index}`}><span>{message.role === 'user' ? 'You' : 'LifeOS assistant'}</span><p>{message.text}</p></article>) : <div className="nutrition-portal-empty"><span><MessageCircle size={22} /></span><div><h2>Start with a question</h2><p>Ask about workout structure, exercise concepts, protein basics, or how to read your logged trends.</p></div></div>}{busy && <article className="coach-message coach-message--assistant"><span>LifeOS assistant</span><p>Thinking…</p></article>}</div><form className="coach-form" onSubmit={(event) => void ask(event)}><label>Optional context to share<textarea rows={2} value={context} onChange={(e) => setContext(e.target.value)} placeholder="For example: home equipment, a movement you want to understand…" /></label><label>Your question<textarea rows={3} value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="What would you like to understand?" /></label><div className="portal-info"><ShieldCheck size={15} /><span>General education only. Not a diagnosis or substitute for a qualified professional. Chat is stored in this browser and synced to your LifeOS account.</span></div>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}<button className="portal-primary" disabled={busy || !question.trim()} type="submit">{busy ? 'Sending…' : 'Ask assistant'} <ArrowRight size={15} /></button></form></div></section>;
+}
+
+function BodyCompositionPage() {
+  const today = new Date().toISOString().slice(0, 10);
+  const [entries, setEntries] = useLocalState<BodyCheckIn[]>('lifeos-fitness-body-checkins', []);
+  const [stepGoal, setStepGoal] = useLocalState<number>('lifeos-fitness-step-goal', 8000);
+  const [form, setForm] = useState({ date: today, weight: '', waist: '', bodyFat: '', steps: '' });
+  const [error, setError] = useState('');
+  const save = () => {
+    const weight = form.weight === '' ? null : Number(form.weight); const waist = form.waist === '' ? null : Number(form.waist); const bodyFat = form.bodyFat === '' ? null : Number(form.bodyFat); const steps = form.steps === '' ? null : Number(form.steps);
+    if (weight !== null && (!Number.isFinite(weight) || weight < 20 || weight > 500)) { setError('Enter a body weight between 20 and 500 kg.'); return; }
+    if (weight === null && waist === null && bodyFat === null && steps === null) { setError('Enter at least one measurement or step count.'); return; }
+    if (waist !== null && (!Number.isFinite(waist) || waist < 20 || waist > 300)) { setError('Enter a waist measurement between 20 and 300 cm.'); return; }
+    if (bodyFat !== null && (!Number.isFinite(bodyFat) || bodyFat < 1 || bodyFat > 75)) { setError('Enter a body-fat percentage between 1 and 75.'); return; }
+    if (steps !== null && (!Number.isFinite(steps) || steps < 0 || steps > 200000)) { setError('Enter a step count between 0 and 200,000.'); return; }
+    const next: BodyCheckIn = { date: form.date, weightKg: weight, waistCm: waist, bodyFatPct: bodyFat, steps: steps === null ? null : Math.round(steps) };
+    setEntries((current) => [...current.filter((item) => item.date !== next.date), next].sort((a, b) => a.date.localeCompare(b.date)));
+    setForm({ ...form, weight: '', waist: '', bodyFat: '', steps: '' }); setError('');
+  };
+  const current = entries.filter((item) => item.date <= today).sort((a, b) => a.date.localeCompare(b.date));
+  const weightEntries = current.filter((item) => item.weightKg !== null);
+  const latest = weightEntries[weightEntries.length - 1];
+  const baseline = weightEntries.find((item) => item.date <= shiftDateByDays(today, -21));
+  const possibleRecomp = !!baseline && !!latest && typeof baseline.weightKg === 'number' && typeof latest.weightKg === 'number' && baseline !== latest && baseline.waistCm !== null && latest.waistCm !== null
+    && Math.abs((latest.weightKg - baseline.weightKg) / baseline.weightKg) <= 0.01
+    && (latest.waistCm - baseline.waistCm) / baseline.waistCm <= -0.01;
+  const recentSteps = current.filter((item) => item.steps !== null && item.date >= shiftDateByDays(today, -6));
+  const avgSteps = recentSteps.length ? Math.round(recentSteps.reduce((sum, item) => sum + Number(item.steps), 0) / recentSteps.length) : null;
+  return <section className="nutrition-module"><PageHeader eyebrow="Body and activity trends" title="Measurements & daily steps" description="Track consistent measurements and activity goals. The trend view describes patterns in your entries; it cannot measure muscle or body fat directly." />
+    <div className="body-overview-grid"><article className="portal-card"><span className="nutrition-eyebrow">Latest check-in</span><strong className="body-big-number">{latest && typeof latest.weightKg === 'number' ? `${latest.weightKg.toFixed(1)} kg` : '—'}</strong><span>{latest ? `Logged ${latest.date}` : 'Add a check-in to begin'}</span></article><article className="portal-card"><span className="nutrition-eyebrow">Step goal</span><label className="body-goal-control"><input type="number" min="1000" max="50000" step="500" value={stepGoal} onChange={(e) => setStepGoal(Math.min(50000, Math.max(1000, Number(e.target.value))))} /> steps / day</label><span>{avgSteps === null ? 'No recent step entries' : `${avgSteps.toLocaleString()} average across ${recentSteps.length} logged days`}</span></article></div>
+    {possibleRecomp && <div className="portal-info body-recomp-note"><Sparkles size={17} /><span><strong>Possible recomposition pattern:</strong> your logged weight is broadly stable while waist measurement decreased over at least three weeks. Tape placement and measurement variation matter; this is not proof of muscle gain or fat loss.</span></div>}
+    <div className="body-checkin-layout"><article className="portal-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">Manual check-in</span><h2>Log measurements</h2></div><Scale size={18} /></div><div className="body-form-grid"><label>Date<input type="date" max={today} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></label><label>Weight (kg)<input type="number" min="20" max="500" step="0.1" value={form.weight} onChange={(e) => setForm({ ...form, weight: e.target.value })} required /></label><label>Waist (cm), optional<input type="number" min="20" max="300" step="0.1" value={form.waist} onChange={(e) => setForm({ ...form, waist: e.target.value })} /></label><label>Body-fat %, optional<input type="number" min="1" max="75" step="0.1" value={form.bodyFat} onChange={(e) => setForm({ ...form, bodyFat: e.target.value })} /></label><label>Steps, optional<input type="number" min="0" max="200000" step="1" value={form.steps} onChange={(e) => setForm({ ...form, steps: e.target.value })} /></label></div>{error && <div className="portal-info portal-info--warning"><AlertTriangle size={15} /><span>{error}</span></div>}<button type="button" className="portal-primary" onClick={save}><Check size={15} /> Save check-in</button><p className="body-source-note">Steps can be entered manually. Direct Apple Health and Google Fit sync requires a native integration and account credentials that are not configured in this web app.</p></article>
+      <article className="portal-card"><div className="portal-card-heading"><div><span className="nutrition-eyebrow">Recorded history</span><h2>Recent measurements</h2></div><Footprints size={18} /></div><div className="body-entry-list">{current.slice().reverse().slice(0, 30).map((item) => <div key={item.date}><span><strong>{item.date}</strong><small>{item.waistCm ? `waist ${item.waistCm} cm` : item.bodyFatPct ? `${item.bodyFatPct}% body fat` : item.steps !== null ? `${Number(item.steps).toLocaleString()} steps` : 'check-in'}</small></span><strong>{item.weightKg !== null ? `${item.weightKg.toFixed(1)} kg` : item.steps !== null ? `${Number(item.steps).toLocaleString()} steps` : '—'}</strong><button type="button" aria-label={`Delete measurement for ${item.date}`} onClick={() => setEntries((all) => all.filter((entry) => entry.date !== item.date))}><Trash2 size={14} /></button></div>)}{!current.length && <p className="body-source-note">Your saved check-ins will appear here.</p>}</div></article></div>
+  </section>;
+}
+
+function NutritionCheckInPage() {
+  const dispatch = useAppDispatch();
+  const { history } = useAppSelector((state) => state.personal.diet);
+  const [entries] = useLocalState<BodyCheckIn[]>('lifeos-fitness-body-checkins', []);
+  const [coverage] = useLocalState<Record<string, string>>('lifeos-nutrition-coverage', {});
+  const [targets] = useLocalState('lifeos-nutrition-targets', { calories: 2100, protein: 130 });
+  const [goal, setGoal] = useLocalState<'lose' | 'maintain' | 'gain'>('lifeos-nutrition-checkin-goal', 'maintain');
+  const today = new Date().toISOString().slice(0, 10);
+  useEffect(() => { void dispatch(fetchDiet(today)); }, [dispatch, today]);
+  const recent = entries.filter((entry) => entry.date <= today);
+  const weightEntries = recent.filter((entry) => entry.weightKg !== null);
+  const average = (from: string, to: string) => { const selected = weightEntries.filter((item) => item.date >= from && item.date <= to); return selected.length >= 3 ? selected.reduce((sum, item) => sum + Number(item.weightKg), 0) / selected.length : null; };
+  const currentWeight = average(shiftDateByDays(today, -6), today);
+  const previousWeight = average(shiftDateByDays(today, -13), shiftDateByDays(today, -7));
+  const recentDays = Array.from({ length: 7 }, (_, index) => shiftDateByDays(today, index - 6));
+  const completeDays = recentDays.filter((date) => coverage[date] === 'complete');
+  const caloriesByDay = new Map<string, number>();
+  history.forEach((log) => { if (log.calories !== null) caloriesByDay.set(log.date, (caloriesByDay.get(log.date) || 0) + log.calories); });
+  const loggedDayCalories = completeDays.map((date) => caloriesByDay.get(date)).filter((value): value is number => value !== undefined);
+  const calorieAverage = loggedDayCalories.length >= 4 ? Math.round(loggedDayCalories.reduce((sum, value) => sum + value, 0) / loggedDayCalories.length) : null;
+  const changePct = currentWeight !== null && previousWeight !== null ? ((currentWeight - previousWeight) / previousWeight) * 100 : null;
+  let finding = 'Log at least three body-weight check-ins in both weeks and mark four or more recent nutrition days likely complete to review a trend.';
+  if (changePct !== null) {
+    const trending = goal === 'lose' ? changePct <= -0.25 : goal === 'gain' ? changePct >= 0.25 : Math.abs(changePct) < 0.25;
+    finding = trending ? 'Your logged weight trend is moving in the direction you selected. Keep observing before changing your manually set targets.' : 'This single weekly comparison does not justify an automatic calorie change. Check the log completeness, routine, and measurement consistency, then review again next week.';
+  }
+  return <section className="nutrition-module"><PageHeader eyebrow="Weekly review" title="Nutrition check-in" description="Review your own logged intake and weight trend together. The app does not change targets automatically." />
+    <article className="portal-card checkin-card"><div className="checkin-goal-row"><label>What are you tracking toward?<select value={goal} onChange={(e) => setGoal(e.target.value as typeof goal)}><option value="lose">Weight reduction</option><option value="maintain">Weight maintenance</option><option value="gain">Weight gain</option></select></label><span>Current manual target: <strong>{targets.calories.toLocaleString()} kcal</strong></span></div><div className="checkin-stat-grid"><div><small>Current 7-day weight average</small><strong>{currentWeight === null ? 'Not enough data' : `${currentWeight.toFixed(1)} kg`}</strong></div><div><small>Previous 7-day average</small><strong>{previousWeight === null ? 'Not enough data' : `${previousWeight.toFixed(1)} kg`}</strong></div><div><small>Weight change</small><strong>{changePct === null ? '—' : `${changePct > 0 ? '+' : ''}${changePct.toFixed(2)}%`}</strong></div><div><small>Recorded calorie average</small><strong>{calorieAverage === null ? 'Not enough complete days' : `${calorieAverage.toLocaleString()} kcal`}</strong></div></div><div className="checkin-guidance"><Sparkles size={19} /><div><span className="nutrition-eyebrow">Review, not a prescription</span><p>{finding}</p></div></div><div className="portal-info"><Info size={15} /><span>Weight varies with hydration, digestion, and measurement timing. Targets stay user-controlled; seek professional guidance for medical, pregnancy, or eating-disorder contexts.</span></div></article>
+    <div className="portal-card checkin-data-card"><h2>Data used in this review</h2><p>{completeDays.length} of the last 7 days marked likely complete · {loggedDayCalories.length} days with calorie entries · {weightEntries.filter((entry) => entry.date >= shiftDateByDays(today, -13)).length} body-weight entries in the last 14 days.</p><NavLink className="portal-secondary" to="/app/diet/body">Log weight and steps <ArrowRight size={15} /></NavLink><NavLink className="portal-secondary" to="/app/diet/diary">Review nutrition diary <ArrowRight size={15} /></NavLink></div>
+  </section>;
 }
 
 function downloadTextFile(filename: string, content: string, type: string) {

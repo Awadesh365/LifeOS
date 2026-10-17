@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Activity, AlertTriangle, ArrowRight, BarChart3, BookOpen, Check, ChevronLeft,
-  ChevronRight, Clock3, Dumbbell, History, Info, Pause, Play, Search,
+  ChevronRight, Clock3, Dumbbell, History, Info, Pause, Play, Plus, Search,
   Settings2, ShieldAlert, Sparkles, Target, TimerReset, TrendingUp, Trophy, X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,7 @@ import Header from '../components/Header';
 import { trainingApi } from '../training/api';
 import type {
   Exercise, PerformedSet, ProgramExercise, ProgressionDecision, TodayTraining,
-  TrainingProfile, TrainingProgram, TrainingReview, TrainingView,
+  TrainingProfile, TrainingProgram, TrainingProgramDraft, TrainingReview, TrainingView,
 } from '../training/types';
 import '../training/training.css';
 
@@ -103,9 +103,9 @@ export default function Training({ isMobile = false }: TrainingProps) {
           onOpenProgress={() => setView('progress')}
         />}
         {view === 'today' && <TodayView data={today} date={date} profile={profile} onRefresh={loadData} onOpenExercise={openExercise} />}
-        {view === 'program' && <ProgramView programs={programs} onActivate={async (id) => { await trainingApi.activateProgram(id); await loadData(); }} onOpenExercise={openExercise} />}
+        {view === 'program' && <ProgramView programs={programs} exercises={exercises} profile={profile} onRefresh={loadData} onActivate={async (id) => { await trainingApi.activateProgram(id); await loadData(); }} onOpenExercise={openExercise} />}
         {view === 'exercises' && <ExerciseLibrary exercises={exercises} onOpenExercise={openExercise} />}
-        {view === 'progress' && <ProgressView review={review} />}
+        {view === 'progress' && <ProgressView review={review} onRefresh={loadData} />}
       </main>
       {selectedExercise && <ExerciseDetail exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />}
       {showSettings && <TrainingSettings profile={profile} onClose={() => setShowSettings(false)} onSave={async (next) => { await trainingApi.updateProfile(next); setShowSettings(false); await loadData(); }} />}
@@ -211,6 +211,7 @@ function FitnessOverview({ date, today, review, profile, onOpenToday, onOpenProg
         <button type="button" onClick={onOpenExercises}><span><BookOpen size={18} /></span><div><strong>Exercise library</strong><small>Find setup cues, alternatives, and movement notes.</small></div><ArrowRight size={16} /></button>
         <Link to="/app/diet"><span><Activity size={18} /></span><div><strong>Nutrition</strong><small>Log meals and review recorded energy and protein.</small></div><ArrowRight size={16} /></Link>
         <Link to="/app/health"><span><History size={18} /></span><div><strong>Daily health</strong><small>Keep movement, sleep, hydration, and wellbeing together.</small></div><ArrowRight size={16} /></Link>
+        <Link to="/app/learning"><span><BookOpen size={18} /></span><div><strong>Knowledge boosters</strong><small>Continue with LifeOS learning notes and fitness material.</small></div><ArrowRight size={16} /></Link>
       </div>
     </section>
   );
@@ -374,16 +375,60 @@ function WorkoutExecution({ workoutName, exercises, active, activeIndex, session
   );
 }
 
-function ProgramView({ programs, onActivate, onOpenExercise }: { programs: TrainingProgram[]; onActivate: (id: string) => Promise<void>; onOpenExercise: (exercise: Exercise) => void }) {
+function ProgramView({ programs, exercises, profile, onRefresh, onActivate, onOpenExercise }: { programs: TrainingProgram[]; exercises: Exercise[]; profile: TrainingProfile | null; onRefresh: () => Promise<void>; onActivate: (id: string) => Promise<void>; onOpenExercise: (exercise: Exercise) => void }) {
   const [selectedId, setSelectedId] = useState(programs.find((program) => program.isActive)?.id || programs[0]?.id || '');
+  const [editor, setEditor] = useState<{ draft: TrainingProgramDraft; id?: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
   useEffect(() => { if (!selectedId && programs[0]) setSelectedId(programs[0].id); }, [programs, selectedId]);
   const program = programs.find((item) => item.id === selectedId) || programs[0];
-  if (!program) return <section className="training-empty-state"><span><Target size={27} /></span><div><h1>No programs available</h1><p>Seed or create a coherent training program first.</p></div></section>;
+  const openEditor = (value?: TrainingProgram) => setEditor(value ? { id: value.id, draft: toProgramDraft(value) } : { draft: { name: 'My training plan', description: '', goal: profile?.goal || 'general_fitness', experience: profile?.experience || 'beginner', durationWeeks: 8, daysPerWeek: 1, workouts: [{ name: 'Workout A', description: '', dayIndex: 0, exercises: [{ exerciseId: exercises[0]?.id || '', targetSets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 }] }] } });
+  const generate = async () => {
+    setBusy(true); setMessage('');
+    try { setEditor({ draft: await trainingApi.generateProgram(profile || {}) }); }
+    catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Could not generate a plan'); }
+    finally { setBusy(false); }
+  };
+  const saveProgram = async (draft: TrainingProgramDraft) => {
+    setBusy(true); setMessage('');
+    try { const saved = editor?.id ? await trainingApi.updateProgram(editor.id, draft) : await trainingApi.createProgram(draft); setSelectedId(saved.id); setEditor(null); await onRefresh(); }
+    catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Could not save program'); }
+    finally { setBusy(false); }
+  };
+  const duplicate = async () => {
+    if (!program) return;
+    setBusy(true); setMessage('');
+    try { const copy = await trainingApi.duplicateProgram(program.id); await onRefresh(); setSelectedId(copy.id); }
+    catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Could not duplicate program'); }
+    finally { setBusy(false); }
+  };
+  if (!program && !editor) return <section className="training-empty-state"><span><Target size={27} /></span><div><h1>No programs available</h1><p>Create a plan from your training context, then review and edit it here.</p><div className="program-empty-actions"><button type="button" onClick={() => openEditor()}>Create from scratch</button><button type="button" onClick={() => void generate()} disabled={busy}>Generate personalized plan</button></div></div></section>;
+  if (editor) return <ProgramEditor editor={editor} exercises={exercises} busy={busy} message={message} onCancel={() => setEditor(null)} onSave={(draft) => void saveProgram(draft)} />;
   return <section className="program-layout">
-    <aside className="program-sidebar"><span className="training-eyebrow">Programs</span><h2>Training blocks</h2>{programs.map((item) => <button type="button" className={item.id === program.id ? 'active' : ''} key={item.id} onClick={() => setSelectedId(item.id)}><span>{item.isActive ? <Check size={14} /> : <Target size={14} />}</span><div><strong>{item.name}</strong><small>{item.durationWeeks} weeks · {item.daysPerWeek} days/week</small></div></button>)}</aside>
-    <article className="program-detail"><div className="program-detail-hero"><div><span className="training-eyebrow">{program.isActive ? 'Current program' : 'Program template'}</span><h1>{program.name}</h1><p>{program.description}</p><div><span>{titleCase(program.goal)}</span><span>{titleCase(program.experience)}</span><span>{program.durationWeeks} weeks</span></div></div>{!program.isActive && <button type="button" onClick={() => onActivate(program.id)}>Use this program <ArrowRight size={16} /></button>}</div>
+    <aside className="program-sidebar"><span className="training-eyebrow">Programs</span><h2>Training library</h2><div className="program-sidebar-actions"><button type="button" onClick={() => openEditor()}><Plus size={14} /> New plan</button><button type="button" onClick={() => void generate()} disabled={busy}><Sparkles size={14} /> {busy ? 'Building…' : 'Generate'}</button></div>{programs.map((item) => <button type="button" className={item.id === program.id ? 'active' : ''} key={item.id} onClick={() => setSelectedId(item.id)}><span>{item.isActive ? <Check size={14} /> : <Target size={14} />}</span><div><strong>{item.name}</strong><small>{item.durationWeeks} weeks · {item.daysPerWeek} days/week</small></div></button>)}</aside>
+    <article className="program-detail">{message && <div className="training-banner training-banner--error"><AlertTriangle size={17} /><span>{message}</span><button type="button" onClick={() => setMessage('')}>Dismiss</button></div>}<div className="program-detail-hero"><div><span className="training-eyebrow">{program.isActive ? 'Current program' : 'Program template'}</span><h1>{program.name}</h1><p>{program.description}</p><div><span>{titleCase(program.goal)}</span><span>{titleCase(program.experience)}</span><span>{program.durationWeeks} weeks</span></div></div><div className="program-hero-actions"><button type="button" onClick={() => openEditor(program)}><Settings2 size={15} /> Edit</button><button type="button" onClick={() => void duplicate()} disabled={busy}><Plus size={15} /> Duplicate</button>{!program.isActive && <button type="button" onClick={() => onActivate(program.id)}>Use this program <ArrowRight size={16} /></button>}</div></div>
       <div className="program-week"><div className="training-section-heading"><div><span className="training-eyebrow">Weekly structure</span><h2>Repeat movements long enough to measure them</h2></div></div>{program.workouts.sort((a, b) => a.dayIndex - b.dayIndex).map((workout) => <section key={workout.id} className="program-day"><header><div><span>{String.fromCharCode(65 + workout.dayIndex)}</span><div><h3>{workout.name}</h3><p>{workout.description}</p></div></div><em>{workout.exercises.reduce((sum, exercise) => sum + exercise.targetSets, 0)} sets</em></header><div>{workout.exercises.sort((a, b) => a.orderIndex - b.orderIndex).map((item) => <button type="button" key={item.id} onClick={() => onOpenExercise(item.exercise)}><strong>{item.exercise.name}</strong><span>{item.targetSets} × {item.repMin}–{item.repMax}</span><span>{item.targetRir} RIR</span><span>{Math.round(item.restSeconds / 60)} min rest</span><ArrowRight size={15} /></button>)}</div></section>)}</div>
     </article>
+  </section>;
+}
+
+function toProgramDraft(program: TrainingProgram): TrainingProgramDraft {
+  return { name: program.name, description: program.description, goal: program.goal, experience: program.experience, durationWeeks: program.durationWeeks, daysPerWeek: program.daysPerWeek, workouts: program.workouts.map((workout) => ({ name: workout.name, description: workout.description || '', dayIndex: workout.dayIndex, exercises: workout.exercises.map((item) => ({ exerciseId: item.exerciseId, targetSets: item.targetSets, repMin: item.repMin, repMax: item.repMax, targetRir: item.targetRir, restSeconds: item.restSeconds, notes: item.notes })) })) };
+}
+
+function ProgramEditor({ editor, exercises, busy, message, onCancel, onSave }: { editor: { draft: TrainingProgramDraft; id?: string }; exercises: Exercise[]; busy: boolean; message: string; onCancel: () => void; onSave: (draft: TrainingProgramDraft) => void }) {
+  const [draft, setDraft] = useState(editor.draft);
+  const updateWorkout = (index: number, patch: Partial<TrainingProgramDraft['workouts'][number]>) => setDraft((current) => ({ ...current, workouts: current.workouts.map((workout, i) => i === index ? { ...workout, ...patch } : workout) }));
+  const updateExercise = (wi: number, ei: number, patch: Partial<TrainingProgramDraft['workouts'][number]['exercises'][number]>) => setDraft((current) => ({ ...current, workouts: current.workouts.map((workout, i) => i === wi ? { ...workout, exercises: workout.exercises.map((item, j) => j === ei ? { ...item, ...patch } : item) } : workout) }));
+  return <section className="program-editor"><header><div><span className="training-eyebrow">{editor.id ? 'Edit workout library' : 'Program builder'}</span><h1>{editor.id ? 'Edit training plan' : 'Create a training plan'}</h1><p>Review every exercise and prescription before saving this plan.</p></div><button type="button" onClick={onCancel} aria-label="Close editor"><X size={20} /></button></header>
+    {message && <div className="training-banner training-banner--error"><AlertTriangle size={17} /><span>{message}</span></div>}
+    <div className="program-editor-meta"><label>Plan name<input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></label><label>Goal<select value={draft.goal} onChange={(e) => setDraft({ ...draft, goal: e.target.value })}><option value="general_fitness">General fitness</option><option value="hypertrophy">Muscle growth</option><option value="strength">Strength</option><option value="mixed">Mixed</option></select></label><label>Experience<select value={draft.experience} onChange={(e) => setDraft({ ...draft, experience: e.target.value })}><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label><label>Weeks<input type="number" min="1" max="52" value={draft.durationWeeks} onChange={(e) => setDraft({ ...draft, durationWeeks: Number(e.target.value) })} /></label><label className="program-editor-wide">Description<textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} rows={2} /></label></div>
+    <div className="program-editor-workouts">{draft.workouts.map((workout, wi) => <article key={wi}><div className="program-editor-workout-head"><label>Workout name<input value={workout.name} onChange={(e) => updateWorkout(wi, { name: e.target.value })} /></label><label>Notes<input value={workout.description || ''} onChange={(e) => updateWorkout(wi, { description: e.target.value })} /></label><button type="button" aria-label="Remove workout" disabled={draft.workouts.length <= 1} onClick={() => setDraft({ ...draft, workouts: draft.workouts.filter((_, i) => i !== wi).map((item, i) => ({ ...item, dayIndex: i })) })}><X size={16} /></button></div>
+      {workout.exercises.map((item, ei) => <div className="program-editor-exercise" key={ei}><select aria-label="Exercise" value={item.exerciseId} onChange={(e) => updateExercise(wi, ei, { exerciseId: e.target.value })}><option value="">Choose exercise</option>{exercises.map((exercise) => <option value={exercise.id} key={exercise.id}>{exercise.name}</option>)}</select><label>Sets<input type="number" min="1" max="8" value={item.targetSets} onChange={(e) => updateExercise(wi, ei, { targetSets: Number(e.target.value) })} /></label><label>Reps<input type="text" aria-label="Rep range" value={`${item.repMin}–${item.repMax}`} onChange={(e) => { const [min, max] = e.target.value.split(/[–-]/).map(Number); if (min && max) updateExercise(wi, ei, { repMin: min, repMax: max }); }} /></label><label>RIR<input type="number" min="0" max="5" value={item.targetRir} onChange={(e) => updateExercise(wi, ei, { targetRir: Number(e.target.value) })} /></label><label>Rest s<input type="number" min="30" max="600" step="15" value={item.restSeconds} onChange={(e) => updateExercise(wi, ei, { restSeconds: Number(e.target.value) })} /></label><button type="button" aria-label="Remove exercise" disabled={workout.exercises.length <= 1} onClick={() => updateWorkout(wi, { exercises: workout.exercises.filter((_, i) => i !== ei) })}><X size={15} /></button></div>)}
+      <button className="program-editor-add-exercise" type="button" disabled={!exercises.length || workout.exercises.length >= 12} onClick={() => updateWorkout(wi, { exercises: [...workout.exercises, { exerciseId: exercises[0].id, targetSets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 }] })}><Plus size={14} /> Add movement</button>
+    </article>)}</div>
+    <div className="program-editor-actions"><button type="button" className="program-editor-add-exercise" disabled={draft.workouts.length >= 7} onClick={() => setDraft({ ...draft, workouts: [...draft.workouts, { name: `Workout ${String.fromCharCode(65 + draft.workouts.length)}`, description: '', dayIndex: draft.workouts.length, exercises: [{ exerciseId: exercises[0]?.id || '', targetSets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 }] }] })}><Plus size={15} /> Add workout</button><span>{draft.workouts.length} workouts · {draft.workouts.reduce((sum, item) => sum + item.exercises.length, 0)} movements</span></div>
+    <footer><button type="button" onClick={onCancel}>Cancel</button><button type="button" disabled={busy || !draft.name.trim() || draft.workouts.some((item) => item.exercises.some((exercise) => !exercise.exerciseId || exercise.repMin > exercise.repMax))} onClick={() => onSave({ ...draft, daysPerWeek: draft.workouts.length, workouts: draft.workouts.map((workout, dayIndex) => ({ ...workout, dayIndex })) })}>{busy ? 'Saving…' : 'Save plan'} <Check size={16} /></button></footer>
   </section>;
 }
 
@@ -394,22 +439,29 @@ function ExerciseLibrary({ exercises, onOpenExercise }: { exercises: Exercise[];
   const muscles = [...new Set(exercises.flatMap((exercise) => exercise.primaryMuscles))].sort();
   const equipmentOptions = [...new Set(exercises.flatMap((exercise) => exercise.equipment))].sort();
   const filtered = exercises.filter((exercise) => (!search || `${exercise.name} ${exercise.movementPattern}`.toLowerCase().includes(search.toLowerCase())) && (muscle === 'all' || exercise.primaryMuscles.includes(muscle)) && (equipment === 'all' || exercise.equipment.includes(equipment)));
-  return <section className="exercise-library"><div className="library-hero"><div><span className="training-eyebrow">Evidence-aware reference</span><h1>Exercise library</h1><p>Browse by training intent, comfort, equipment, and progressability—not an invented universal “best exercise” score.</p></div><strong>{exercises.length}<span>curated movements</span></strong></div>
+  return <section className="exercise-library"><div className="library-hero"><div><span className="training-eyebrow">Exercise reference</span><h1>Exercise library</h1><p>Browse by training intent, comfort, and equipment. Tutorial availability depends on the exercise.</p></div><strong>{exercises.length}<span>movements</span></strong></div>
     <div className="library-filters"><label><Search size={17} /><input placeholder="Search exercise or movement…" value={search} onChange={(event) => setSearch(event.target.value)} /></label><select value={muscle} onChange={(event) => setMuscle(event.target.value)}><option value="all">All muscles</option>{muscles.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}</select><select value={equipment} onChange={(event) => setEquipment(event.target.value)}><option value="all">All equipment</option>{equipmentOptions.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}</select></div>
     <div className="exercise-grid">{filtered.map((exercise) => <button type="button" className="exercise-card" key={exercise.id} onClick={() => onOpenExercise(exercise)}><div className="exercise-card-icon"><Dumbbell size={20} /></div><div className="exercise-card-tags"><span>{titleCase(exercise.classification)}</span><span>{titleCase(exercise.movementPattern)}</span></div><h2>{exercise.name}</h2><p>{exercise.primaryMuscles.map(titleCase).join(' · ')}</p><div className="exercise-card-equipment">{exercise.equipment.slice(0, 3).map((item) => <span key={item}>{titleCase(item)}</span>)}</div><blockquote>“{exercise.coachingCue}”</blockquote><footer><span><Activity size={14} /> {titleCase(exercise.evidenceConfidence)}</span><ArrowRight size={16} /></footer></button>)}</div>
     {!filtered.length && <div className="library-empty"><Search size={22} /><h2>No matching movement</h2><p>Try removing one filter. The library does not generate unsupported exercises.</p></div>}
   </section>;
 }
 
-function ProgressView({ review }: { review: TrainingReview | null }) {
+function ProgressView({ review, onRefresh }: { review: TrainingReview | null; onRefresh: () => Promise<void> }) {
+  const [editingSet, setEditingSet] = useState<string | null>(null);
+  const [setForm, setSetForm] = useState({ actualLoad: 0, actualReps: 0, actualRir: '' as number | '', painScore: 0, techniqueQuality: 'good' });
+  const [savingSet, setSavingSet] = useState(false);
+  const [historyError, setHistoryError] = useState('');
   if (!review) return <section className="training-empty-state"><span><BarChart3 size={27} /></span><div><h1>No review data yet</h1><p>Complete comparable sessions before drawing conclusions.</p></div></section>;
   const adherence = review.sessionsPlanned ? Math.round((review.sessionsCompleted / review.sessionsPlanned) * 100) : 0;
   const maxSets = Math.max(1, ...Object.values(review.muscleSets));
+  const editSet = (set: PerformedSet) => { setEditingSet(set.id); setSetForm({ actualLoad: set.actualLoad, actualReps: set.actualReps, actualRir: set.actualRir ?? '', painScore: set.painScore, techniqueQuality: set.techniqueQuality }); };
+  const saveSet = async (id: string) => { setSavingSet(true); setHistoryError(''); try { await trainingApi.updateSet(id, setForm); setEditingSet(null); await onRefresh(); } catch (cause) { setHistoryError(cause instanceof Error ? cause.message : 'Could not update set'); } finally { setSavingSet(false); } };
   return <section className="progress-view"><div className="progress-hero"><div><span className="training-eyebrow">28-day review · {formatDate(review.from)}–{formatDate(review.to)}</span><h1>Training progress, with context</h1><p>Performance and adherence come before decorative volume totals. Associations are not treated as causes.</p></div><div className="adherence-ring" style={{ '--progress': `${adherence * 3.6}deg` } as React.CSSProperties}><span><strong>{adherence}%</strong><small>adherence</small></span></div></div>
     <div className="progress-metrics"><MetricCard icon={<Check size={18} />} label="Sessions completed" value={`${review.sessionsCompleted}`} context={`of ${review.sessionsPlanned} planned`} /><MetricCard icon={<Dumbbell size={18} />} label="Working sets" value={`${review.workingSets}`} context="warm-ups excluded" /><MetricCard icon={<Trophy size={18} />} label="Best e1RM" value={review.bestPerformance ? `${review.bestPerformance.estimatedOneRepMax} kg` : '—'} context={review.bestPerformance?.exercise || 'not enough data'} /><MetricCard icon={<ShieldAlert size={18} />} label="Pain flags" value={`${review.painFlags}`} context={review.painFlags ? 'review before progressing' : 'none recorded'} /></div>
     <div className="progress-grid"><article className="muscle-exposure-card"><div className="training-section-heading"><div><span className="training-eyebrow">Direct hard sets</span><h2>Muscle exposure</h2></div><span>Not “effective-set” fractions</span></div><div className="muscle-bars">{Object.entries(review.muscleSets).sort((a, b) => b[1] - a[1]).map(([muscle, count]) => <div key={muscle}><label><span>{titleCase(muscle)}</span><strong>{count} sets</strong></label><div><i style={{ width: `${(count / maxSets) * 100}%` }} /></div></div>)}{!Object.keys(review.muscleSets).length && <p>No completed working sets in this period.</p>}</div></article>
       <article className="decision-card"><span className="decision-icon"><TrendingUp size={20} /></span><span className="training-eyebrow">What the data supports</span><h2>{review.sessionsCompleted < 2 ? 'Build consistency before optimizing the program.' : adherence < 70 ? 'Fix schedule fit before adding volume.' : 'Keep comparable movements and follow progression decisions.'}</h2><p>{review.sessionsCompleted < 2 ? 'One session cannot establish a trend.' : adherence < 70 ? 'A complex progression model cannot compensate for missed sessions.' : 'There is enough execution data to review exercise-level changes, while still avoiding causal claims about recovery.'}</p></article>
     </div>
+    <section className="training-history"><div className="training-section-heading"><div><span className="training-eyebrow">Editable record · last 28 days</span><h2>Workout history</h2></div><span>Corrections update progression and review totals</span></div>{historyError && <div className="training-banner training-banner--error"><AlertTriangle size={17} /><span>{historyError}</span></div>}{review.sessions.filter((session) => session.status === 'completed').slice().reverse().map((session) => <article key={session.id}><header><div><strong>{session.name}</strong><span>{formatDate(session.date.slice(0, 10))}</span></div><small>{session.sets.length} recorded sets</small></header>{session.sets.map((set) => <div className="training-history-set" key={set.id}><span><strong>{set.exercise?.name || 'Exercise'}</strong><small>Set {set.setNumber} · {set.setType}</small></span>{editingSet === set.id ? <><label>Load<input type="number" min="0" step="0.5" value={setForm.actualLoad} onChange={(e) => setSetForm({ ...setForm, actualLoad: Number(e.target.value) })} /></label><label>Reps<input type="number" min="0" max="200" value={setForm.actualReps} onChange={(e) => setSetForm({ ...setForm, actualReps: Number(e.target.value) })} /></label><label>RIR<input type="number" min="0" max="10" value={setForm.actualRir} onChange={(e) => setSetForm({ ...setForm, actualRir: e.target.value === '' ? '' : Number(e.target.value) })} /></label><button type="button" disabled={savingSet} onClick={() => void saveSet(set.id)}>{savingSet ? 'Saving' : 'Save'}</button><button type="button" onClick={() => setEditingSet(null)}>Cancel</button></> : <><strong>{set.actualLoad} × {set.actualReps}{set.actualRir !== null ? ` · ${set.actualRir} RIR` : ''}</strong><button type="button" onClick={() => editSet(set)} aria-label={`Edit ${set.exercise?.name || 'exercise'} set ${set.setNumber}`}><Settings2 size={14} /> Edit</button></>}</div>)}</article>)}{!review.sessions.some((session) => session.status === 'completed') && <p className="training-history-empty">Completed workouts appear here so you can correct a recording when needed.</p>}</section>
     <div className="association-note"><Info size={17} /><span><strong>Cross-domain associations are intentionally paused.</strong> Sleep and nutrition need sufficient paired observations and explicit consent before LifeOS analyzes them.</span></div>
   </section>;
 }
@@ -419,7 +471,10 @@ function MetricCard({ icon, label, value, context }: { icon: React.ReactNode; la
 }
 
 function ExerciseDetail({ exercise, onClose }: { exercise: Exercise; onClose: () => void }) {
+  const demo = exercise.demoVideos?.find((video) => /^[A-Za-z0-9_-]{6,20}$/.test(video.youtube_id));
+  const videoStart = Math.max(0, Math.floor(demo?.start_seconds || 0));
   return <div className="exercise-drawer-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><aside className="exercise-drawer" role="dialog" aria-modal="true" aria-label={`${exercise.name} details`}><header><div><span className="training-eyebrow">{titleCase(exercise.movementPattern)} · {titleCase(exercise.classification)}</span><h1>{exercise.name}</h1><p>{exercise.primaryMuscles.map(titleCase).join(' · ')}</p></div><button type="button" onClick={onClose} aria-label="Close exercise details"><X size={20} /></button></header>
+    {demo && <section className="exercise-demo-video"><h2>Exercise demonstration</h2><div><iframe src={`https://www.youtube-nocookie.com/embed/${demo.youtube_id}${videoStart ? `?start=${videoStart}` : ''}`} title={`${exercise.name} demonstration`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>{demo.channel && <small>Video: {demo.channel}</small>}</section>}
     <section className="detail-cue"><Sparkles size={18} /><div><span>Primary coaching cue</span><strong>{exercise.coachingCue}</strong></div></section>
     <section><h2>Set up</h2><ol>{exercise.setupSteps?.map((step, index) => <li key={step}><span>{index + 1}</span>{step}</li>)}</ol></section>
     <section><h2>Execute</h2><ol>{exercise.executionSteps?.map((step, index) => <li key={step}><span>{index + 1}</span>{step}</li>)}</ol></section>
@@ -427,24 +482,31 @@ function ExerciseDetail({ exercise, onClose }: { exercise: Exercise; onClose: ()
     <section className="evidence-card"><div><BookOpen size={17} /><span><strong>Evidence context</strong><em>{titleCase(exercise.evidenceConfidence)}</em></span></div><p>{exercise.evidenceSummary}</p></section>
     {!!exercise.alternatives?.length && <section><h2>Intent-preserving alternatives</h2>{exercise.alternatives.map((item) => <div className="alternative-row" key={item.id}><span><Dumbbell size={16} /></span><div><strong>{item.alternative.name}</strong><p>{item.rationale}</p></div><em>{titleCase(item.relationship)}</em></div>)}</section>}
     <section className="drawer-safety"><ShieldAlert size={17} /><p>LifeOS does not diagnose pain. Stop for sharp or sudden pain, instability, neurological symptoms, chest pressure, dizziness, or unusual breathlessness.</p></section>
+    {exercise.source && <footer className="exercise-source-credit">Reference data: <a href={exercise.source} target="_blank" rel="noreferrer">workout-database</a>{exercise.license && ` · ${exercise.license} license`}</footer>}
   </aside></div>;
 }
 
 function TrainingSettings({ profile, onClose, onSave }: { profile: TrainingProfile | null; onClose: () => void; onSave: (profile: Partial<TrainingProfile>) => Promise<void> }) {
   const equipmentOptions = ['barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'bench', 'rack', 'band'];
+  const muscleOptions = ['chest', 'lats', 'mid_back', 'quadriceps', 'hamstrings', 'glutes', 'lateral_deltoid', 'biceps', 'triceps', 'calves', 'abs'];
   const [form, setForm] = useState<Partial<TrainingProfile>>(profile || {
     goal: 'mixed', experience: 'beginner', daysPerWeek: 3, minutesPerSession: 60,
-    loadUnit: 'kg', smallestIncrement: 2.5, availableEquipment: [], limitations: [], excludedExerciseIds: [],
+    loadUnit: 'kg', smallestIncrement: 2.5, availableEquipment: [], priorityMuscles: [], limitations: [], excludedExerciseIds: [],
   });
   const [saving, setSaving] = useState(false);
   const toggleEquipment = (item: string) => setForm((current) => {
     const selected = current.availableEquipment || [];
     return { ...current, availableEquipment: selected.includes(item) ? selected.filter((value) => value !== item) : [...selected, item] };
   });
+  const toggleMuscle = (item: string) => setForm((current) => {
+    const selected = current.priorityMuscles || [];
+    return { ...current, priorityMuscles: selected.includes(item) ? selected.filter((value) => value !== item) : [...selected, item].slice(0, 6) };
+  });
   const save = async () => { setSaving(true); try { await onSave(form); } finally { setSaving(false); } };
   return <div className="training-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="training-settings-modal" role="dialog" aria-modal="true" aria-label="Training profile settings"><header><div><span className="training-eyebrow">Personalization constraints</span><h1>Training profile</h1><p>LifeOS uses only inputs that change a defined training decision.</p></div><button type="button" onClick={onClose} aria-label="Close training settings"><X size={20} /></button></header>
     <div className="training-settings-grid"><label>Primary goal<select value={form.goal} onChange={(event) => setForm({ ...form, goal: event.target.value })}><option value="general_fitness">General fitness</option><option value="hypertrophy">Hypertrophy</option><option value="strength">Strength</option><option value="mixed">Mixed</option></select></label><label>Experience<select value={form.experience} onChange={(event) => setForm({ ...form, experience: event.target.value })}><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label><label>Days per week<input type="number" min="1" max="7" value={form.daysPerWeek} onChange={(event) => setForm({ ...form, daysPerWeek: Number(event.target.value) })} /></label><label>Minutes per session<input type="number" min="15" max="240" value={form.minutesPerSession} onChange={(event) => setForm({ ...form, minutesPerSession: Number(event.target.value) })} /></label><label>Load unit<select value={form.loadUnit} onChange={(event) => setForm({ ...form, loadUnit: event.target.value as 'kg' | 'lb' })}><option value="kg">Kilograms</option><option value="lb">Pounds</option></select></label><label>Smallest load increment<input type="number" min="0.25" step="0.25" value={form.smallestIncrement} onChange={(event) => setForm({ ...form, smallestIncrement: Number(event.target.value) })} /></label></div>
     <div className="equipment-selector"><span>Available equipment</span><div>{equipmentOptions.map((item) => <button type="button" className={form.availableEquipment?.includes(item) ? 'selected' : ''} key={item} onClick={() => toggleEquipment(item)}>{form.availableEquipment?.includes(item) && <Check size={13} />}{titleCase(item)}</button>)}</div></div>
+    <div className="equipment-selector priority-selector"><span>Muscles you want the generator to emphasize (up to six)</span><div>{muscleOptions.map((item) => <button type="button" className={form.priorityMuscles?.includes(item) ? 'selected' : ''} key={item} onClick={() => toggleMuscle(item)}>{form.priorityMuscles?.includes(item) && <Check size={13} />}{titleCase(item)}</button>)}</div></div>
     <div className="settings-safety-note"><ShieldAlert size={17} /><p>Limitations and medical constraints should only be added when they change a feature. LifeOS does not turn them into a diagnosis or rehabilitation plan.</p></div>
     <footer><button type="button" onClick={onClose}>Cancel</button><button type="button" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save training context'} <Check size={16} /></button></footer>
   </section></div>;

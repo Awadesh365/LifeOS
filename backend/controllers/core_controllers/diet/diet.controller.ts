@@ -1,5 +1,6 @@
 import { asyncHandler } from '../../../utils/asyncHandler.js';
 import * as dietService from '../../../services/diet/diet.service.js';
+import * as dietAiService from '../../../services/diet/ai.service.js';
 
 export const listLogs = asyncHandler(async (req, res) => {
   res.json(await dietService.listLogs(req.query.date as string | undefined));
@@ -30,9 +31,17 @@ export const consumeSupplement = asyncHandler(async (req, res) => {
 });
 
 export const getRecord = asyncHandler(async (req, res) => {
-  res.json(await dietService.getRecord(req.params.key));
+  res.json(await dietService.getRecord(req.params.key, String(req.session.userId || '')));
 });
 
 export const upsertRecord = asyncHandler(async (req, res) => {
-  res.json(await dietService.upsertRecord(req.params.key, req.body.value));
+  res.json(await dietService.upsertRecord(req.params.key, req.body.value, String(req.session.userId || '')));
+});
+
+export const scanMeal = asyncHandler(async (req, res) => {
+  res.json(await dietAiService.scanMeal(req.body));
+});
+
+export const askFitnessAssistant = asyncHandler(async (req, res) => {
+  res.json(await dietAiService.askFitnessAssistant(req.body));
 });

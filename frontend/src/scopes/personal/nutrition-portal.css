@@ -54,6 +54,59 @@
 .lifeos-personal-scope .nutrition-workspace { min-width: 0; }
 .lifeos-personal-scope .nutrition-workspace > .nutrition-page { max-width: none; }
 .lifeos-personal-scope .nutrition-module { width: min(1400px, 100%); margin: 0 auto; padding: 28px 38px 48px; }
+.lifeos-personal-scope .ai-tool-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; align-items: start; }
+.lifeos-personal-scope .ai-tool-heading { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; color: var(--accent); }
+.lifeos-personal-scope .ai-tool-heading h2 { margin: 0; color: var(--text-heading); font-size: .95rem; }
+.lifeos-personal-scope .ai-tool-heading p { margin: 4px 0 0; color: var(--text-muted); font-size: .66rem; line-height: 1.5; }
+.lifeos-personal-scope .ai-photo-picker { display: grid; min-height: 220px; overflow: hidden; place-items: center; border: 1px dashed var(--border); border-radius: 12px; background: var(--bg-secondary); color: var(--text-muted); cursor: pointer; }
+.lifeos-personal-scope .ai-photo-picker > span { display: grid; justify-items: center; gap: 9px; font-size: .68rem; }
+.lifeos-personal-scope .ai-photo-picker input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.lifeos-personal-scope .ai-photo-picker img { width: 100%; max-height: 360px; object-fit: contain; }
+.lifeos-personal-scope .ai-photo-name, .lifeos-personal-scope .body-source-note, .lifeos-personal-scope .ai-estimate-caveat { display: block; margin: 8px 0; color: var(--text-muted); font-size: .61rem; line-height: 1.55; }
+.lifeos-personal-scope .ai-scan-fields, .lifeos-personal-scope .ai-estimate-macros { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
+.lifeos-personal-scope .ai-tool-grid label, .lifeos-personal-scope .coach-form label, .lifeos-personal-scope .body-form-grid label, .lifeos-personal-scope .checkin-goal-row label { display: grid; gap: 5px; color: var(--text-secondary); font-size: .63rem; font-weight: 750; }
+.lifeos-personal-scope .ai-tool-grid input, .lifeos-personal-scope .ai-tool-grid select, .lifeos-personal-scope .coach-form textarea, .lifeos-personal-scope .body-form-grid input, .lifeos-personal-scope .body-goal-control input, .lifeos-personal-scope .checkin-goal-row select { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-heading); font: inherit; font-size: .67rem; }
+.lifeos-personal-scope .ai-tool-grid .portal-primary { width: 100%; justify-content: center; margin-top: 8px; }
+.lifeos-personal-scope .ai-estimate-card > label { display: grid; gap: 5px; color: var(--text-secondary); font-size: .63rem; font-weight: 750; }
+.lifeos-personal-scope .ai-estimate-card h3 { margin: 14px 0 4px; color: var(--text-heading); font-size: .7rem; }
+.lifeos-personal-scope .ai-estimate-card > p { color: var(--text-secondary); font-size: .68rem; line-height: 1.55; }
+.lifeos-personal-scope .ai-privacy-note { margin-top: 15px; }
+.lifeos-personal-scope .coach-workspace { display: grid; grid-template-columns: minmax(0,1fr) 350px; gap: 16px; align-items: start; }
+.lifeos-personal-scope .coach-messages, .lifeos-personal-scope .coach-form { display: grid; gap: 11px; padding: 16px; border: 1px solid var(--border); border-radius: 13px; background: #fff; }
+.lifeos-personal-scope .coach-message { max-width: 88%; padding: 11px 13px; border: 1px solid var(--border); border-radius: 11px; background: #f7f8fa; }
+.lifeos-personal-scope .coach-message--user { justify-self: end; border-color: rgba(229,85,85,.2); background: rgba(229,85,85,.07); }
+.lifeos-personal-scope .coach-message > span { color: var(--text-muted); font-size: .58rem; font-weight: 800; }
+.lifeos-personal-scope .coach-message p { margin: 5px 0 0; color: var(--text-heading); font-size: .68rem; line-height: 1.6; white-space: pre-wrap; }
+.lifeos-personal-scope .coach-form textarea { min-height: 40px; resize: vertical; }
+.lifeos-personal-scope .coach-form .portal-primary { justify-content: center; }
+.lifeos-personal-scope .body-overview-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 13px; }
+.lifeos-personal-scope .body-overview-grid article { display: grid; gap: 4px; }
+.lifeos-personal-scope .body-overview-grid article > span { color: var(--text-muted); font-size: .62rem; }
+.lifeos-personal-scope .body-big-number { color: var(--text-heading); font-size: 1.7rem; letter-spacing: -.04em; }
+.lifeos-personal-scope .body-goal-control { display: flex; align-items: center; gap: 8px; color: var(--text-heading) !important; font-size: 1rem !important; }
+.lifeos-personal-scope .body-goal-control input { max-width: 150px; font-size: 1rem !important; font-weight: 800; }
+.lifeos-personal-scope .body-recomp-note { margin-bottom: 13px; }
+.lifeos-personal-scope .body-checkin-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 15px; align-items: start; margin-top: 13px; }
+.lifeos-personal-scope .body-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 13px 0; }
+.lifeos-personal-scope .body-entry-list { display: grid; max-height: 500px; overflow: auto; }
+.lifeos-personal-scope .body-entry-list > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+.lifeos-personal-scope .body-entry-list > div > span strong, .lifeos-personal-scope .body-entry-list > div > span small { display: block; }
+.lifeos-personal-scope .body-entry-list > div > span strong, .lifeos-personal-scope .body-entry-list > div > strong { color: var(--text-heading); font-size: .66rem; }
+.lifeos-personal-scope .body-entry-list > div > span small { margin-top: 3px; color: var(--text-muted); font-size: .58rem; }
+.lifeos-personal-scope .body-entry-list button { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid var(--border); border-radius: 7px; background: #fff; color: var(--text-muted); cursor: pointer; }
+.lifeos-personal-scope .checkin-card, .lifeos-personal-scope .checkin-data-card { display: grid; gap: 15px; }
+.lifeos-personal-scope .checkin-goal-row { display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+.lifeos-personal-scope .checkin-goal-row span { color: var(--text-muted); font-size: .65rem; }
+.lifeos-personal-scope .checkin-goal-row span strong { color: var(--text-heading); }
+.lifeos-personal-scope .checkin-stat-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; }
+.lifeos-personal-scope .checkin-stat-grid > div { display: grid; gap: 7px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; }
+.lifeos-personal-scope .checkin-stat-grid small { color: var(--text-muted); font-size: .58rem; }
+.lifeos-personal-scope .checkin-stat-grid strong { color: var(--text-heading); font-size: .76rem; }
+.lifeos-personal-scope .checkin-guidance { display: flex; gap: 11px; align-items: flex-start; padding: 14px; border-radius: 10px; background: rgba(229,85,85,.06); color: var(--accent); }
+.lifeos-personal-scope .checkin-guidance p { margin: 5px 0 0; color: var(--text-heading); font-size: .68rem; line-height: 1.6; }
+.lifeos-personal-scope .checkin-data-card h2 { color: var(--text-heading); font-size: .88rem; }
+.lifeos-personal-scope .checkin-data-card p { color: var(--text-secondary); font-size: .66rem; }
+.lifeos-personal-scope .checkin-data-card .portal-secondary { width: fit-content; }
 .lifeos-personal-scope .nutrition-page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 23px; }
 .lifeos-personal-scope .nutrition-page-header > div { max-width: 720px; }
 .lifeos-personal-scope .nutrition-page-header > div > span { display: block; color: var(--success); font-size: .58rem; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
@@ -258,6 +311,8 @@
 @media (max-width: 1050px) {
   .lifeos-personal-scope .nutrition-module { padding: 24px; }
   .lifeos-personal-scope .food-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lifeos-personal-scope .coach-workspace { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .checkin-stat-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 
 @media (min-width: 1500px) {
@@ -265,6 +320,10 @@
 }
 
 @media (max-width: 700px) {
+  .lifeos-personal-scope .ai-tool-grid, .lifeos-personal-scope .body-checkin-layout, .lifeos-personal-scope .body-overview-grid { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .body-form-grid { grid-template-columns: 1fr; }
+  .lifeos-personal-scope .checkin-goal-row { align-items: stretch; flex-direction: column; }
+  .lifeos-personal-scope .checkin-stat-grid { grid-template-columns: 1fr 1fr; }
   .lifeos-personal-scope .nutrition-module { padding: 19px 13px 38px; }
   .lifeos-personal-scope .header--with-navigation { flex-wrap: wrap; gap: 9px; padding-bottom: 10px; }
   .lifeos-personal-scope .header--with-navigation .header-left { flex: 1 1 100%; }

@@ -298,6 +298,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
   }, { ...baseOptions, tableName: 'supplements' });
 
   const NutritionRecord = sequelize.define('NutritionRecord', {
+    userId: { type: DataTypes.STRING, primaryKey: true, field: 'user_id' },
     key: { type: DataTypes.STRING, primaryKey: true },
     value: { type: DataTypes.JSONB, allowNull: false },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
@@ -326,6 +327,7 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     loadUnit: { type: DataTypes.STRING, allowNull: false, defaultValue: 'kg', field: 'load_unit' },
     smallestIncrement: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 2.5, field: 'smallest_increment' },
     availableEquipment: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'available_equipment' },
+    priorityMuscles: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'priority_muscles' },
     limitations: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
     excludedExerciseIds: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'excluded_exercise_ids' },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
@@ -351,6 +353,9 @@ export const defineLifeTrackerModels = (sequelize: Sequelize): LifeTrackerModels
     defaultRestSeconds: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 120, field: 'default_rest_seconds' },
     loadUnit: { type: DataTypes.STRING, allowNull: false, defaultValue: 'kg', field: 'load_unit' },
     searchTerms: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'search_terms' },
+    demoVideos: { type: DataTypes.JSONB, allowNull: false, defaultValue: [], field: 'demo_videos' },
+    source: { type: DataTypes.TEXT },
+    license: { type: DataTypes.STRING },
   }, { ...baseOptions, tableName: 'exercises' });
 
   const ExerciseAlternative = sequelize.define('ExerciseAlternative', {

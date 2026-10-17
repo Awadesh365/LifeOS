@@ -66,6 +66,7 @@ const allowedNutritionRecordKeys = new Set([
   'lifeos-grocery-checked', 'lifeos-nutrition-targets', 'lifeos-nutrition-coverage',
   'lifeos-nutrition-reports', 'lifeos-nutrition-sharing', 'lifeos-nutrition-data-issues',
   'lifeos-nutrition-preferences',
+  'lifeos-fitness-body-checkins', 'lifeos-fitness-step-goal',
 ]);
 
 function assertNutritionRecordKey(key: string) {
@@ -74,15 +75,15 @@ function assertNutritionRecordKey(key: string) {
   }
 }
 
-export async function getRecord(key: string) {
+export async function getRecord(key: string, userId: string) {
   assertNutritionRecordKey(key);
-  const record = await models.NutritionRecord.findByPk(key, { raw: true }) as Record<string, any> | null;
+  const record = await models.NutritionRecord.findOne({ where: { key, userId }, raw: true }) as Record<string, any> | null;
   return { key, value: record?.value ?? null, updatedAt: record?.updatedAt ?? null };
 }
 
-export async function upsertRecord(key: string, value: unknown) {
+export async function upsertRecord(key: string, value: unknown, userId: string) {
   assertNutritionRecordKey(key);
   if (value === undefined) throw createHttpError(400, 'Nutrition record value is required');
-  const [record] = await models.NutritionRecord.upsert({ key, value, updatedAt: new Date() }, { returning: true });
+  const [record] = await models.NutritionRecord.upsert({ userId, key, value, updatedAt: new Date() }, { returning: true });
   return record.toJSON();
 }

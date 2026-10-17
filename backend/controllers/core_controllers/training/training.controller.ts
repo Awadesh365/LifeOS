@@ -8,10 +8,15 @@ export const getExercise = asyncHandler(async (req, res) => { res.json(await tra
 export const getExerciseHistory = asyncHandler(async (req, res) => { res.json(await training.getExerciseHistory(req.params.id)); });
 export const getProgression = asyncHandler(async (req, res) => { res.json(await training.getProgression(req.params.id, String(req.query.programExerciseId || ''))); });
 export const listPrograms = asyncHandler(async (_req, res) => { res.json(await training.listPrograms()); });
+export const createProgram = asyncHandler(async (req, res) => { res.status(201).json(await training.createProgram(req.body)); });
+export const updateProgram = asyncHandler(async (req, res) => { res.json(await training.updateProgram(req.params.id, req.body)); });
+export const duplicateProgram = asyncHandler(async (req, res) => { res.status(201).json(await training.duplicateProgram(req.params.id)); });
+export const generateProgram = asyncHandler(async (req, res) => { res.json(await training.generateProgram(req.body)); });
 export const activateProgram = asyncHandler(async (req, res) => { res.json(await training.activateProgram(req.params.id)); });
 export const getToday = asyncHandler(async (req, res) => { res.json(await training.getToday(String(req.query.date || new Date().toISOString().slice(0, 10)))); });
 export const startSession = asyncHandler(async (req, res) => { res.status(201).json(await training.startSession(req.body)); });
 export const logSet = asyncHandler(async (req, res) => { res.status(201).json(await training.logSet(req.params.id, req.body)); });
+export const updatePerformedSet = asyncHandler(async (req, res) => { res.json(await training.updatePerformedSet(req.params.id, req.body)); });
 export const completeSession = asyncHandler(async (req, res) => { res.json(await training.completeSession(req.params.id, req.body)); });
 export const getReview = asyncHandler(async (req, res) => {
   const to = String(req.query.to || new Date().toISOString().slice(0, 10));

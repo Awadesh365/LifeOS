@@ -18,6 +18,9 @@ export interface Exercise {
   evidenceSummary: string;
   evidenceConfidence: string;
   defaultRestSeconds: number;
+  demoVideos?: Array<{ youtube_id: string; type?: string; start_seconds?: number; channel?: string; duration_seconds?: number | null }>;
+  source?: string | null;
+  license?: string | null;
   alternatives?: Array<{ id: string; relationship: string; rationale: string; alternative: Exercise }>;
 }
 
@@ -55,6 +58,12 @@ export interface TrainingProgram {
   isActive: boolean;
   workouts: ProgramWorkout[];
 }
+
+export type TrainingProgramDraft = Omit<TrainingProgram, 'id' | 'isTemplate' | 'isActive' | 'workouts'> & {
+  workouts: Array<Omit<ProgramWorkout, 'id' | 'programId' | 'exercises'> & {
+    exercises: Array<Pick<ProgramExercise, 'exerciseId' | 'targetSets' | 'repMin' | 'repMax' | 'targetRir' | 'restSeconds' | 'notes'>>;
+  }>;
+};
 
 export interface PerformedSet {
   id: string;
@@ -101,6 +110,7 @@ export interface TrainingProfile {
   loadUnit: 'kg' | 'lb';
   smallestIncrement: number;
   availableEquipment: string[];
+  priorityMuscles: string[];
   limitations: string[];
   excludedExerciseIds: string[];
 }

@@ -71,7 +71,7 @@
 .lifeos-personal-scope .fitness-next-card h2 { margin: 4px 0 7px; color: var(--text-heading); font-size: .93rem; letter-spacing: -.02em; }
 .lifeos-personal-scope .fitness-next-card p { color: var(--text-secondary); font-size: .63rem; line-height: 1.65; }
 .lifeos-personal-scope .fitness-next-card button { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: .63rem; font-weight: 850; cursor: pointer; }
-.lifeos-personal-scope .fitness-quick-links { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 11px; }
+.lifeos-personal-scope .fitness-quick-links { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 11px; }
 .lifeos-personal-scope .fitness-quick-links > a, .lifeos-personal-scope .fitness-quick-links > button { display: grid; min-width: 0; grid-template-columns: 36px minmax(0,1fr) 16px; gap: 10px; align-items: center; padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); color: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: border-color .18s ease, transform .18s ease; }
 .lifeos-personal-scope .fitness-quick-links > a:hover, .lifeos-personal-scope .fitness-quick-links > button:hover { transform: translateY(-1px); border-color: var(--accent); }
 .lifeos-personal-scope .fitness-quick-links > a > span, .lifeos-personal-scope .fitness-quick-links > button > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: var(--info-glow); color: var(--info); }
@@ -201,6 +201,37 @@
 .lifeos-personal-scope .program-sidebar button small { color: var(--text-muted); font-size: .56rem; }
 .lifeos-personal-scope .program-sidebar button.active strong { color: #fff; }
 .lifeos-personal-scope .program-detail { display: grid; gap: 18px; }
+.lifeos-personal-scope .program-sidebar-actions, .lifeos-personal-scope .program-hero-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 8px 12px; }
+.lifeos-personal-scope .program-sidebar-actions button, .lifeos-personal-scope .program-hero-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-secondary); font-size: .59rem; font-weight: 750; cursor: pointer; }
+.lifeos-personal-scope .program-sidebar-actions button:disabled, .lifeos-personal-scope .program-hero-actions button:disabled { opacity: .55; cursor: wait; }
+.lifeos-personal-scope .program-hero-actions { justify-content: flex-end; margin: 0; }
+.lifeos-personal-scope .program-editor { display: grid; gap: 17px; padding: 22px; border: 1px solid var(--border); border-radius: 17px; background: #fff; }
+.lifeos-personal-scope .program-editor > header, .lifeos-personal-scope .program-editor-workout-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lifeos-personal-scope .program-editor h1 { margin: 3px 0; color: var(--text-heading); font-size: 1.4rem; }
+.lifeos-personal-scope .program-editor p { margin: 3px 0; color: var(--text-secondary); font-size: .68rem; }
+.lifeos-personal-scope .program-editor > header > button, .lifeos-personal-scope .program-editor-workout-head > button, .lifeos-personal-scope .program-editor-exercise > button { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-secondary); cursor: pointer; }
+.lifeos-personal-scope .program-editor > header > button:disabled, .lifeos-personal-scope .program-editor-workout-head > button:disabled, .lifeos-personal-scope .program-editor-exercise > button:disabled { opacity: .45; cursor: not-allowed; }
+.lifeos-personal-scope .program-editor-meta { display: grid; grid-template-columns: 2fr 1fr 1fr 90px; gap: 10px; }
+.lifeos-personal-scope .program-editor label { display: grid; gap: 5px; color: var(--text-secondary); font-size: .61rem; font-weight: 750; }
+.lifeos-personal-scope .program-editor input, .lifeos-personal-scope .program-editor select, .lifeos-personal-scope .program-editor textarea { width: 100%; min-height: 36px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 7px; background: #fff; color: var(--text-heading); font: inherit; font-size: .66rem; }
+.lifeos-personal-scope .program-editor textarea { resize: vertical; }
+.lifeos-personal-scope .program-editor-wide { grid-column: 1 / -1; }
+.lifeos-personal-scope .program-editor-workouts { display: grid; gap: 11px; }
+.lifeos-personal-scope .program-editor-workouts article { display: grid; gap: 10px; padding: 13px; border: 1px solid var(--border); border-radius: 11px; background: #fbfcfd; }
+.lifeos-personal-scope .program-editor-workout-head { align-items: end; }
+.lifeos-personal-scope .program-editor-workout-head label:first-child { flex: 1; }
+.lifeos-personal-scope .program-editor-exercise { display: grid; grid-template-columns: minmax(180px,1fr) 62px 90px 62px 75px 30px; gap: 7px; align-items: end; }
+.lifeos-personal-scope .program-editor-exercise select { min-height: 36px; }
+.lifeos-personal-scope .program-editor-add-exercise, .lifeos-personal-scope .program-editor-actions > button, .lifeos-personal-scope .program-empty-actions button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-secondary); font-size: .62rem; font-weight: 750; cursor: pointer; }
+.lifeos-personal-scope .program-editor-add-exercise:disabled { opacity: .5; cursor: not-allowed; }
+.lifeos-personal-scope .program-editor-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lifeos-personal-scope .program-editor-actions span { color: var(--text-muted); font-size: .62rem; }
+.lifeos-personal-scope .program-editor footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+.lifeos-personal-scope .program-editor footer button { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-secondary); font-size: .65rem; font-weight: 750; cursor: pointer; }
+.lifeos-personal-scope .program-editor footer button:last-child { border-color: var(--accent); background: var(--accent); color: #fff; }
+.lifeos-personal-scope .program-editor footer button:disabled { opacity: .5; cursor: not-allowed; }
+.lifeos-personal-scope .program-empty-actions { display: flex; gap: 8px; margin-top: 12px; }
+.lifeos-personal-scope .program-empty-actions button:last-child { border-color: var(--accent); background: var(--accent); color: #fff; }
 .lifeos-personal-scope .program-detail-hero { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding: 25px; border: 1px solid var(--border); border-radius: 17px; background: radial-gradient(circle at 95% 0,rgba(229,85,85,.08),transparent 30%),#fff; }
 .lifeos-personal-scope .program-detail-hero > div:first-child { max-width: 650px; }
 .lifeos-personal-scope .program-detail-hero h1 { color: var(--text-heading); font-size: 1.5rem; letter-spacing: -.04em; }
@@ -220,6 +251,18 @@
 .lifeos-personal-scope .program-day > div > button strong { color: var(--text-heading); font-size: .68rem; }
 .lifeos-personal-scope .program-day > div > button span { color: var(--text-secondary); font-size: .59rem; }
 .lifeos-personal-scope .program-day > div > button svg { color: var(--text-muted); }
+.lifeos-personal-scope .training-history { display: grid; gap: 9px; margin-top: 18px; padding: 20px; border: 1px solid var(--border); border-radius: 15px; background: #fff; }
+.lifeos-personal-scope .training-history > article { overflow: hidden; border: 1px solid var(--border); border-radius: 10px; }
+.lifeos-personal-scope .training-history > article > header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-secondary); }
+.lifeos-personal-scope .training-history > article > header > div { display: flex; gap: 11px; align-items: center; }
+.lifeos-personal-scope .training-history strong { color: var(--text-heading); font-size: .65rem; }
+.lifeos-personal-scope .training-history small, .lifeos-personal-scope .training-history > article > header span, .lifeos-personal-scope .training-history > article > header small { color: var(--text-muted); font-size: .58rem; }
+.lifeos-personal-scope .training-history-set { display: grid; grid-template-columns: minmax(150px,1fr) auto auto; gap: 10px; align-items: center; padding: 8px 11px; border-top: 1px solid var(--border); }
+.lifeos-personal-scope .training-history-set > span strong, .lifeos-personal-scope .training-history-set > span small { display: block; }
+.lifeos-personal-scope .training-history-set > label { display: flex; align-items: center; gap: 4px; color: var(--text-muted); font-size: .56rem; }
+.lifeos-personal-scope .training-history-set input { width: 65px; min-height: 30px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; }
+.lifeos-personal-scope .training-history-set button { display: inline-flex; align-items: center; gap: 4px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 7px; background: #fff; color: var(--text-secondary); font-size: .58rem; cursor: pointer; }
+.lifeos-personal-scope .training-history-empty { padding: 13px; color: var(--text-muted); font-size: .67rem; }
 
 .lifeos-personal-scope .library-hero, .lifeos-personal-scope .progress-hero { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding: 25px 27px; border: 1px solid var(--border); border-radius: 18px; background: radial-gradient(circle at 95% 0,rgba(229,85,85,.08),transparent 28%),#fff; }
 .lifeos-personal-scope .library-hero > div { max-width: 720px; }
@@ -286,6 +329,11 @@
 .lifeos-personal-scope .exercise-drawer header p { color: var(--text-muted); font-size: .64rem; }
 .lifeos-personal-scope .exercise-drawer header button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--border); border-radius: 9px; background: #fff; color: var(--text-muted); cursor: pointer; }
 .lifeos-personal-scope .exercise-drawer > section { margin-top: 20px; }
+.lifeos-personal-scope .exercise-demo-video > div { position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: 12px; background: #101828; }
+.lifeos-personal-scope .exercise-demo-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.lifeos-personal-scope .exercise-demo-video small { display: block; margin-top: 7px; color: var(--text-muted); font-size: .58rem; }
+.lifeos-personal-scope .exercise-source-credit { margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: .58rem; }
+.lifeos-personal-scope .exercise-source-credit a { color: var(--info); }
 .lifeos-personal-scope .exercise-drawer section h2 { margin-bottom: 10px; color: var(--text-heading); font-size: .76rem; }
 .lifeos-personal-scope .detail-cue { display: flex; align-items: flex-start; gap: 10px; padding: 13px; border-radius: 10px; background: var(--warning-glow); color: var(--warning); }
 .lifeos-personal-scope .detail-cue span, .lifeos-personal-scope .detail-cue strong { display: block; }
@@ -322,6 +370,7 @@
 .lifeos-personal-scope .equipment-selector > div { display: flex; flex-wrap: wrap; gap: 7px; }
 .lifeos-personal-scope .equipment-selector button { display: flex; align-items: center; gap: 4px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 20px; background: #fff; color: var(--text-secondary); font-size: .61rem; font-weight: 750; cursor: pointer; }
 .lifeos-personal-scope .equipment-selector button.selected { border-color: rgba(2,121,0,.2); background: var(--success-glow); color: var(--success); }
+.lifeos-personal-scope .priority-selector { margin-top: 15px; }
 .lifeos-personal-scope .settings-safety-note { display: flex; align-items: flex-start; gap: 9px; margin-top: 18px; padding: 12px; border-radius: 9px; background: var(--info-glow); color: var(--info); }
 .lifeos-personal-scope .settings-safety-note p { color: var(--text-secondary); font-size: .62rem; line-height: 1.55; }
 .lifeos-personal-scope .training-settings-modal > footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--border); }
@@ -329,6 +378,7 @@
 .lifeos-personal-scope .training-settings-modal > footer button:last-child { border-color: var(--accent); background: var(--accent); color: #fff; }
 
 @media (max-width: 1080px) {
+  .lifeos-personal-scope .fitness-quick-links { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .lifeos-personal-scope .exercise-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .lifeos-personal-scope .progress-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .lifeos-personal-scope .fitness-overview-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -341,6 +391,14 @@
   .lifeos-personal-scope .execution-queue nav { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 650px) {
+  .lifeos-personal-scope .program-editor-meta { grid-template-columns: 1fr 1fr; }
+  .lifeos-personal-scope .program-editor-exercise { grid-template-columns: 1fr 1fr; align-items: end; }
+  .lifeos-personal-scope .program-editor-exercise select { grid-column: 1 / -1; }
+  .lifeos-personal-scope .program-editor-exercise > button { grid-column: 2; justify-self: end; }
+  .lifeos-personal-scope .program-hero-actions { justify-content: flex-start; }
+  .lifeos-personal-scope .program-editor-actions { align-items: flex-start; flex-direction: column; }
+  .lifeos-personal-scope .training-history-set { grid-template-columns: 1fr 1fr; }
+  .lifeos-personal-scope .training-history-set > span { grid-column: 1 / -1; }
   .lifeos-personal-scope .training-page { padding: 15px 12px 34px; }
   .lifeos-personal-scope .training-commandbar { align-items: stretch; flex-direction: column; }
   .lifeos-personal-scope .training-tabs { display: grid; grid-template-columns: repeat(5,1fr); }

@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { models } from '../../models/index.js';
+import { models, sequelize } from '../../models/index.js';
 import { createHttpError } from '../../utils/httpError.js';
 import { shortId } from '../../utils/id.js';
 import { decideProgression, estimateOneRepMax, type ProgressionSet } from './progression.js';
@@ -10,6 +10,7 @@ const asNumber = (value: unknown, fallback = 0) => {
 };
 
 const asArray = (value: unknown): string[] => Array.isArray(value) ? value.map(String) : [];
+const titleCase = (value: string) => value.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
 
 const exerciseInclude = { model: models.Exercise, as: 'exercise' };
 const workoutInclude = {
@@ -39,6 +40,7 @@ export async function updateProfile(input: Record<string, unknown>) {
     loadUnit: input.loadUnit === 'lb' ? 'lb' : 'kg',
     smallestIncrement: Math.max(0.25, asNumber(input.smallestIncrement, 2.5)),
     availableEquipment: asArray(input.availableEquipment),
+    priorityMuscles: asArray(input.priorityMuscles).slice(0, 6),
     limitations: asArray(input.limitations),
     excludedExerciseIds: asArray(input.excludedExerciseIds),
     updatedAt: new Date(),
@@ -57,7 +59,19 @@ export async function listExercises(query: Record<string, unknown>) {
     return (!search || searchable.includes(search))
       && (!muscle || [...asArray(exercise.primaryMuscles), ...asArray(exercise.secondaryMuscles)].map((item) => item.toLowerCase()).includes(muscle))
       && (!equipment || asArray(exercise.equipment).map((item) => item.toLowerCase()).includes(equipment));
-  });
+  }).map((exercise: any) => ({
+    id: exercise.id,
+    name: exercise.name,
+    aliases: exercise.aliases,
+    classification: exercise.classification,
+    movementPattern: exercise.movementPattern,
+    primaryMuscles: exercise.primaryMuscles,
+    secondaryMuscles: exercise.secondaryMuscles,
+    equipment: exercise.equipment,
+    difficulty: exercise.difficulty,
+    coachingCue: exercise.coachingCue,
+    evidenceConfidence: exercise.evidenceConfidence,
+  }));
 }
 
 export async function getExercise(id: string) {
@@ -70,6 +84,118 @@ export async function getExercise(id: string) {
 
 export async function listPrograms() {
   return models.TrainingProgram.findAll({ include: [workoutInclude], order: [['createdAt', 'ASC']] });
+}
+
+function programInput(input: Record<string, any>) {
+  const name = String(input.name || '').trim().slice(0, 100);
+  const goal = String(input.goal || 'general_fitness');
+  const experience = String(input.experience || 'beginner');
+  const workouts = Array.isArray(input.workouts) ? input.workouts : [];
+  if (!name || !workouts.length || workouts.length > 7) throw createHttpError(400, 'A program needs a name and 1–7 workouts');
+  if (!['general_fitness', 'hypertrophy', 'strength', 'mixed'].includes(goal) || !['beginner', 'intermediate', 'advanced'].includes(experience)) throw createHttpError(400, 'Invalid goal or experience');
+  const normalized = workouts.map((workout: any, dayIndex: number) => {
+    const exercises = Array.isArray(workout.exercises) ? workout.exercises : [];
+    if (!String(workout.name || '').trim() || exercises.length < 1 || exercises.length > 12) throw createHttpError(400, 'Each workout needs a name and 1–12 exercises');
+    return { name: String(workout.name).trim().slice(0, 100), description: String(workout.description || '').slice(0, 500), dayIndex, exercises: exercises.map((item: any, orderIndex: number) => ({
+      exerciseId: String(item.exerciseId || ''), orderIndex,
+      targetSets: Math.min(8, Math.max(1, Math.round(asNumber(item.targetSets, 3)))),
+      repMin: Math.min(30, Math.max(1, Math.round(asNumber(item.repMin, 8)))),
+      repMax: Math.min(30, Math.max(1, Math.round(asNumber(item.repMax, 12)))),
+      targetRir: Math.min(5, Math.max(0, Math.round(asNumber(item.targetRir, 2)))),
+      restSeconds: Math.min(600, Math.max(30, Math.round(asNumber(item.restSeconds, 120)))),
+      setType: 'working', notes: String(item.notes || '').slice(0, 300),
+    })) };
+  });
+  if (normalized.some((workout: any) => workout.exercises.some((item: any) => !item.exerciseId || item.repMin > item.repMax))) throw createHttpError(400, 'Exercise selections or rep ranges are invalid');
+  return { name, description: String(input.description || '').slice(0, 1000), goal, experience, durationWeeks: Math.min(52, Math.max(1, Math.round(asNumber(input.durationWeeks, 8)))), daysPerWeek: normalized.length, workouts: normalized };
+}
+
+async function persistProgram(input: Record<string, any>, existingId?: string) {
+  const value = programInput(input);
+  const exerciseIds = [...new Set(value.workouts.flatMap((workout: any) => workout.exercises.map((item: any) => item.exerciseId)))];
+  const known = await models.Exercise.findAll({ where: { id: exerciseIds }, attributes: ['id'], raw: true });
+  if (known.length !== exerciseIds.length) throw createHttpError(400, 'One or more selected exercises do not exist');
+  return sequelize.transaction(async (transaction: any) => {
+    let program: any;
+    if (existingId) {
+      program = await models.TrainingProgram.findByPk(existingId, { transaction });
+      if (!program) throw createHttpError(404, 'Training program not found');
+      await program.update({ name: value.name, description: value.description, goal: value.goal, experience: value.experience, durationWeeks: value.durationWeeks, daysPerWeek: value.daysPerWeek }, { transaction });
+      const currentWorkouts = await models.ProgramWorkout.findAll({ where: { programId: existingId }, attributes: ['id'], raw: true, transaction });
+      const workoutIds = currentWorkouts.map((row: any) => row.id);
+      if (workoutIds.length) {
+        await models.ProgramExercise.destroy({ where: { programWorkoutId: workoutIds }, transaction });
+        await models.ProgramWorkout.destroy({ where: { id: workoutIds }, transaction });
+      }
+    } else {
+      program = await models.TrainingProgram.create({ id: shortId(), ...value, isTemplate: false, isActive: false }, { transaction });
+    }
+    for (const workout of value.workouts) {
+      const created = await models.ProgramWorkout.create({ id: shortId(), programId: program.get('id'), name: workout.name, description: workout.description, dayIndex: workout.dayIndex }, { transaction });
+      for (const item of workout.exercises) await models.ProgramExercise.create({ id: shortId(), programWorkoutId: created.get('id'), ...item }, { transaction });
+    }
+    return String(program.get('id'));
+  }).then((id: string) => models.TrainingProgram.findByPk(id, { include: [workoutInclude] }));
+}
+
+export async function createProgram(input: Record<string, any>) { return persistProgram(input); }
+export async function updateProgram(id: string, input: Record<string, any>) { return persistProgram(input, id); }
+
+export async function duplicateProgram(id: string) {
+  const source: any = await models.TrainingProgram.findByPk(id, { include: [workoutInclude] });
+  if (!source) throw createHttpError(404, 'Training program not found');
+  const value = source.toJSON();
+  return createProgram({ ...value, id: undefined, name: `${value.name} copy`, workouts: value.workouts.map((workout: any) => ({ ...workout, exercises: workout.exercises.map((item: any) => ({ ...item, exerciseId: item.exerciseId })) })) });
+}
+
+export async function generateProgram(input: Record<string, any>) {
+  const profile: any = await getProfile();
+  const goal = ['general_fitness', 'hypertrophy', 'strength', 'mixed'].includes(String(input.goal)) ? String(input.goal) : String(profile?.goal || 'general_fitness');
+  const experience = ['beginner', 'intermediate', 'advanced'].includes(String(input.experience)) ? String(input.experience) : String(profile?.experience || 'beginner');
+  const days = Math.min(6, Math.max(1, Math.round(asNumber(input.daysPerWeek, Number(profile?.daysPerWeek) || 3))));
+  const equipment = asArray(input.availableEquipment ?? profile?.availableEquipment).map((item) => item.toLowerCase());
+  const priorities = asArray(input.priorityMuscles ?? profile?.priorityMuscles).map((item) => item.toLowerCase());
+  const all: any[] = await models.Exercise.findAll({ raw: true, order: [['name', 'ASC']] });
+  const candidates = all.filter((exercise) => !asArray(profile?.excludedExerciseIds).includes(exercise.id)
+    && (!equipment.length || asArray(exercise.equipment).every((item) => equipment.includes(item.toLowerCase()) || item.toLowerCase() === 'bodyweight')));
+  if (candidates.length < 4) throw createHttpError(422, 'The exercise library has too few movements for this equipment selection');
+  const split = days === 1 ? ['Full body'] : days === 2 ? ['Full body A', 'Full body B'] : days === 3 ? ['Full body A', 'Full body B', 'Full body C'] : days === 4 ? ['Upper A', 'Lower A', 'Upper B', 'Lower B'] : ['Push', 'Pull', 'Legs', 'Upper', 'Lower', 'Full body'];
+  const splitPatterns = days <= 3
+    ? [
+      ['squat', 'horizontal_push', 'horizontal_pull', 'hip_hinge', 'vertical_pull', 'elbow_extension'],
+      ['hip_hinge', 'vertical_push', 'vertical_pull', 'knee_flexion', 'horizontal_push', 'elbow_flexion'],
+      ['squat', 'horizontal_pull', 'horizontal_push', 'hip_hinge', 'shoulder_abduction', 'elbow_extension'],
+    ]
+    : split.map((name) => name.startsWith('Upper') ? ['horizontal_push', 'horizontal_pull', 'vertical_push', 'vertical_pull', 'elbow_flexion', 'elbow_extension'] : ['squat', 'hip_hinge', 'knee_flexion', 'shoulder_abduction']);
+  const usedByDay = new Set<string>();
+  const workouts = split.map((name, dayIndex) => {
+    const chosen: any[] = [];
+    const dayPatterns = splitPatterns[dayIndex] || splitPatterns[splitPatterns.length - 1];
+    for (const pattern of dayPatterns) {
+      const ranked = candidates.filter((exercise) => exercise.movementPattern === pattern && !usedByDay.has(`${dayIndex}:${exercise.id}`)).sort((a, b) => {
+        const aPriority = asArray(a.primaryMuscles).some((muscle) => priorities.includes(muscle.toLowerCase())) ? 1 : 0;
+        const bPriority = asArray(b.primaryMuscles).some((muscle) => priorities.includes(muscle.toLowerCase())) ? 1 : 0;
+        const aCompound = a.classification === 'compound' ? 1 : 0;
+        const bCompound = b.classification === 'compound' ? 1 : 0;
+        return (bPriority - aPriority) || (bCompound - aCompound) || a.name.localeCompare(b.name);
+      });
+      const selected = ranked.find((exercise) => !chosen.some((item) => item.exerciseId === exercise.id));
+      if (selected && chosen.length < (Number(profile?.minutesPerSession) <= 35 ? 4 : 6)) chosen.push({ exerciseId: selected.id, targetSets: experience === 'beginner' ? 3 : 4, repMin: goal === 'strength' ? 4 : 8, repMax: goal === 'strength' ? 6 : 12, targetRir: 2, restSeconds: goal === 'strength' ? 180 : 120 });
+    }
+    const maxExercises = Number(profile?.minutesPerSession) <= 35 ? 4 : 6;
+    const remaining = candidates.filter((exercise) => !chosen.some((item) => item.exerciseId === exercise.id)).sort((a, b) => {
+      const aPriority = asArray(a.primaryMuscles).filter((muscle) => priorities.includes(muscle.toLowerCase())).length;
+      const bPriority = asArray(b.primaryMuscles).filter((muscle) => priorities.includes(muscle.toLowerCase())).length;
+      return bPriority - aPriority || a.name.localeCompare(b.name);
+    });
+    for (const selected of remaining) {
+      if (chosen.length >= maxExercises) break;
+      chosen.push({ exerciseId: selected.id, targetSets: experience === 'beginner' ? 3 : 4, repMin: goal === 'strength' ? 4 : 8, repMax: goal === 'strength' ? 6 : 12, targetRir: 2, restSeconds: goal === 'strength' ? 180 : 120 });
+    }
+    chosen.forEach((item) => usedByDay.add(`${dayIndex}:${item.exerciseId}`));
+    return { name, description: 'Generated from your goal, schedule, available equipment, experience, and muscle priorities. Review and edit before activating.', exercises: chosen };
+  });
+  return { name: `${titleCase(goal)} · ${days}-day plan`, description: 'A starting template generated from your training context. Adjust it to your preferences before use.', goal, experience, durationWeeks: 8, daysPerWeek: days, workouts };
 }
 
 export async function activateProgram(id: string) {
@@ -164,6 +290,21 @@ export async function logSet(sessionId: string, input: Record<string, unknown>) 
       ? { level: 'caution', message: 'Stop the painful set. Reduce load or range only if a comfortable option exists; persistent or worsening pain should be professionally assessed.' }
       : null;
   return { set: created.toJSON(), safety };
+}
+
+export async function updatePerformedSet(id: string, input: Record<string, unknown>) {
+  const set = await models.PerformedSet.findByPk(id);
+  if (!set) throw createHttpError(404, 'Performed set not found');
+  const current: any = set.toJSON();
+  const reps = asNumber(input.actualReps ?? current.actualReps, -1);
+  const load = asNumber(input.actualLoad ?? current.actualLoad, -1);
+  const rirValue = input.actualRir === undefined ? current.actualRir : input.actualRir;
+  const rir = rirValue === null || rirValue === '' ? null : asNumber(rirValue, -1);
+  const painScore = Math.round(asNumber(input.painScore ?? current.painScore, 0));
+  const techniqueQuality = String(input.techniqueQuality ?? current.techniqueQuality);
+  if (!Number.isInteger(reps) || reps < 0 || reps > 200 || load < 0 || (rir !== null && (rir < 0 || rir > 10)) || painScore < 0 || painScore > 10 || !['good', 'acceptable', 'poor'].includes(techniqueQuality)) throw createHttpError(400, 'Set values are outside accepted ranges');
+  await set.update({ actualReps: reps, actualLoad: load, actualRir: rir, painScore, techniqueQuality, painLocation: input.painLocation === undefined ? current.painLocation : String(input.painLocation || '').slice(0, 120) });
+  return set.toJSON();
 }
 
 export async function completeSession(id: string, input: Record<string, unknown>) {
