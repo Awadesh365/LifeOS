@@ -34,10 +34,10 @@ By default, the frontend uses `http://localhost:5000/api`. Override it with:
 VITE_PERSONAL_API_URL=http://localhost:5000/api
 ```
 
-Visiting `/app` redirects unauthenticated users to `/login`. The first setup
-creates the sole owner account; later visits use email/password login backed by
-a server-side HttpOnly cookie. Authentication credentials are never stored in
-localStorage.
+Visiting `/app` redirects unauthenticated users to `/login`. Users can create
+separate accounts, each with an isolated workspace; the first account is the
+workspace administrator. Login uses email/password backed by a server-side
+HttpOnly cookie. Authentication credentials are never stored in localStorage.
 
 ## Verification
 

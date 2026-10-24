@@ -49,7 +49,7 @@ export default function SignInScreen() {
             <Pressable accessibilityRole="tab" accessibilityState={{ selected: mode === 'signup' }} onPress={() => { setMode('signup'); setError(''); }} style={[styles.modeButton, mode === 'signup' && styles.modeButtonActive]}><Text style={[styles.modeText, mode === 'signup' && styles.modeTextActive]}>Create account</Text></Pressable>
           </View>
           <Text accessibilityRole="header" style={styles.title}>{mode === 'signup' ? 'Create your account' : 'Welcome back'}</Text>
-          <Text style={styles.intro}>{mode === 'signup' && registrationOpen ? 'Create the owner account. Setup closes automatically afterward.' : mode === 'signup' ? 'Account creation is closed because this private workspace already has an owner.' : 'Sign in to continue to your personal operating system.'}</Text>
+          <Text style={styles.intro}>{mode === 'signup' && registrationOpen ? 'Create an account to start your own private LifeOS workspace.' : mode === 'signup' ? 'Account creation is currently unavailable.' : 'Sign in to continue to your personal operating system.'}</Text>
           <View style={styles.form}>
             {mode === 'signup' ? (
               <Field autoComplete="name" label="Name" value={displayName} onChangeText={setDisplayName} styles={styles} />

@@ -36,12 +36,6 @@ function formatLocalDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-function getDateKey(offset: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return formatLocalDate(d);
-}
-
 function getToday(): string {
   return formatLocalDate(new Date());
 }
@@ -82,10 +76,16 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
   const [savingHabitId, setSavingHabitId] = useState<string | null>(null);
   const [habitSyncMode, setHabitSyncMode] = useState<'server' | 'error' | 'loading'>('server');
   const [error, setError] = useState('');
+  const [today, setToday] = useState(getToday);
+  useEffect(() => {
+    const update = () => setToday(getToday());
+    const timer = window.setInterval(update, 30_000);
+    window.addEventListener('focus', update);
+    return () => { window.clearInterval(timer); window.removeEventListener('focus', update); };
+  }, []);
 
   useEffect(() => {
     async function load() {
-      const weekKeys = Array.from({ length: 7 }, (_, i) => getDateKey(i - 6));
       setError('');
 
       dispatch(fetchLearning());
@@ -93,33 +93,16 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
       dispatch(fetchDreams());
       dispatch(fetchJobs());
 
-      const habitResults = await Promise.allSettled(
-        weekKeys.map((date) => api.getHabits(date))
-      );
-
-      const allFulfilled = habitResults.every((r) => r.status === 'fulfilled');
-      if (allFulfilled) {
-        const habitWeekRows = (habitResults as PromiseFulfilledResult<HabitWithDone[]>[]).map(
-          (r) => r.value
-        );
-        const todayRows = habitWeekRows[habitWeekRows.length - 1] || [];
-        setHabitRows(todayRows);
-        setHabitLog(
-          weekKeys.reduce<Record<string, Record<string, boolean>>>((log, date, index) => {
-            log[date] = rowsToLog(habitWeekRows[index] || []);
-            return log;
-          }, {})
-        );
+      try {
+        const week = await api.getHabitWeek(today);
+        setHabitRows(week.days[6]?.habits ?? []);
+        setHabitLog(Object.fromEntries(week.days.map(day => [day.date, rowsToLog(day.habits)])));
         setHabitSyncMode('server');
-      } else {
-        console.error(
-          'Habit API load failed:',
-          habitResults.find((r) => r.status === 'rejected')
-        );
+      } catch {
         setHabitRows([]);
         setHabitLog({});
         setHabitSyncMode('error');
-        setError('Dashboard habits are unavailable because the backend request failed.');
+        setError('Dashboard habits are unavailable. Reload to try again.');
       }
 
       try {
@@ -143,9 +126,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
       setLoading(false);
     }
     load();
-  }, [dispatch]);
-
-  const today = getToday();
+  }, [dispatch, today]);
   const habitsCompleted = habitRows.filter((habit) => habit.done).length;
   const habitsTotal = habitRows.length;
   const habitsRemaining = Math.max(habitsTotal - habitsCompleted, 0);
@@ -190,6 +171,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
       : 0;
 
   const toggleHabit = (habitId: string) => {
+    if (savingHabitId || habitSyncMode !== 'server') return;
     const previousRows = habitRows;
     const nextRows = habitRows.map((habit) =>
       habit.id === habitId ? { ...habit, done: !habit.done } : habit
@@ -205,13 +187,13 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
 
     setSavingHabitId(habitId);
 
-    dispatch(toggleHabitThunk({ id: habitId, date: today }))
+    dispatch(toggleHabitThunk({ id: habitId, date: today, done: !previousRows.find(h => h.id === habitId)?.done }))
       .unwrap()
       .catch((err: string) => {
         console.error('Failed to update habit from dashboard:', err);
         setHabitRows(previousRows);
         setHabitLog((current) => ({ ...current, [today]: rowsToLog(previousRows) }));
-        setHabitSyncMode('error');
+        setHabitSyncMode('server');
         setError(err || 'Unable to save dashboard habit change.');
       })
       .finally(() => setSavingHabitId(null));
@@ -382,7 +364,7 @@ export default function Dashboard({ isMobile: isMobileProp }: DashboardProps) {
                   variant={habit.done ? 'contained' : 'outlined'}
                   fullWidth
                   onClick={() => toggleHabit(habit.id)}
-                  disabled={savingHabitId === habit.id}
+                  disabled={Boolean(savingHabitId) || habitSyncMode !== 'server'}
                   sx={{
                     textTransform: 'none',
                     justifyContent: 'flex-start',

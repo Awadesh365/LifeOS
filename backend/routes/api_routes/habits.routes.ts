@@ -4,6 +4,10 @@ import * as habitsApiController from '../../controllers/api_controllers/habits/h
 
 const router = Router();
 
+router.get('/week', habitsApiController.getHabitWeek);
+router.put('/completion', habitsApiController.setCompletions);
+router.put('/:id/completion', habitsApiController.setCompletion);
+
 router.get('/', habitsApiController.listHabits);
 router.post('/', habitsApiController.createHabit);
 router.put('/:id', habitsApiController.updateHabit);

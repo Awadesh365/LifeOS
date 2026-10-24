@@ -60,6 +60,11 @@ async function request<T = unknown>(path: string, options: RequestInit = {}): Pr
 }
 
 export const api = {
+  getHabitWeek: (date: string) => request<{ days: Array<{ date: string; habits: HabitWithDone[]; completed: number; total: number }> }>(withQuery('/habits/week', { date })),
+  updateHabit: (id: string, data: Omit<Habit, 'id'>) => request<Habit>(`/habits/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteHabit: (id: string) => request(`/habits/${id}`, { method: 'DELETE' }),
+  setHabitCompletion: (id: string, date: string, done: boolean) => request<HabitWithDone>(`/habits/${id}/completion`, { method: 'PUT', body: JSON.stringify({ date, done }) }),
+  setHabitCompletions: (ids: string[], date: string, done: boolean) => request<HabitWithDone[]>('/habits/completion', { method: 'PUT', body: JSON.stringify({ ids, date, done }) }),
   // Habits
   getHabits: (date: string) =>
     request<HabitWithDone[]>(withQuery('/habits', { date })),

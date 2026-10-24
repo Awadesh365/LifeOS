@@ -1,8 +1,10 @@
-import { asyncHandler } from '../../../utils/asyncHandler.js';
-import * as habitsService from '../../../services/habits/habits.service.js';
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import * as habitsService from "../../../services/habits/habits.service.js";
 
 export const listHabits = asyncHandler(async (req, res) => {
-  res.json(await habitsService.listHabits(req.query.date as string | undefined));
+  res.json(
+    await habitsService.listHabits(req.query.date as string | undefined),
+  );
 });
 
 export const createHabit = asyncHandler(async (req, res) => {
@@ -18,9 +20,25 @@ export const deleteHabit = asyncHandler(async (req, res) => {
 });
 
 export const toggleHabit = asyncHandler(async (req, res) => {
-  res.json(await habitsService.toggleHabit(req.params.id, req.body.date));
+  res.json(await habitsService.toggleHabit(req.params.id, req.body?.date));
 });
 
 export const getHabitHistory = asyncHandler(async (req, res) => {
   res.json(await habitsService.getHabitHistory(req.params.date));
+});
+
+export const getHabitWeek = asyncHandler(async (req, res) => {
+  res.json(await habitsService.getHabitWeek(req.query.date));
+});
+export const setCompletion = asyncHandler(async (req, res) => {
+  res.json(
+    await habitsService.setCompletion(
+      req.params.id,
+      req.body?.date,
+      req.body?.done,
+    ),
+  );
+});
+export const setCompletions = asyncHandler(async (req, res) => {
+  res.json(await habitsService.setCompletions(req.body));
 });

@@ -53,6 +53,10 @@ jobs:
         run: npm run db:migrate
       - name: Verify migration replay is safe
         run: npm run db:migrate
+      - name: Verify habit persistence across sessions
+        env:
+          HABITS_TEST_DATABASE_URL: postgresql://postgres:ci-test-only@localhost:5432/lifeos_ci_test
+        run: bash scripts/with-nvm-node.sh node --import tsx --test tests/habits/*.test.ts
       - name: Verify Vercel API entry
         env:
           NODE_ENV: production

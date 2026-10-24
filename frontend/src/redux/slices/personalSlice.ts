@@ -1,3 +1,4 @@
+import { localHabitDate } from '../../scopes/personal/habits/date';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type {
   HabitWithDone, RoutineGroup, LearningTree, LearningItem, GoalWithMilestones,
@@ -100,10 +101,10 @@ export const fetchHabits = createAsyncThunk(
 
 export const toggleHabit = createAsyncThunk(
   'personal/toggleHabit',
-  async ({ id, date }: { id: string; date: string }, { rejectWithValue }) => {
+  async ({ id, date, done }: { id: string; date: string; done: boolean }, { rejectWithValue }) => {
     try {
-      await api.toggleHabit(id, date);
-      return { id };
+      const updated = await api.setHabitCompletion(id, date, done);
+      return { id, done: updated.done };
     } catch (err: any) {
       return rejectWithValue(err.message || 'Failed to toggle habit');
     }
@@ -127,7 +128,7 @@ export const fetchDashboard = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const [habits, learning, goals, _dreams, jobs, strongStack] = await Promise.allSettled([
-        api.getHabits(new Date().toISOString().slice(0, 10)),
+        api.getHabits(localHabitDate()),
         api.getLearning(),
         api.getGoals(),
         api.getDreams(),
@@ -1006,7 +1007,7 @@ const personalSlice = createSlice({
       })
       .addCase(toggleHabit.fulfilled, (state, action) => {
         const habit = state.habits.items.find((h) => h.id === action.payload.id);
-        if (habit) habit.done = !habit.done;
+        if (habit) habit.done = action.payload.done;
       })
       .addCase(createHabit.fulfilled, (state, action) => {
         state.habits.items.push(action.payload);

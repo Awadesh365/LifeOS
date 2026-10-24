@@ -1,8 +1,9 @@
 import { models } from '../../models/index.js';
+import { habitDate } from '../habits/habits.validation.js';
 import { todayIsoDate } from '../../utils/date.js';
 
-export async function getDashboardSummary() {
-  const today = todayIsoDate();
+export async function getDashboardSummary(dateInput: unknown = todayIsoDate()) {
+  const today = habitDate(dateInput);
 
   const [
     habitsTotal,
@@ -29,7 +30,7 @@ export async function getDashboardSummary() {
   return {
     habits: {
       total: habitsTotal,
-      completedToday: todayLogs.filter((log: any) => log.done).length,
+      completedToday: new Set(todayLogs.filter((log: any) => log.done).map((log: any) => log.habitId)).size,
     },
     learning: {
       total: learningTotal,

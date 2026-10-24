@@ -1,6 +1,7 @@
 import { Algorithm, hash, verify } from '@node-rs/argon2';
 import { compare as verifyBcrypt } from 'bcryptjs';
 import { randomUUID } from 'node:crypto';
+import { UniqueConstraintError } from 'sequelize';
 
 import { models, sequelize } from '../../models/index.js';
 import { createHttpError } from '../../utils/httpError.js';
@@ -51,45 +52,48 @@ const publicUser = (row: Record<string, unknown>) => ({
 });
 
 export async function registrationOpen() {
-  const rows = await models.User.findAll({ attributes: ['email', 'name', 'passwordHash'], raw: true }) as unknown as Record<string, unknown>[];
-  return rows.length === 0 || (
-    rows.length === 1
-    && String(rows[0].email).toLowerCase() === 'admin@lifeos.local'
-    && String(rows[0].name).toLowerCase() === 'admin'
-    && String(rows[0].passwordHash) === LEGACY_SEEDED_PASSWORD_HASH
-  );
+  return true;
 }
 
 export async function register(input: AuthInput) {
   const email = normalizeEmail(input.email);
   const password = normalizePassword(input.password);
   const displayName = normalizeDisplayName(input.displayName);
+  const existing = await models.User.findOne({ where: { email } });
+  if (existing) throw createHttpError(409, 'An account with this email already exists. Sign in instead.');
   const passwordHash = await hash(password, HASH_OPTIONS);
 
-  return sequelize.transaction(async (transaction) => {
-    await sequelize.query('SELECT pg_advisory_xact_lock(72460391)', { transaction });
-    const rows = await models.User.findAll({ transaction });
-    const legacyOwner = rows.length === 1
-      && String(rows[0].get('email')).toLowerCase() === 'admin@lifeos.local'
-      && String(rows[0].get('name')).toLowerCase() === 'admin'
-      && String(rows[0].get('passwordHash')) === LEGACY_SEEDED_PASSWORD_HASH;
-    if (rows.length > 0 && !legacyOwner) {
-      throw createHttpError(403, 'Owner account setup is already complete');
+  try {
+    return await sequelize.transaction(async (transaction) => {
+      await sequelize.query('SELECT pg_advisory_xact_lock(72460391)', { transaction });
+      const rows = await models.User.findAll({ transaction });
+      const legacyOwner = rows.length === 1
+        && String(rows[0].get('email')).toLowerCase() === 'admin@lifeos.local'
+        && String(rows[0].get('name')).toLowerCase() === 'admin'
+        && String(rows[0].get('passwordHash')) === LEGACY_SEEDED_PASSWORD_HASH;
+      const firstOwner = rows.length === 0;
+      const row = legacyOwner
+        ? await rows[0].update({ email, name: displayName, passwordHash, isVerified: true, isActive: true, updatedAt: new Date() }, { transaction })
+        : await models.User.create(
+          { email, name: displayName, passwordHash, role: firstOwner ? 'admin' : 'customer', isVerified: true, isActive: true, createdAt: new Date(), updatedAt: new Date() },
+          { transaction },
+        );
+      if (firstOwner || legacyOwner) {
+        await sequelize.query(
+          `UPDATE user_preferences SET user_id = :userId
+           WHERE user_id = 'awadesh'
+           AND NOT EXISTS (SELECT 1 FROM user_preferences WHERE user_id = :userId)`,
+          { replacements: { userId: String(row.get('id')) }, transaction },
+        );
+      }
+      return publicUser(row.get({ plain: true }) as Record<string, unknown>);
+    });
+  } catch (error) {
+    if (error instanceof UniqueConstraintError) {
+      throw createHttpError(409, 'An account with this email already exists. Sign in instead.');
     }
-    const row = legacyOwner
-      ? await rows[0].update({ email, name: displayName, passwordHash, isVerified: true, isActive: true, updatedAt: new Date() }, { transaction })
-      : await models.User.create(
-        { email, name: displayName, passwordHash, role: 'admin', isVerified: true, isActive: true, createdAt: new Date(), updatedAt: new Date() },
-        { transaction },
-      );
-    await sequelize.query(
-      `UPDATE user_preferences SET user_id = :userId
-       WHERE user_id = 'awadesh'
-       AND NOT EXISTS (SELECT 1 FROM user_preferences WHERE user_id = :userId)`,
-      { replacements: { userId: String(row.get('id')) }, transaction },
-    );
-    return publicUser(row.get({ plain: true }) as Record<string, unknown>);
-  });
+    throw error;
+  }
 }
 
 export async function login(input: AuthInput) {

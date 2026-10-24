@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [mode, setMode] = useState<'signin' | 'signup'>(registrationOpen ? 'signup' : 'signin');
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -19,10 +19,6 @@ export default function LoginPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (mode === 'signup' && !registrationOpen) {
-      setError('Account creation is closed for this private workspace');
-      return;
-    }
     if (mode === 'signup' && password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -53,9 +49,9 @@ export default function LoginPage() {
         <h1 id="auth-title">{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h1>
         <p className="auth-intro">
           {mode === 'signup' && registrationOpen
-            ? 'Create the owner account. Setup closes automatically after this account is secured.'
+            ? 'Create an account to start your own private LifeOS workspace.'
             : mode === 'signup'
-              ? 'Account creation is closed because this private workspace already has an owner.'
+              ? 'Account creation is currently unavailable.'
               : 'Sign in to continue to your personal operating system.'}
         </p>
         <form onSubmit={submit}>
@@ -68,7 +64,7 @@ export default function LoginPage() {
             <label>Confirm password<input autoComplete="new-password" type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required minLength={12} maxLength={128} /></label>
           )}
           {error && <div className="auth-error" role="alert">{error}</div>}
-          <button disabled={submitting || (mode === 'signup' && !registrationOpen)} type="submit">{submitting ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
+          <button disabled={submitting} type="submit">{submitting ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
         </form>
         <p className="auth-security-note">Your session is held in a secure HttpOnly cookie and is never stored in browser JavaScript.</p>
       </section>

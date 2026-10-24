@@ -22,7 +22,7 @@ The deployment job runs only on main after CI succeeds and only when the reposit
    - NODE_ENV: production.
    The API URL is built as /api; no frontend secret is needed.
 5. In GitHub create a production environment. Add secrets VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID, and DATABASE_DIRECT_URL (Neon's direct URL with SSL settings). Add repository variables PRODUCTION_URL and DEPLOY_ENABLED. Leave DEPLOY_ENABLED false during setup.
-6. Initialize the owner account against Neon before making the production site public. The existing first-owner registration endpoint allows the first registrant to become owner. Use a local app connected to Neon or a protected deployment; never expose an empty owner database publicly.
+6. Initialize the administrator account against Neon before making the production site public. The first registrant becomes the workspace administrator; later registrants get regular user accounts with separate workspaces. Use a local app connected to Neon or a protected deployment while setting up the administrator.
 7. After reviewing and merging this branch, set DEPLOY_ENABLED=true. A subsequent push to main runs checks, builds the exact commit, migrates, publishes, and checks the public health endpoint and homepage. No credentials belong in chat or committed files.
 
 Preview deployments must use a separate Neon branch/database and their own session secret and allowed origin. Do not reuse production credentials for untrusted branches.

@@ -1,460 +1,502 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import Header from '../components/Header';
-import { useAppDispatch } from '../../../hooks/redux';
-import { toggleHabit as toggleHabitThunk } from '../../../redux/slices/personalSlice';
-import { api } from '../api/client';
-import type { HabitWithDone } from '../types';
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  LinearProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Header from "../components/Header";
+import { api } from "../api/client";
+import type { HabitWithDone } from "../types";
+import { localHabitDate, shiftHabitDate } from "../habits/date";
 
-interface HabitsProps {
-  isMobile?: boolean;
-}
+type Week = Awaited<ReturnType<typeof api.getHabitWeek>>;
+const blank = { name: "", category: "Personal", icon: "✓" };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  all: 'All',
-  open: 'Open',
-  done: 'Done',
-  routine: 'Routine',
-  health: 'Health',
-  learning: 'Learning',
-  career: 'Career',
-  discipline: 'Discipline',
-};
+export default function Habits({ isMobile = false }: { isMobile?: boolean }) {
+  const [today, setToday] = useState(localHabitDate);
+  const [date, setDate] = useState(localHabitDate);
+  const [week, setWeek] = useState<Week | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const lock = useRef(false);
+  const requestId = useRef(0);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [editor, setEditor] = useState<HabitWithDone | "new" | null>(null);
+  const [form, setForm] = useState(blank);
+  const [formError, setFormError] = useState("");
+  const [deleting, setDeleting] = useState<HabitWithDone | null>(null);
 
-function formatLocalDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+  const refresh = useCallback(async () => {
+    const current = ++requestId.current;
+    setLoading(true);
+    setError("");
+    try {
+      const result = await api.getHabitWeek(date);
+      if (current === requestId.current) setWeek(result);
+    } catch (reason) {
+      if (current === requestId.current) {
+        setWeek(null);
+        setError(
+          reason instanceof Error
+            ? reason.message
+            : "Could not load habits. Retry to reconnect.",
+        );
+      }
+    } finally {
+      if (current === requestId.current) setLoading(false);
+    }
+  }, [date]);
 
-function getDayLabel(offset: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return d.toLocaleDateString('en', { weekday: 'short' });
-}
-
-function getDateKey(offset: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return formatLocalDate(d);
-}
-
-function getToday(): string {
-  return formatLocalDate(new Date());
-}
-
-function rowsToLog(rows: HabitWithDone[]): Record<string, boolean> {
-  return rows.reduce<Record<string, boolean>>((log, habit) => {
-    log[habit.id] = Boolean(habit.done);
-    return log;
-  }, {});
-}
-
-function getHeatColor(level: string): string {
-  switch (level) {
-    case 'high':
-      return 'success.main';
-    case 'mid':
-      return 'warning.main';
-    case 'low':
-      return 'error.light';
-    default:
-      return 'grey.200';
-  }
-}
-
-export default function Habits({ isMobile: isMobileProp }: HabitsProps) {
-  const theme = useTheme();
-  const isMobileQuery = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMobile = isMobileProp ?? isMobileQuery;
-  const dispatch = useAppDispatch();
-
-  const [habitLog, setHabitLog] = useState<Record<string, Record<string, boolean>>>({});
-  const [habits, setHabits] = useState<HabitWithDone[]>([]);
-  const [filter, setFilter] = useState('all');
-  const [syncMode, setSyncMode] = useState<'loading' | 'server' | 'saving' | 'error'>('loading');
-  const [busyIds, setBusyIds] = useState<string[]>([]);
-  const [error, setError] = useState('');
-  const today = getToday();
+  const latestRefresh = useRef(refresh);
+  latestRefresh.current = refresh;
 
   useEffect(() => {
-    let isActive = true;
-
-    async function loadHabits() {
-      const weekKeys = Array.from({ length: 7 }, (_, i) => getDateKey(i - 6));
-      setSyncMode('loading');
-      setError('');
-
-      try {
-        const weekRows = await Promise.all(weekKeys.map((date) => api.getHabits(date)));
-        if (!isActive) return;
-
-        const todayRows = weekRows[weekRows.length - 1] || [];
-        setHabits(todayRows);
-        setHabitLog(
-          weekKeys.reduce<Record<string, Record<string, boolean>>>((log, date, index) => {
-            log[date] = rowsToLog(weekRows[index] || []);
-            return log;
-          }, {})
-        );
-        setSyncMode('server');
-      } catch (err: any) {
-        console.error('Failed to load habits from server:', err);
-        if (!isActive) return;
-        setHabits([]);
-        setHabitLog({});
-        setSyncMode('error');
-        setError(err.message || 'Unable to load habits from backend.');
-      }
-    }
-
-    loadHabits();
-
+    void refresh();
     return () => {
-      isActive = false;
+      requestId.current++;
     };
-  }, []);
-
-  const todayHabits = useMemo(() => rowsToLog(habits), [habits]);
-
-  const toggleHabit = (habitId: string) => {
-    const previousHabits = habits;
-    const nextHabits = habits.map((habit) =>
-      habit.id === habitId ? { ...habit, done: !habit.done } : habit
-    );
-
-    setHabits(nextHabits);
-    setHabitLog((previousLog) => ({ ...previousLog, [today]: rowsToLog(nextHabits) }));
-
-    if (syncMode !== 'server') {
-      setError('Backend is unavailable. Habit changes were not saved.');
-      return;
-    }
-
-    setBusyIds((ids) => [...ids, habitId]);
-    setSyncMode('saving');
-
-    dispatch(toggleHabitThunk({ id: habitId, date: today }))
-      .unwrap()
-      .then(() => {
-        setError('');
-        setSyncMode('server');
-      })
-      .catch((err: string) => {
-        console.error('Failed to toggle habit on server:', err);
-        setHabits(previousHabits);
-        setHabitLog((previousLog) => ({ ...previousLog, [today]: rowsToLog(previousHabits) }));
-        setSyncMode('error');
-        setError(err || 'Unable to save habit change.');
-      })
-      .finally(() => {
-        setBusyIds((ids) => ids.filter((id) => id !== habitId));
-      });
-  };
-
-  const setAllHabits = (done: boolean) => {
-    const idsToChange = habits
-      .filter((habit) => Boolean(habit.done) !== done)
-      .map((habit) => habit.id);
-    if (idsToChange.length === 0) return;
-
-    const previousHabits = habits;
-    const nextHabits = habits.map((habit) => ({ ...habit, done }));
-
-    setHabits(nextHabits);
-    setHabitLog((previousLog) => ({ ...previousLog, [today]: rowsToLog(nextHabits) }));
-
-    if (syncMode !== 'server') {
-      setError('Backend is unavailable. Habit changes were not saved.');
-      return;
-    }
-
-    setBusyIds((ids) => [...new Set([...ids, ...idsToChange])]);
-    setSyncMode('saving');
-
-    Promise.all(
-      idsToChange.map((habitId) =>
-        dispatch(toggleHabitThunk({ id: habitId, date: today })).unwrap()
-      )
-    )
-      .then(() => {
-        setError('');
-        setSyncMode('server');
-      })
-      .catch((err: string) => {
-        console.error('Failed to bulk update habits on server:', err);
-        setHabits(previousHabits);
-        setHabitLog((previousLog) => ({ ...previousLog, [today]: rowsToLog(previousHabits) }));
-        setSyncMode('error');
-        setError(err || 'Unable to save habit changes.');
-      })
-      .finally(() => {
-        setBusyIds((ids) => ids.filter((id) => !idsToChange.includes(id)));
-      });
-  };
-
-  const habitsCompleted = Object.values(todayHabits).filter(Boolean).length;
-  const habitsTotal = habits.length;
-  const habitsRemaining = Math.max(habitsTotal - habitsCompleted, 0);
-  const habitPercent = habitsTotal > 0 ? Math.round((habitsCompleted / habitsTotal) * 100) : 0;
-  const isSaving = syncMode === 'saving';
-  const syncLabel =
-    syncMode === 'server'
-      ? 'Synced'
-      : syncMode === 'saving'
-        ? 'Saving'
-        : syncMode === 'loading'
-          ? 'Loading'
-          : 'Backend error';
-
-  const getStreak = (habitId: string): number => {
-    let s = 0;
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    for (let i = 0; i < 365; i++) {
-      const key = formatLocalDate(d);
-      if (habitLog[key]?.[habitId]) {
-        s++;
-        d.setDate(d.getDate() - 1);
-      } else {
-        break;
+  }, [refresh]);
+  useEffect(() => {
+    const update = () => {
+      const next = localHabitDate();
+      if (today !== next) {
+        setDate((selected) => (selected === today ? next : selected));
+        setToday(next);
       }
-    }
-    if (todayHabits[habitId]) s++;
-    return s;
-  };
-
-  const weekData = Array.from({ length: 7 }, (_, i) => {
-    const offset = i - 6;
-    const key = getDateKey(offset);
-    const dayHabits = key === today ? todayHabits : habitLog[key] || {};
-    const done = Object.values(dayHabits).filter(Boolean).length;
-    const ratio = habitsTotal > 0 ? done / habitsTotal : 0;
-    let level: 'empty' | 'low' | 'mid' | 'high' = 'empty';
-    if (ratio > 0.7) level = 'high';
-    else if (ratio > 0.3) level = 'mid';
-    else if (ratio > 0) level = 'low';
-    return {
-      label: getDayLabel(offset),
-      done,
-      level,
-      isToday: offset === 0,
     };
-  });
+    const timer = window.setInterval(update, 30_000);
+    window.addEventListener("focus", update);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", update);
+    };
+  }, [today]);
 
+  const selected = week?.days.find((day) => day.date === date);
+  const habits = selected?.habits ?? [];
+  const completed = selected?.completed ?? 0;
+  const percent = habits.length
+    ? Math.round((completed / habits.length) * 100)
+    : 0;
+  const visible = habits.filter(
+    (habit) =>
+      filter === "all" ||
+      (filter === "done"
+        ? habit.done
+        : filter === "open"
+          ? !habit.done
+          : habit.category === filter.slice(9)),
+  );
   const filters = [
-    { key: 'all', count: habitsTotal },
-    { key: 'open', count: habitsRemaining },
-    { key: 'done', count: habitsCompleted },
-    ...Array.from(new Set(habits.map((habit) => habit.category))).map((category) => ({
-      key: category,
-      count: habits.filter((habit) => habit.category === category).length,
+    { value: "all", label: "All" },
+    { value: "open", label: "Open" },
+    { value: "done", label: "Done" },
+    ...[...new Set(habits.map((habit) => habit.category))].map((category) => ({
+      value: `category:${category}`,
+      label: category,
     })),
   ];
+  const disabled = busy || loading || !week;
 
-  const visibleHabits = habits
-    .filter((habit) => {
-      if (filter === 'open') return !habit.done;
-      if (filter === 'done') return habit.done;
-      if (filter === 'all') return true;
-      return habit.category === filter;
-    })
-    .sort((a, b) => Number(a.done) - Number(b.done));
+  async function mutate(
+    action: () => Promise<unknown>,
+    success: string,
+    close?: () => void,
+  ) {
+    if (lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setError("");
+    setFormError("");
+    setNotice("");
+    try {
+      await action();
+      close?.();
+      setNotice(success);
+      await latestRefresh.current();
+    } catch (reason) {
+      const message =
+        reason instanceof Error ? reason.message : "Save failed. Please retry.";
+      setError(message);
+      setFormError(message);
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
+  function openEditor(habit?: HabitWithDone) {
+    setEditor(habit ?? "new");
+    setForm(
+      habit
+        ? { name: habit.name, category: habit.category, icon: habit.icon }
+        : blank,
+    );
+    setFormError("");
+  }
 
   return (
     <>
       <Header
         title="Daily Tracker"
-        subtitle={`${habitsCompleted}/${habitsTotal} done today \u00B7 ${habitsRemaining} remaining`}
+        subtitle="Build a daily rhythm, one practice at a time"
       />
       <Box sx={{ p: isMobile ? 2 : 3 }}>
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          gap={1}
+          alignItems="center"
+          sx={{ mb: 2 }}
+        >
+          <Button
+            disabled={busy || date <= "1900-01-08"}
+            onClick={() => setDate(shiftHabitDate(date, -1))}
+          >
+            Previous day
+          </Button>
+          <TextField
+            label="Habit date"
+            type="date"
+            value={date}
+            disabled={busy}
+            slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: { min: "1900-01-07", max: today },
+            }}
+            onChange={(event) => {
+              const next = event.target.value;
+              if (
+                /^\d{4}-\d{2}-\d{2}$/.test(next) &&
+                next <= today &&
+                next >= "1900-01-07"
+              )
+                setDate(next);
+            }}
+          />
+          <Button
+            disabled={busy || date >= today}
+            onClick={() => setDate(shiftHabitDate(date, 1))}
+          >
+            Next day
+          </Button>
+          <Button disabled={busy} onClick={() => setDate(today)}>
+            Today
+          </Button>
+          <Button disabled={busy || loading} onClick={() => void refresh()}>
+            Refresh
+          </Button>
+          <Button
+            variant="contained"
+            disabled={busy}
+            onClick={() => openEditor()}
+          >
+            Add habit
+          </Button>
+        </Stack>
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            action={
+              <Button disabled={busy || loading} onClick={() => void refresh()}>
+                Retry
+              </Button>
+            }
+          >
             {error}
           </Alert>
         )}
-
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 1,
-            }}
-          >
-            <Box>
-              <Typography variant="body2" color="text.secondary">
-                Today
-              </Typography>
-              <Typography variant="h6">
-                {habitsRemaining === 0 ? 'All clear' : `${habitsRemaining} left`}
-              </Typography>
-            </Box>
-            <Typography variant="h4" color="primary">
-              {habitPercent}%
-            </Typography>
+        {notice && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {notice}
+          </Alert>
+        )}
+        {loading ? (
+          <Box role="status" sx={{ p: 4 }}>
+            <CircularProgress size={24} /> Loading habits…
           </Box>
-          <LinearProgress
-            variant="determinate"
-            value={habitPercent}
-            sx={{ height: 8, borderRadius: 4, mb: 1 }}
-          />
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 2,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              {habitsCompleted} complete
-            </Typography>
-            <Chip
-              label={syncLabel}
-              size="small"
-              color={
-                syncMode === 'server'
-                  ? 'success'
-                  : syncMode === 'saving'
-                    ? 'warning'
-                    : syncMode === 'loading'
-                      ? 'info'
-                      : 'error'
-              }
-            />
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+        ) : (
+          week && (
+            <>
+              <Card sx={{ mb: 2 }}>
+                <CardContent>
+                  <Typography variant="h5">
+                    {completed} of {habits.length} complete · {percent}%
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {date === today ? "Today" : date}
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={percent}
+                    sx={{ my: 2, height: 8, borderRadius: 4 }}
+                  />
+                  <Stack direction="row" gap={1}>
+                    <Button
+                      disabled={disabled || completed === habits.length}
+                      onClick={() =>
+                        void mutate(
+                          () =>
+                            api.setHabitCompletions(
+                              habits.map((h) => h.id),
+                              date,
+                              true,
+                            ),
+                          "All habits marked complete.",
+                        )
+                      }
+                    >
+                      Mark all done
+                    </Button>
+                    <Button
+                      disabled={disabled || !completed}
+                      onClick={() =>
+                        void mutate(
+                          () =>
+                            api.setHabitCompletions(
+                              habits.map((h) => h.id),
+                              date,
+                              false,
+                            ),
+                          "All habits marked incomplete.",
+                        )
+                      }
+                    >
+                      Reset day
+                    </Button>
+                  </Stack>
+                </CardContent>
+              </Card>
+              <Card sx={{ mb: 3 }}>
+                <CardContent>
+                  <Typography variant="h6">Seven-day progress</Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
+                    Seven days ending {date}. Counts use your current habit
+                    list; deleting a habit removes its history.
+                  </Typography>
+                  <Stack direction="row" gap={1} sx={{ overflowX: "auto" }}>
+                    {week.days.map((day) => (
+                      <Button
+                        key={day.date}
+                        variant={day.date === date ? "contained" : "outlined"}
+                        disabled={busy}
+                        onClick={() => setDate(day.date)}
+                        aria-label={`View ${day.date}: ${day.completed} of ${day.total} complete`}
+                        sx={{ minWidth: 90, flexDirection: "column" }}
+                      >
+                        <span>
+                          {new Date(`${day.date}T12:00:00`).toLocaleDateString(
+                            "en",
+                            { weekday: "short", day: "numeric" },
+                          )}
+                        </span>
+                        <strong>
+                          {day.completed}/{day.total}
+                        </strong>
+                      </Button>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+              <Stack direction="row" gap={1} sx={{ mb: 2 }}>
+                {filters.map(({ value, label }) => (
+                  <Chip
+                    key={value}
+                    label={label}
+                    color={filter === value ? "primary" : "default"}
+                    onClick={() => setFilter(value)}
+                  />
+                ))}
+              </Stack>
+              {!habits.length ? (
+                <Alert severity="info">
+                  No habits yet. Add your first habit to start tracking.
+                </Alert>
+              ) : !visible.length ? (
+                <Alert severity="info">No habits match this filter.</Alert>
+              ) : (
+                <Stack gap={1}>
+                  {visible.map((habit) => (
+                    <Card key={habit.id} variant="outlined">
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Checkbox
+                          checked={habit.done}
+                          disabled={disabled}
+                          inputProps={{
+                            "aria-label": `Complete ${habit.name}`,
+                          }}
+                          onChange={(_, done) =>
+                            void mutate(
+                              () =>
+                                api.setHabitCompletion(habit.id, date, done),
+                              done
+                                ? "Habit completed."
+                                : "Habit marked incomplete.",
+                            )
+                          }
+                        />
+                        <Box sx={{ flex: 1, minWidth: 120 }}>
+                          <Typography
+                            sx={{
+                              textDecoration: habit.done
+                                ? "line-through"
+                                : "none",
+                            }}
+                          >
+                            {habit.icon} {habit.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {habit.category}
+                          </Typography>
+                        </Box>
+                        <Button
+                          disabled={disabled}
+                          aria-label={`Edit ${habit.name}`}
+                          onClick={() => openEditor(habit)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          color="error"
+                          disabled={disabled}
+                          aria-label={`Delete ${habit.name}`}
+                          onClick={() => {
+                            setDeleting(habit);
+                            setFormError("");
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Stack>
+              )}
+            </>
+          )
+        )}
+        <Dialog
+          open={Boolean(editor)}
+          onClose={() => {
+            if (!busy) setEditor(null);
+          }}
+          fullWidth
+          maxWidth="sm"
+        >
+          <DialogTitle>
+            {editor === "new" ? "Add habit" : "Edit habit"}
+          </DialogTitle>
+          <DialogContent>
+            <Stack gap={2} sx={{ pt: 1 }}>
+              {formError && <Alert severity="error">{formError}</Alert>}
+              {(["name", "category", "icon"] as const).map((key) => (
+                <TextField
+                  key={key}
+                  autoFocus={key === "name"}
+                  label={
+                    key === "name"
+                      ? "Name"
+                      : key === "category"
+                        ? "Category"
+                        : "Icon"
+                  }
+                  value={form[key]}
+                  disabled={busy}
+                  inputProps={{
+                    maxLength:
+                      key === "name" ? 80 : key === "category" ? 40 : 32,
+                  }}
+                  onChange={(event) =>
+                    setForm({ ...form, [key]: event.target.value })
+                  }
+                />
+              ))}
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button disabled={busy} onClick={() => setEditor(null)}>
+              Cancel
+            </Button>
             <Button
               variant="contained"
-              onClick={() => setAllHabits(true)}
-              disabled={isSaving || habitsRemaining === 0}
+              disabled={
+                busy ||
+                !form.name.trim() ||
+                !form.category.trim() ||
+                !form.icon.trim()
+              }
+              onClick={() =>
+                void mutate(
+                  () =>
+                    editor === "new"
+                      ? api.createHabit(form)
+                      : api.updateHabit((editor as HabitWithDone).id, form),
+                  "Habit saved.",
+                  () => setEditor(null),
+                )
+              }
             >
-              {'\u2713'} Mark all done
+              {busy ? "Saving…" : "Save habit"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={Boolean(deleting)}
+          onClose={() => {
+            if (!busy) setDeleting(null);
+          }}
+        >
+          <DialogTitle>Delete {deleting?.name}?</DialogTitle>
+          <DialogContent>
+            {formError && <Alert severity="error">{formError}</Alert>}This
+            permanently deletes the habit and all its completion history on web
+            and mobile.
+          </DialogContent>
+          <DialogActions>
+            <Button disabled={busy} onClick={() => setDeleting(null)}>
+              Cancel
             </Button>
             <Button
-              variant="outlined"
-              onClick={() => setAllHabits(false)}
-              disabled={isSaving || habitsCompleted === 0}
+              color="error"
+              disabled={busy}
+              onClick={() =>
+                void mutate(
+                  () => api.deleteHabit(deleting!.id),
+                  "Habit and history deleted.",
+                  () => setDeleting(null),
+                )
+              }
             >
-              Reset today
+              {busy ? "Deleting…" : "Delete permanently"}
             </Button>
-          </Box>
-        </Paper>
-
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 2,
-              }}
-            >
-              <Typography variant="h6">This Week</Typography>
-              <Chip label="7-Day View" color="info" size="small" />
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1, overflowX: 'auto' }}>
-              {weekData.map((day, i) => (
-                <Paper
-                  key={i}
-                  sx={{
-                    flex: 1,
-                    minWidth: 60,
-                    p: 1.5,
-                    textAlign: 'center',
-                    bgcolor: getHeatColor(day.level),
-                    border: day.isToday ? '2px solid' : '1px solid',
-                    borderColor: day.isToday ? 'primary.main' : 'divider',
-                  }}
-                >
-                  <Typography variant="caption" fontWeight={day.isToday ? 700 : 400}>
-                    {day.label}
-                  </Typography>
-                  <Typography variant="body2">
-                    {day.done}/{habitsTotal}
-                  </Typography>
-                </Paper>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-
-        <Typography variant="h6" sx={{ mb: 1 }}>
-          Today&apos;s Habits
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {visibleHabits.length} shown{' \u00B7 '}pending tasks stay first in the flow
-        </Typography>
-
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-          {filters.map((item) => (
-            <Chip
-              key={item.key}
-              label={`${CATEGORY_LABELS[item.key] || item.key} (${item.count})`}
-              onClick={() => setFilter(item.key)}
-              color={filter === item.key ? 'primary' : 'default'}
-              variant={filter === item.key ? 'filled' : 'outlined'}
-            />
-          ))}
-        </Box>
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {visibleHabits.map((habit) => {
-            const isDone = todayHabits[habit.id] || false;
-            const streak = getStreak(habit.id);
-            return (
-              <Button
-                key={habit.id}
-                variant={isDone ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => toggleHabit(habit.id)}
-                disabled={isSaving || busyIds.includes(habit.id)}
-                sx={{
-                  textTransform: 'none',
-                  justifyContent: 'flex-start',
-                  gap: 1,
-                  py: 1.5,
-                  opacity: isDone ? 0.7 : 1,
-                }}
-              >
-                <Chip
-                  label={isDone ? '\u2713' : ''}
-                  size="small"
-                  color={isDone ? 'success' : 'default'}
-                  sx={{ minWidth: 32 }}
-                />
-                <Typography component="span">{habit.icon}</Typography>
-                <Box sx={{ textAlign: 'left', flex: 1 }}>
-                  <Typography
-                    component="span"
-                    display="block"
-                    sx={{ textDecoration: isDone ? 'line-through' : 'none' }}
-                  >
-                    {habit.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" component="span">
-                    {CATEGORY_LABELS[habit.category] || habit.category}
-                  </Typography>
-                </Box>
-                {streak > 0 && <Chip label={`${streak}d`} size="small" color="warning" />}
-              </Button>
-            );
-          })}
-        </Box>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );

@@ -64,8 +64,9 @@ startup is disabled and the configured database must already be available.
 The health endpoint is `GET /api/health-check`. All other feature endpoints
 require an authenticated server-side session and a CSRF header for mutations.
 
-Open `/login` in the web portal or the mobile sign-in screen to create the first
-owner account. Registration closes automatically afterward. Session identifiers
+Open `/login` in the web portal or the mobile sign-in screen to create an
+account. Each account gets an isolated workspace, and the first account is the
+workspace administrator. Session identifiers
 are opaque, stored in PostgreSQL, and sent to the browser only through a Secure,
 HttpOnly, SameSite cookie. The server derives the preference owner from that
 session and ignores client-provided user identity.
